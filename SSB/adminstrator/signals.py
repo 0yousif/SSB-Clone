@@ -4,18 +4,12 @@ from django.contrib.auth.models import User
 
 from adminstrator.models import Profile
 
-
-
-
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     print("instance", instance)
     if created:
         Profile.objects.create(
-            user=instance)
-        
-        
-        
+            user=instance)  
 
 
 @receiver(post_save, sender=User)
