@@ -22,8 +22,6 @@ def save_profile(sender, instance, **kwargs):
 
 @receiver(pre_save, sender=Profile)
 def save_profile(sender, instance, **kwargs):
-    print("HELLOO________________________________________________________")
-    print(instance.academic_number)
     if (instance.user_type == 'student'):
         year = date.today().year
         user_id = instance.user_id
