@@ -372,3 +372,33 @@ html {
 .lemon-green-background {
   background-color: #CCEFBF;
 }
+
+/* Registration Page */
+.reg-registration-section-header {
+  height: 2.7rem;
+  padding-bottom: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  gap: 1rem;
+  border-bottom: 1px solid lightgrey;
+}
+
+.reg-registration-section {
+  width: 80%;
+  margin: 2.5rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.reg-registration-section-header img {
+  height: 100%;
+
+}
+
+.reg-registration-table {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-columns: repeat() ;
+}
