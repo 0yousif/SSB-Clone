@@ -120,9 +120,13 @@
           <img src="{% static 'icons/setting-2.png' %}" alt="" />Account
           Settings
         </button>
-        <button class="poppins-semibold">
-          <img src="{% static 'icons/logout.png' %}" alt="" />Logout
-        </button>
+
+        <form action="{% url 'logout' %}" method="post">
+          {%csrf_token%}
+          <button type="submit">
+            <img src="{% static 'icons/logout.png' %}" alt="" />Logout
+          </button>
+        </form>
       </div>
     </div>
     <main class="base-main">{% block content%} {% endblock %}</main>
