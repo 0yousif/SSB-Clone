@@ -1,0 +1,19 @@
+{% extends 'base.html' %} {% block content %} {% for user in users%}
+<tr>
+  <td>{{ user.id}}</td>
+  <td>{{ user.user_id}}</td>
+  <td>{{ user.first_name }}</td>
+  <td>{{ user.last_name }}</td>
+  <td>{{ user.academic_number }}</td>
+  <td>{{ user.dob }}</td>
+  <td>{{ user.gender }}</td>
+  <td>{{ user.profession }}</td>
+  <td>{{ user.major }}</td>
+  <td>{{ user.school }}</td>
+  <td>{{ user.current_semester }}</td>
+  <td>{{ user.gpa }}</td>
+  <td>{{ user.status }}</td>
+  <br />
+</tr>
+<br />
+{% endfor %} {% endblock %}
