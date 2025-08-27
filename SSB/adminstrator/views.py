@@ -33,7 +33,8 @@ def adminregstudent(request, user_id):
     # print("request.user.profile", request.user)
     userProfile = Profile.objects.get(user_id=user_id)
     if request.method == 'POST':
-        profile_form = ProfileForm(request.POST, instance=userProfile)
+        profile_form = ProfileForm(
+            request.POST, request.FILES, instance=userProfile)
         if profile_form.is_valid():
             profile_form.save()
 
