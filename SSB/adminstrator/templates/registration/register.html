@@ -1,0 +1,17 @@
+{% extends 'base.html' %} {% block content %}
+ {% if user.is_superuser %} 
+{% if error_message %}
+<p class="red-text">{{ error_message }}</p>
+{% endif %}
+
+<h1>Add User</h1>
+<form method="post" action="{% url 'admin_reg' %}">
+  {% csrf_token %} {{ user_form.as_p }}
+  <hr />
+  <h3>User:</h3>
+  {{ form.as_p }}
+  <button type="submit">Create User</button>
+</form>
+{% else %}
+<h1>NOT ADMIN</h1>
+{% endif %} {% endblock %}

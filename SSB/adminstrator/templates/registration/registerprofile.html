@@ -1,0 +1,36 @@
+{% extends 'base.html' %} {% block content %}
+{% if user.is_superuser %}
+<form method="post">
+  {% csrf_token %}
+  <hr />
+  <h3>User Profile:</h3>
+  {{ profile_form.as_p }}
+  <button type="submit">Create User</button>
+</form>
+
+<script>
+  let dateEl = document.getElementById('id_dob')
+  M.Datepicker.init(dateEl, {
+    format: 'yyyy-mm-dd',
+    defaultDate: new Date(),
+    setDefaultDate: true,
+    autoClose: true,
+    changeYear: true
+  })
+  
+  let selectGender = document.getElementById('id_gender')
+  M.FormSelect.init(selectGender)
+  
+  let selectDep = document.getElementById('id_department_id')
+  M.FormSelect.init(selectDep)
+  
+  let selectType = document.getElementById('id_user_type')
+  M.FormSelect.init(selectType)
+  
+  let selectStatus = document.getElementById('id_status')
+  M.FormSelect.init(selectStatus)
+</script>
+{% else %}
+<h1>NOT ADMIN</h1>
+{% endif %}
+{% endblock %}

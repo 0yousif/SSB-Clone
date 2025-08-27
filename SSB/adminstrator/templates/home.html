@@ -1,0 +1,12 @@
+{% extends 'base.html' %} {% block nav%} {% if user.is_superuser %}
+<li>
+  <a href="{% url 'admin_reg'%}">register student</a>
+</li>
+<li>
+  <a href="{% url 'admindex'%}">See users</a>
+</li>
+{% endif %} {% endblock%} {% block content %}
+
+<h1>Hello {{user.username}}</h1>
+
+{% endblock %}
