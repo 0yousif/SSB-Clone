@@ -2,6 +2,8 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from datetime import date
 from django.contrib.auth.models import User
+from django.urls import reverse
+
 # Create your models here.
 
 GENDERS = (
@@ -27,11 +29,33 @@ USER_STATUS_CHOICES = (
 )
 
 
+COURSE_CREDITS = (
+    (5, "5"),
+    (15, "15"),
+    (60, "60")
+)
+
+SCHEDULE_TYPES = (
+    ("lab", "lab"),
+    ("lec", "lec"),
+    ("lec/lab", "lec,lab")
+)
+
+DAYS = (
+    ("Sunday", "sunday"),
+    ("Monday", "monday"),
+    ("Tuesday", "tuesday"),
+    ("Wednesday", "wednesday"),
+    ("Thursday", "thursday"),
+    ("Friday", "friday"),
+    ("Saturday", "saturday"),
+)
+
+
 class Departments(models.Model):
     department_id = models.AutoField(primary_key=True, null=False)
     department_code = models.CharField(max_length=4, null=False)
     department_name = models.CharField(max_length=100, null=False)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
 
     def __str__(this):
         return this.department_id
@@ -65,6 +89,107 @@ class Profile(models.Model):
     status = models.CharField(
         choices=USER_STATUS_CHOICES, default=USER_STATUS_CHOICES[0][0], null=False)
     email = models.CharField(max_length=50, null=True)
+    avatar = models.ImageField(
+        upload_to='adminstrator/static/user_profiles', default='')
 
     def __str__(self):
         return self.user.username
+
+#########################################################################
+
+
+class Semester(models.Model):
+    semester_id = models.AutoField(primary_key=True, null=False)
+    semester_name = models.CharField(max_length=50, null=False)
+    start_date = models.DateField(null=False)
+    registration_start = models.DateField(null=False)
+    end_date = models.DateField(null=False)
+    is_current = models.BooleanField(null=False)
+
+    def get_absolute_url(self):
+        return reverse('see_semester', kwargs={'pk': self.semester_id})
+
+    def __str__(this):
+        return this.semester_id
+
+
+class Course(models.Model):
+    course_id = models.AutoField(primary_key=True, null=False)
+    department_id = models.ForeignKey(Departments, models.CASCADE, null=False)
+    code = models.IntegerField(
+        validators=[MaxValueValidator(9999)], null=False)
+    name = models.CharField(max_length=50, null=False)
+    description = models.CharField(max_length=100, null=False)
+    credit_hours = models.IntegerField(choices=COURSE_CREDITS, null=False)
+    schedule_type = models.CharField(choices=SCHEDULE_TYPES, null=False)
+    prerequisit_course = models.ForeignKey(
+        "Course", on_delete=models.SET_NULL, null=True)
+    is_active = models.BooleanField(default=False, null=False)
+    semester_id = models.ForeignKey(
+        Semester, on_delete=models.SET_NULL, null=True)
+
+    def __str__(this):
+        return this.course_id
+
+
+class Section(models.Model):
+    crn = models.AutoField(
+        validators=[MaxValueValidator(999999)], primary_key=True, null=False)
+    course_id = models.ForeignKey(Course, on_delete=models.CASCADE, null=False)
+    tutor_id = models.ForeignKey(User, on_delete=models.PROTECT, null=False)
+    schedule_type = models.CharField(choices=SCHEDULE_TYPES, null=False)
+    semester_id = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, null=False)
+
+    def __str__(this):
+        return this.crn
+
+
+class Location(models.Model):
+    location_id = models.AutoField(primary_key=True, null=False)
+    room_number = models.IntegerField(
+        validators=[MaxValueValidator(999)], null=False)
+    building_code = models.IntegerField(
+        validators=[MaxValueValidator(999)], null=False)
+
+    def __str__(this):
+        return this.location_id
+
+
+class Time(models.Model):
+    time_id = models.AutoField(primary_key=True, null=False)
+    start_time = models.TimeField(null=False)
+    end_time = models.TimeField(null=False)
+
+    def __str__(this):
+        this.time_id
+
+
+class Section_schedules(models.Model):
+    schedule_id = models.AutoField(primary_key=True, null=False)
+    day_of_week = models.CharField(choices=DAYS, null=False)
+    crn = models.ForeignKey(Section, on_delete=models.CASCADE, null=False)
+    location_id = models.ForeignKey(
+        Location, on_delete=models.PROTECT, null=False)
+    time_id = models.ForeignKey(Time, on_delete=models.PROTECT, null=False)
+
+    def __str__(this):
+        this.schedule_id
+
+
+class Student_registration(models.Model):
+    registration_id = models.AutoField(primary_key=True, null=False)
+    student_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    registration_status = models.CharField(null=False)
+    registered_date = models.DateField(null=False)
+    crn = models.ForeignKey(Section, on_delete=models.PROTECT)
+
+    def __str__(this):
+        this.registration_id
+
+
+class Configurations(models.Model):
+    Section_limit = models.IntegerField(
+        validators=[MaxValueValidator(200), MinValueValidator(0)], null=False)
+    credits_limit = models.IntegerField(null=False, default=60)
+    time_limit = models.IntegerField(null=False)

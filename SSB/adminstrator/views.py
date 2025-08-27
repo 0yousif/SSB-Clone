@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
-from .models import Profile
+from .models import Profile, Semester
 from django.contrib.auth.models import User
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
 
 from .forms import UserForm, ProfileForm
+
 
 @login_required
 def signupUser(request):
@@ -25,6 +27,7 @@ def signupUser(request):
 
 # Create your views here.
 
+
 @login_required
 def adminregstudent(request, user_id):
     # print("request.user.profile", request.user)
@@ -40,9 +43,11 @@ def adminregstudent(request, user_id):
 
     return render(request, 'registration/registerprofile.html', {'profile_form': profile_form, 'profile': userProfile})
 
+
 @login_required
 def adminhome(request):
     return render(request, 'home.html')
+
 
 @login_required
 def admindex(request):
@@ -50,3 +55,27 @@ def admindex(request):
     users = User.objects.all()
 
     return render(request, 'index.html', {'users': users, 'profiles': profiles})
+
+
+class SemesterCreate(CreateView):
+    model = Semester
+    fields = '__all__'
+
+
+class SemesterUpdate(UpdateView):
+    model = Semester
+    fields = '__all__'
+    success_url = '/administrator/'
+
+
+class SemesterList(ListView):
+    model = Semester
+
+
+class SemesterDetail(DetailView):
+    model = Semester
+
+
+class SemesterDelete(DeleteView):
+    model = Semester
+    success_url = '/administrator/semester/list'

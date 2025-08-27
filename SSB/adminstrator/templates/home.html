@@ -1,12 +1,18 @@
-{% extends 'base.html' %} {% block nav%} {% if user.is_superuser %}
+{% extends 'base.html' %} {% block content %}{% if user.is_superuser %}
 <li>
   <a href="{% url 'admin_reg'%}">register student</a>
 </li>
 <li>
   <a href="{% url 'admindex'%}">See users</a>
 </li>
-{% endif %} {% endblock%} {% block content %}
+<li>
+  <a href="{% url 'make_semester'%}">Make a semester</a>
+</li>
+
+<li>
+  <a href="{% url 'list_semester'%}">list semesters</a>
+</li>
 
 <h1>Hello {{user.username}}</h1>
-
-{% endblock %}
+<h1>Hello {{user.profile.}}</h1>
+{% endif %} {% endblock %}
