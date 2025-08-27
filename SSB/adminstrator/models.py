@@ -64,7 +64,7 @@ class Profile(models.Model):
         validators=[MaxValueValidator(999)], null=True, default=0)
     status = models.CharField(
         choices=USER_STATUS_CHOICES, default=USER_STATUS_CHOICES[0][0], null=False)
-
+    email = models.CharField(max_length=50, null=True)
 
     def __str__(self):
         return self.user.username

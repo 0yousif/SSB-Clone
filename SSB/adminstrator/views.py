@@ -3,11 +3,12 @@ from .models import Profile
 from django.contrib.auth.models import User
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 
 
 from .forms import UserForm, ProfileForm
 
-
+@login_required
 def signupUser(request):
     error_message = ""
     if request.method == 'POST':
@@ -24,7 +25,7 @@ def signupUser(request):
 
 # Create your views here.
 
-
+@login_required
 def adminregstudent(request, user_id):
     # print("request.user.profile", request.user)
     userProfile = Profile.objects.get(user_id=user_id)
@@ -39,11 +40,11 @@ def adminregstudent(request, user_id):
 
     return render(request, 'registration/registerprofile.html', {'profile_form': profile_form, 'profile': userProfile})
 
-
+@login_required
 def adminhome(request):
     return render(request, 'home.html')
 
-
+@login_required
 def admindex(request):
     profiles = Profile.objects.all()
     users = User.objects.all()
