@@ -1,10 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from . import views
-
-
 urlpatterns = [
-    path('', views.adminhome, name='home'),
+    path('', views.adminhome, name='admin_home'),
 
     # CBV
     path('register/', views.signupUser, name='admin_reg'),
