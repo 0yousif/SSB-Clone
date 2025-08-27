@@ -1,19 +1,20 @@
-{% extends 'base.html' %} {% block content %} {% for user in users%}
+{% extends 'base.html' %} {% block content %} {% for profile in profiles%}
 <tr>
-  <td>{{ user.id}}</td>
-  <td>{{ user.user_id}}</td>
-  <td>{{ user.first_name }}</td>
-  <td>{{ user.last_name }}</td>
-  <td>{{ user.academic_number }}</td>
-  <td>{{ user.dob }}</td>
-  <td>{{ user.gender }}</td>
-  <td>{{ user.profession }}</td>
-  <td>{{ user.major }}</td>
-  <td>{{ user.school }}</td>
-  <td>{{ user.current_semester }}</td>
-  <td>{{ user.gpa }}</td>
-  <td>{{ user.status }}</td>
+  <td>{{ profile.id}}</td>
+  <td>{{ profile.user_id}}</td>
+  <td>{{ profile.first_name }}</td>
+  <td>{{ profile.last_name }}</td>
+  <td>{{ profile.academic_number }}</td>
+  <td>{{ profile.dob }}</td>
+  <td>{{ profile.gender }}</td>
+  <td>{{ profile.profession }}</td>
+  <td>{{ profile.major }}</td>
+  <td>{{ profile.school }}</td>
+  <td>{{ profile.current_semester }}</td>
+  <td>{{ profile.gpa }}</td>
+  <td>{{ profile.status }}</td>
+  <td>{{ profile.email }}</td>
   <br />
 </tr>
 <br />
-{% endfor %} {% endblock %}
+{% endfor %} {% endblock %} 

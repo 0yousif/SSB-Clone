@@ -1,0 +1,11 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<h1>Student Profile</h1>
+
+<p>Username: {{ user.username }}</p>
+<p>Email: {{ profile.email }}</p>
+<p>First Name: {{ profile.first_name }}</p>
+<p>Last Name: {{ profile.last_name }}</p>
+<p>Academic Number: {{ profile.academic_number }}</p>
+<p>Department: {{ profile.department_id.department_name }}</p>
+<p>GPA: {{ profile.gpa }}</p>
+{%endblock%}
