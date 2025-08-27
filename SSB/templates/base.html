@@ -19,8 +19,9 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
-    />
-
+      />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <!-- End of google fonts -->
   </head>
   <body class="base-body">
@@ -29,7 +30,9 @@
         <img onclick="slide()" src="{% static 'icons/menu.png' %}" alt="" />
       </div>
       <div class="base-nav-user-info">
-        <p class="base-user-name poppins-medium">{{ profile.first_name }}</p>
+        <p class="base-user-name poppins-medium">
+          {{ user.profile.first_name }}
+        </p>
         <div class="base-user-image-container">
           <img src="" alt="" />
         </div>
@@ -134,14 +137,35 @@
   </body>
   <script>
     let isAppearing = false
-    const sideBar = document.querySelector("#base-side-bar")
+    const sideBar = document.querySelector('#base-side-bar')
     const slide = () => {
       if (isAppearing) {
-        sideBar.style.transform = "translate(-13rem)"
+        sideBar.style.transform = 'translate(-13rem)'
       } else {
-        sideBar.style.transform = "translate(0rem)"
+        sideBar.style.transform = 'translate(0rem)'
       }
       isAppearing = !isAppearing
     }
+
+    let dateEl = document.getElementById('id_dob')
+    M.Datepicker.init(dateEl, {
+      format: 'yyyy-mm-dd',
+      defaultDate: new Date(),
+      setDefaultDate: true,
+      autoClose: true,
+      changeYear: true
+    })
+
+    let selectGender = document.getElementById('id_gender')
+    M.FormSelect.init(selectGender)
+
+    let selectDep = document.getElementById('id_department_id')
+    M.FormSelect.init(selectDep)
+
+    let selectType = document.getElementById('id_user_type')
+    M.FormSelect.init(selectType)
+
+    let selectStatus = document.getElementById('id_status')
+    M.FormSelect.init(selectStatus)
   </script>
 </html>

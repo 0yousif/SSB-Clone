@@ -1,0 +1,18 @@
+{% extends 'base.html' %} {% block content %}
+
+<h1>Semesters List</h1>
+
+{% for semester in semester_list %}
+<a href="{% url 'see_semester' semester.semester_id %}">
+  <div class="card">
+    <div class="card-content">
+      <span class="card-title">{{ semester.semester_name }}</span>
+      <h3>semester id: {{semester.semester_id}}</h3>
+      <h3>start date: {{semester.start_date}}</h3>
+      <h3>Registration start: {{semester.Registration_start}}</h3>
+      <h3>end date: {{semester.end_date}}</h3>
+      <h3>is_current: {{semester.is_current}}</h3>
+    </div>
+  </div>
+</a>
+{% endfor %} {% endblock %}
