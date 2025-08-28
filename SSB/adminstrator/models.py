@@ -100,10 +100,11 @@ class Profile(models.Model):
 
 class Semester(models.Model):
     semester_id = models.AutoField(primary_key=True, null=False)
-    semester_name = models.CharField(max_length=50, null=False)
-    start_date = models.DateField(null=False)
+    year = models.IntegerField(validators=[MaxValueValidator(
+        9999), MinValueValidator(2000)], null=False)
+    semester = models.IntegerField(null=False)
     registration_start = models.DateField(null=False)
-    end_date = models.DateField(null=False)
+    registration_end = models.DateField(null=False)
     is_current = models.BooleanField(null=False)
 
     def get_absolute_url(self):
@@ -115,17 +116,17 @@ class Semester(models.Model):
 
 class Course(models.Model):
     course_id = models.AutoField(primary_key=True, null=False)
-    department_id = models.ForeignKey(Departments, models.CASCADE, null=False)
+    department = models.ForeignKey(Departments, models.CASCADE, null=False)
     code = models.IntegerField(
         validators=[MaxValueValidator(9999)], null=False)
     name = models.CharField(max_length=50, null=False)
-    description = models.CharField(max_length=100, null=False)
+    description = models.CharField(max_length=200, null=False)
     credit_hours = models.IntegerField(choices=COURSE_CREDITS, null=False)
     schedule_type = models.CharField(choices=SCHEDULE_TYPES, null=False)
     prerequisit_course = models.ForeignKey(
         "Course", on_delete=models.SET_NULL, null=True)
     is_active = models.BooleanField(default=False, null=False)
-    semester_id = models.ForeignKey(
+    semester = models.ForeignKey(
         Semester, on_delete=models.SET_NULL, null=True)
 
     def __str__(this):
@@ -135,10 +136,10 @@ class Course(models.Model):
 class Section(models.Model):
     crn = models.AutoField(
         validators=[MaxValueValidator(999999)], primary_key=True, null=False)
-    course_id = models.ForeignKey(Course, on_delete=models.CASCADE, null=False)
-    tutor_id = models.ForeignKey(User, on_delete=models.PROTECT, null=False)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False)
+    tutor = models.ForeignKey(User, on_delete=models.PROTECT, null=False)
     schedule_type = models.CharField(choices=SCHEDULE_TYPES, null=False)
-    semester_id = models.ForeignKey(
+    semester = models.ForeignKey(
         Semester, on_delete=models.CASCADE, null=False)
 
     def __str__(this):
@@ -160,6 +161,8 @@ class Time(models.Model):
     time_id = models.AutoField(primary_key=True, null=False)
     start_time = models.TimeField(null=False)
     end_time = models.TimeField(null=False)
+    period = models.IntegerField(null=False, validators=[
+                                 MaxValueValidator(2), MinValueValidator(1)])
 
     def __str__(this):
         this.time_id
@@ -169,9 +172,9 @@ class Section_schedules(models.Model):
     schedule_id = models.AutoField(primary_key=True, null=False)
     day_of_week = models.CharField(choices=DAYS, null=False)
     crn = models.ForeignKey(Section, on_delete=models.CASCADE, null=False)
-    location_id = models.ForeignKey(
+    location = models.ForeignKey(
         Location, on_delete=models.PROTECT, null=False)
-    time_id = models.ForeignKey(Time, on_delete=models.PROTECT, null=False)
+    time = models.ForeignKey(Time, on_delete=models.PROTECT, null=False)
 
     def __str__(this):
         this.schedule_id

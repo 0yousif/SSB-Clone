@@ -108,14 +108,10 @@
       </div>
 
       <div class="side-bar-element-container">
-        <p>Administrative</p>
-        <button button class="poppins-semibold">
-          <img src="{% static 'icons/Vector.png' %}" alt="" />Faculty
-        </button>
-        <button class="poppins-semibold">
-          <img src="{% static 'icons/Vector.png' %}" alt="" />Admin
-        </button>
-      </div>
+        {% block admin_nav %} {% endblock %}
+        </div>
+
+        
 
       <div class="side-bar-element-container">
         <p>Settings</p>
@@ -132,7 +128,7 @@
         </form>
       </div>
     </div>
-    <main class="base-main">{% block content%} {% endblock %}</main>
+    <main class="base-main">{% block content %} {% endblock %}</main>
     <footer class="base-footer"></footer>
   </body>
   <script>
