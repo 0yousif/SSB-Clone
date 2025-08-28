@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Profile, Semester
+from .models import Profile, Semester, Course, Section
 from django.contrib.auth.models import User
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
@@ -80,3 +80,55 @@ class SemesterDetail(DetailView):
 class SemesterDelete(DeleteView):
     model = Semester
     success_url = '/administrator/semester/list'
+
+# courses
+
+
+class CourseCreate(CreateView):
+    model = Course
+    fields = '__all__'
+
+
+class CourseUpdate(UpdateView):
+    model = Course
+    fields = '__all__'
+    success_url = '/administrator/'
+
+
+class CourseList(ListView):
+    model = Course
+
+
+class CourseDetail(DetailView):
+    model = Course
+
+
+class CourseDelete(DeleteView):
+    model = Course
+    success_url = '/administrator/course/list/'
+
+#######################################################
+
+class SectionCreate(CreateView):
+    model = Section
+    fields = '__all__'
+
+
+class SectionUpdate(UpdateView):
+    model = Section
+    fields = '__all__'
+    success_url = '/administrator/'
+
+
+class SectionList(ListView):
+    model = Section
+
+
+class SectionDetail(DetailView):
+    model = Section
+
+
+class SectionDelete(DeleteView):
+    model = Section
+    success_url = '/administrator/section/list/'
+

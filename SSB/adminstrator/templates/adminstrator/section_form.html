@@ -1,0 +1,31 @@
+{% extends 'base.html' %} {% block content %} {% if object %}
+<h1>Edit <span class="teal-text">{{object.name}}</span></h1>
+{% else %}
+<h1>Make a section</h1>
+{% endif %}
+<form action="" method="post" class="form">
+  {% csrf_token %}
+  <table>
+    {{ form.as_p }}
+  </table>
+  <input type="submit" value="Submit" class="btn" />
+</form>
+
+<script>
+  let selectCourseId = document.getElementById('id_course')
+
+  let selectTutor = document.getElementById('id_tutor')
+
+  let selectScheduleType = document.getElementById('id_schedule_type')
+  let selectSemester = document.getElementById('id_semester')
+
+
+  M.AutoInit()
+  M.FormSelect.init(selectCourseId)
+  M.FormSelect.init(selectTutor)
+  M.FormSelect.init(selectScheduleType)
+  M.FormSelect.init(selectSemester)
+</script>
+
+
+{% endblock %}
