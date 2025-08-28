@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% block content %} {% if user.is_superuser %}
 <h3>User Profile</h3>
-<form action="" method="post" enctype="multipart/form-data">
+<form class="form" action="" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   <hr />
   <h4>{{profile.first_name}}</h4>

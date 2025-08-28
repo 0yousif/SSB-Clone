@@ -58,7 +58,7 @@ class Departments(models.Model):
     department_name = models.CharField(max_length=100, null=False)
 
     def __str__(this):
-        return this.department_id
+        return str(this.department_name)
 
 
 class Profile(models.Model):
@@ -93,7 +93,7 @@ class Profile(models.Model):
         upload_to='adminstrator/static/user_profiles', default='')
 
     def __str__(self):
-        return self.user.username
+        return str(self.user.username)
 
 #########################################################################
 
@@ -108,10 +108,10 @@ class Semester(models.Model):
     is_current = models.BooleanField(null=False)
 
     def get_absolute_url(self):
-        return reverse('see_semester', kwargs={'pk': self.semester_id})
+        return reverse('semester_detail', kwargs={'pk': self.semester_id})
 
     def __str__(this):
-        return this.semester_id
+        return str(this.semester_id)
 
 
 class Course(models.Model):
@@ -130,7 +130,10 @@ class Course(models.Model):
         Semester, on_delete=models.SET_NULL, null=True)
 
     def __str__(this):
-        return this.course_id
+        return f"{this.name}"
+
+    def get_absolute_url(self):
+        return reverse('course_detail', kwargs={'pk': self.course_id})
 
 
 class Section(models.Model):
@@ -142,8 +145,11 @@ class Section(models.Model):
     semester = models.ForeignKey(
         Semester, on_delete=models.CASCADE, null=False)
 
+    def get_absolute_url(self):
+        return reverse('section_detail', kwargs={'pk': self.crn})
+
     def __str__(this):
-        return this.crn
+        return str(this.crn)
 
 
 class Location(models.Model):
@@ -154,7 +160,7 @@ class Location(models.Model):
         validators=[MaxValueValidator(999)], null=False)
 
     def __str__(this):
-        return this.location_id
+        return str(this.location_id)
 
 
 class Time(models.Model):
@@ -165,7 +171,7 @@ class Time(models.Model):
                                  MaxValueValidator(2), MinValueValidator(1)])
 
     def __str__(this):
-        this.time_id
+        return str(this.time_id)
 
 
 class Section_schedules(models.Model):
@@ -177,18 +183,18 @@ class Section_schedules(models.Model):
     time = models.ForeignKey(Time, on_delete=models.PROTECT, null=False)
 
     def __str__(this):
-        this.schedule_id
+        return str(this.schedule_id)
 
 
 class Student_registration(models.Model):
-    registration_id = models.AutoField(primary_key=True, null=False)
-    student_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    registration = models.AutoField(primary_key=True, null=False)
+    student = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     registration_status = models.CharField(null=False)
     registered_date = models.DateField(null=False)
     crn = models.ForeignKey(Section, on_delete=models.PROTECT)
 
     def __str__(this):
-        this.registration_id
+        return str(this.registration_id)
 
 
 class Configurations(models.Model):

@@ -5,7 +5,7 @@
 {% endif %}
 
 <h1>Add User</h1>
-<form method="post" action="{% url 'admin_reg' %}">
+<form class="form" method="post" action="{% url 'admin_reg' %}">
   {% csrf_token %} {{ user_form.as_p }}
   <hr />
   <h3>User:</h3>

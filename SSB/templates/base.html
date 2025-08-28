@@ -19,9 +19,12 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
-      />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <!-- End of google fonts -->
   </head>
   <body class="base-body">
@@ -109,9 +112,7 @@
 
       <div class="side-bar-element-container">
         {% block admin_nav %} {% endblock %}
-        </div>
-
-        
+      </div>
 
       <div class="side-bar-element-container">
         <p>Settings</p>
@@ -128,7 +129,11 @@
         </form>
       </div>
     </div>
-    <main class="base-main">{% block content %} {% endblock %}</main>
+    <!-- <main class="base-main"> -->
+
+    {% block content %} {% endblock %}
+
+    <!-- </main> -->
     <footer class="base-footer"></footer>
   </body>
   <script>
@@ -153,15 +158,18 @@
     })
 
     let selectGender = document.getElementById('id_gender')
-    M.FormSelect.init(selectGender)
-
-    let selectDep = document.getElementById('id_department_id')
-    M.FormSelect.init(selectDep)
 
     let selectType = document.getElementById('id_user_type')
-    M.FormSelect.init(selectType)
 
-    let selectStatus = document.getElementById('id_status')
-    M.FormSelect.init(selectStatus)
+    // M.FormSelect.init(
+    //   selectGender,
+    //   selectDepartment,
+    //   selesctPrerequisite,
+    //   selectScheduleType,
+    //   selectCreditHours,
+    //   selectType,
+    //   selectDep,
+    //   selectSemester
+    // )
   </script>
 </html>
