@@ -11,6 +11,8 @@ def redirect_user(request):
         return redirect('/administrator')
     if (profile_type == 'student'):
         return redirect('dashboard')
+    if profile_type == 'tutor':
+        return redirect('faculty_dashboard')
 
 
 @login_required
