@@ -115,6 +115,18 @@
   font-variation-settings: 'wdth' 100;
 }
 
+
+.montserrat-medium{
+  font-family: Montserrat;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.montserrat-regular{
+  font-family: Montserrat;
+  font-weight: 400;
+  font-size: 0.75rem;
+}
 /* _____________________GOOGLE FONTS END____________________ */
 
 * {
@@ -171,26 +183,6 @@ html {
   border-radius: 10rem;
   aspect-ratio: 1/1;
 }
-
-/* @keyframes slide-in {
-  from {
-    transform: translate(-10rem);
-  }
-  
-  to {
-    transform: translate(0rem);
-  }
-}
-
-@keyframes slide-out {
-  from {
-    transform: translate(0rem);
-  }
-  
-  to {
-    transform: translate(-10rem);
-  }
-} */
 
 .slide-in-animation {
   animation-name: slide-in;
@@ -369,8 +361,49 @@ html {
 }
 
 .lemon-green-background {
-  background-color: #ccefbf;
+  background-color: #CCEFBF;
 }
+
+/* Registration Page */
+.reg-registration-section-header {
+  height: 2.7rem;
+  padding-bottom: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  gap: 1rem;
+  border-bottom: 1px solid lightgrey;
+}
+
+.reg-registration-section {
+  width: 80%;
+  margin: 2.5rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.reg-registration-section-header img {
+  height: 100%;
+
+}
+
+.reg-registration-table {
+  width: 100%;
+}
+
+
+.reg-registration-table tr:nth-of-type(even){
+  background-color: #F4F6F7;
+}
+.reg-registration-table:nth-of-type(1) tr:last-of-type{
+  background-color: #F4F6F7;
+}
+
+.reg-registration-table {
+  text-align: left;
+}
+
 
 .form {
   display: flex;
