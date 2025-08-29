@@ -6,6 +6,24 @@
   <div class="reg-registration-section">
     <div class="reg-registration-table">
       <h1 class="reg-registration-section-header"><img src="{% static 'icons/registration1.png'%}" alt="">Registration</h1>
+      <div class="reg-registration-filters">
+        <div class="reg-registration-filter">
+          <p>Department: </p>
+          <select id="department-filter-select">
+            <option value="none">none</option>
+          </select>
+        </div>
+        <div class="reg-registration-filter">
+          <p>Code: </p>
+          <select id="code-filter-select">
+            <option value="none">none</option>
+          </select>
+        </div>
+        <div class="reg-registration-search">
+          <input type="text" id="reg-registration-search">
+          <img src="{% static 'icons/glasses.png'%}" alt="">
+        </div>
+      </div>
       <table class="reg-registration-table">
         <tr>
           <th>Code</th>
@@ -20,7 +38,7 @@
       </tr>
       
       {% for section in unregisteredSections %}
-      <tr data-unregisteredcourse="unregisteredcourse" data-department="" data-code="" aria-crn="">
+      <tr data-unregisteredcourse="" data-department="{{section.course.department.department_code}}" data-code="{{section.course.code}}" data-crn="{{section.crn}}">
         <td>{{section.course.department.department_code}}{{section.course.code}}</td>
         <td>{{section.course.name}}</td>
         <td>{{section.tutor.username}}</td>
@@ -179,6 +197,74 @@
   </div>
 
   <script>
+    let uniqueValues = (query, value)=>{
+      const objectsList = document.querySelectorAll(query)
+      let values = []
+      for(let i =0; i < objectsList.length;i++){
+        values.push(objectsList[i]['dataset'][value])
+      }
+      values = values.filter((value,index,array)=>{
+        return array.indexOf(value) === index;
+      })
+      console.log(values)
+      return values
+    }
+
+    let allsections = document.querySelectorAll('[data-unregisteredcourse]')
+    let departmentsList = uniqueValues('[data-unregisteredcourse][data-department]','department')
+    let codesList = uniqueValues('[data-unregisteredcourse][data-department]','code') 
+
+    let searchFilter = document.querySelector('#reg-registration-search')
+    let codeFilterSelect = document.querySelector('#code-filter-select')
+    let departmentFilterSelect = document.querySelector('#department-filter-select')
     
-  </script>
+
+    const applyFilters = () =>{
+      if (departmentFilterSelect.value === 'none' 
+      && codeFilterSelect.value === 'none' 
+      && searchFilter.value === ''){
+        for (let i = 0; i < allsections.length; i++){
+          allsections[i].style.display = 'table-row'
+        }
+        return
+      }
+      
+      for (let i = 0; i < allsections.length; i++){
+        allsections[i].style.display = 'none'
+      }
+      
+
+      for (let i = 0; i < allsections.length; i++){
+        if ((departmentFilterSelect.value !== 'none' && allsections[i].dataset.department !== departmentFilterSelect.value) 
+        || (codeFilterSelect.value !== 'none' && allsections[i].dataset.code !== codeFilterSelect.value )
+        || (searchFilter.value && allsections[i].dataset.crn !== searchFilter.value) ){
+        }else{
+          allsections[i].style.display = 'table-row'
+        }
+        }
+    }
+
+
+    for (let i = 0; i < departmentsList.length; i++){
+      console.log(departmentsList[i])
+      departmentFilterSelect.innerHTML += `<option value="${departmentsList[i]}">${departmentsList[i]}</option>`
+    }
+
+    for (let i = 0; i < codesList.length; i++){
+      codeFilterSelect.innerHTML += `<option value="${codesList[i]}">${codesList[i]}</option>`
+    }
+    
+    departmentFilterSelect.addEventListener("change",(event)=>{
+      applyFilters()
+    })
+
+    codeFilterSelect.addEventListener("change",(event)=>{
+      applyFilters()
+    })
+    
+    searchFilter.addEventListener("change",(event)=>{
+      applyFilters()
+    })
+
+</script>
 {% endblock %}
