@@ -27,40 +27,26 @@ USER_STATUS_CHOICES = (
 )
 
 COURSE_CREDITS = (
-    (5,"5"),
-    (15,"15"),
-    (60,"60")
+    (5, "5"),
+    (15, "15"),
+    (60, "60")
 )
 
 SCHEDULE_TYPES = (
-    ("lab","lab"),
-    ("lec","lec"),
+    ("lab", "lab"),
+    ("lec", "lec"),
     ("lec/lab", "lec,lab")
 )
 
 DAYS = (
-    ("Sunday","sunday"),
-    ("Monday","monday"),
-    ("Tuesday","tuesday"),
-    ("Wednesday","wednesday"),
-    ("Thursday","thursday"),
-    ("Friday","friday"),
-    ("Saturday","saturday"),
+    ("Sunday", "sunday"),
+    ("Monday", "monday"),
+    ("Tuesday", "tuesday"),
+    ("Wednesday", "wednesday"),
+    ("Thursday", "thursday"),
+    ("Friday", "friday"),
+    ("Saturday", "saturday"),
 )
-
-
-
-
-class Semester(models.Model):
-    semester_id = models.AutoField(primary_key=True,null=False)
-    year = models.IntegerField(validators=[MaxValueValidator(9999),MinValueValidator(2000)],null=False)
-    semester = models.IntegerField(null=False)
-    registration_start = models.DateField(null=False)
-    registration_end = models.DateField(null=False)
-    is_current = models.BooleanField(null=False)
-
-    def __str__(this):
-        return f"{this.semester_id}"
 
 
 COURSE_CREDITS = (
@@ -86,6 +72,22 @@ DAYS = (
 )
 
 
+class Semester(models.Model):
+    semester_id = models.AutoField(primary_key=True, null=False)
+    year = models.IntegerField(validators=[MaxValueValidator(
+        2), MinValueValidator(1)], null=False)
+    semester = models.IntegerField(null=False)
+    registration_start = models.DateField(null=False)
+    registration_end = models.DateField(null=False)
+    is_current = models.BooleanField(null=False)
+
+    def get_absolute_url(self):
+        return reverse('semester_detail', kwargs={'pk': self.semester_id})
+
+    def __str__(this):
+        return str(this.semester_id)
+
+
 class Departments(models.Model):
     department_id = models.AutoField(primary_key=True, null=False)
     department_code = models.CharField(max_length=4, null=False)
@@ -94,30 +96,6 @@ class Departments(models.Model):
     def __str__(this):
         return str(this.department_name)
 
-class Course(models.Model):
-    course_id = models.AutoField(primary_key=True,null=False)
-    department = models.ForeignKey(Departments, models.CASCADE,null=False)
-    code = models.IntegerField(validators=[MaxValueValidator(9999)],null=False)
-    name = models.CharField(max_length=50,null=False)
-    description = models.CharField(max_length=200, null=False)
-    credit_hours = models.IntegerField(choices=COURSE_CREDITS,null=False)
-    schedule_type = models.CharField(choices=SCHEDULE_TYPES,null=False)
-    prerequisit_course = models.ForeignKey("Course", on_delete=models.SET_NULL,null=True)
-    is_active = models.BooleanField(default=False,null=False)
-    semester = models.ForeignKey(Semester,on_delete=models.SET_NULL,null=True)
-
-    def __str__ (this):
-        return f"{this.course_id}"
-
-class Section(models.Model):
-    crn = models.AutoField(validators=[MaxValueValidator(999999)],primary_key=True,null=False)
-    course = models.ForeignKey(Course,on_delete=models.CASCADE,null=False)
-    tutor = models.ForeignKey(User,on_delete=models.PROTECT,null=False)
-    schedule_type = models.CharField(choices=SCHEDULE_TYPES,null=False)
-    semester = models.ForeignKey(Semester, on_delete=models.CASCADE,null=False)
-    
-    def __str__(this):
-        return f"{this.crn}"
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -156,22 +134,6 @@ class Profile(models.Model):
 #########################################################################
 
 
-class Semester(models.Model):
-    semester_id = models.AutoField(primary_key=True, null=False)
-    year = models.IntegerField(validators=[MaxValueValidator(
-        2), MinValueValidator(1)], null=False)
-    semester = models.IntegerField(null=False)
-    registration_start = models.DateField(null=False)
-    registration_end = models.DateField(null=False)
-    is_current = models.BooleanField(null=False)
-
-    def get_absolute_url(self):
-        return reverse('semester_detail', kwargs={'pk': self.semester_id})
-
-    def __str__(this):
-        return str(this.semester_id)
-
-
 class Course(models.Model):
     course_id = models.AutoField(primary_key=True, null=False)
     department = models.ForeignKey(Departments, models.CASCADE, null=False)
@@ -188,7 +150,7 @@ class Course(models.Model):
         Semester, on_delete=models.SET_NULL, null=True)
 
     def __str__(this):
-        return f"{this.name}"
+        return f"{this.code} -{this.name}"
 
     def get_absolute_url(self):
         return reverse('course_detail', kwargs={'pk': self.course_id})
@@ -252,8 +214,7 @@ class Student_registration(models.Model):
     crn = models.ForeignKey(Section, on_delete=models.PROTECT)
 
     def __str__(this):
-        return str(this.registration_id)
-
+        return str(this.registration)
 
 
 class Configurations(models.Model):

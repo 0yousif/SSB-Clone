@@ -1,58 +1,82 @@
-{% extends 'base.html' %} {% load static %} {% block admin_nav %} 
-{% if user.is_superuser %}
-<p>Administrative</p>
-<a href="{% url 'admin_reg'%}">
-  <button class="poppins-semibold">
-    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />register
-    student
-  </button></a
->
+{% extends 'base.html' %} {% load static %} {% include 'admin_panel' %} 
+{% block content %} {% if user.is_superuser %}
+<div class="dashboard-get-started-section">
+  <p>Administrator dashboard</p>
 
-<a href="{% url 'admindex'%}">
-  <button class="poppins-semibold">
-    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />See users
-  </button></a
->
+  <div class="dashboard-get-started-boxes">
+    <a href="{% url 'admin_reg'%}">
+      <div class="dashboard-get-started-box">
+        <div class="image-container cyan-background">
+          <img src="{% static 'icons/Vector.png' %}" alt="" />
+        </div>
+        <p class="box-title poppins-bold">Register users</p>
+        <p class="box-description roboto">Register a new user</p>
+      </div>
+    </a>
+    <a href="{% url 'admindex'%}">
+      <div class="dashboard-get-started-box">
+        <div class="image-container magenta-background">
+          <img src="{% static 'icons/note-2.png' %}" alt="" />
+        </div>
+        <p class="box-title poppins-bold">All users</p>
+        <p class="box-description roboto">A table of all users</p>
+      </div>
+    </a>
+    <a href="{% url 'make_semester'%}">
+      <div class="dashboard-get-started-box">
+        <div class="image-container yellow-background">
+          <img src="{% static 'icons/menu-board.png' %}" alt="" />
+        </div>
+        <p class="box-title poppins-bold">Create a semester</p>
+        <p class="box-description roboto">Create a new semester.</p>
+      </div>
+    </a>
+    <a href="{% url 'list_semesters'%}">
+      <div class="dashboard-get-started-box">
+        <div class="image-container lemon-green-background">
+          <img src="{% static 'icons/book.png' %}" alt="" />
+        </div>
+        <p class="box-title poppins-bold">Semesters list</p>
+        <p class="box-description roboto">A list of all semesters</p>
+      </div>
+    </a>
+    <a href="{% url 'make_course'%}">
+      <div class="dashboard-get-started-box">
+        <div class="image-container cyan-background">
+          <img src="{% static 'icons/calendar-tick.png' %}" alt="" />
+        </div>
+        <p class="box-title poppins-bold">Create a course</p>
+        <p class="box-description roboto">Create a new course</p>
+      </div>
+    </a>
+    <a href="{% url 'List_courses'%}">
+      <div class="dashboard-get-started-box">
+        <div class="image-container magenta-background">
+          <img src="{% static 'icons/archive-book.png' %}" alt="" />
+        </div>
+        <p class="box-title poppins-bold">Courses list</p>
+        <p class="box-description roboto">A list of all courses</p>
+      </div>
+    </a>
+    <a href="{% url 'make_section'%}">
+      <div class="dashboard-get-started-box">
+        <div class="image-container yellow-background">
+          <img src="{% static 'icons/Vector.png' %}" alt="" />
+        </div>
+        <p class="box-title poppins-bold">Create a section</p>
+        <p class="box-description roboto">Create a new section</p>
+      </div>
+    </a>
+    <a href="{% url 'list_sections'%}">
+      <div class="dashboard-get-started-box">
+        <div class="image-container lemon-green-background">
+          <img src="{% static 'icons/Vector.png' %}" alt="" />
+        </div>
+        <p class="box-title poppins-bold">Section list</p>
+        <p class="box-description roboto">A list of all sections</p>
+      </div>
+    </a>
+  </div>
+</div>
 
-<a href="{% url 'make_semester'%}">
-  <button class="poppins-semibold">
-    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />Make a
-    semester
-  </button></a
->
-<a href="{% url 'list_semesters'%}">
-  <button class="poppins-semibold">
-    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />list
-    semesters
-  </button></a
->
-
-<a href="{% url 'make_course'%}">
-  <button class="poppins-semibold">
-    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />Make a
-    course
-  </button></a
->
-<a href="{% url 'List_courses'%}">
-  <button class="poppins-semibold">
-    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />list courses
-  </button></a
->
-
-<a href="{% url 'make_section'%}">
-  <button class="poppins-semibold">
-    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />Make a
-    section
-  </button></a
->
-<a href="{% url 'list_sections'%}">
-  <button class="poppins-semibold">
-    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />list
-    sections
-  </button></a
->
-{% endif %} {% endblock %} {% block content %} {% if user.is_superuser %}
-
-<h1>Hello {{user.username}}</h1>
-<h1>ID: {{user.profile.user_id}}</h1>
 {% endif %} {% endblock %}
