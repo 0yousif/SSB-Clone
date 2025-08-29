@@ -4,13 +4,97 @@
 {% block content %}
 
   <div class="reg-registration-section">
-    <h1 class="reg-registration-section-header"><img src="{% static 'icons/registration1.png'%}" alt="">Registration</h1>
     
     <div class="reg-registration-table">
-      <div>1</div>
-      <div>2</div>
-      <div>3</div>
+      <h1 class="reg-registration-section-header"><img src="{% static 'icons/registration1.png'%}" alt="">Registration</h1>
+      <table class="reg-registration-table">
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>Instructor</th>
+          <th>Time</th>
+          <th>CRN</th>
+          <th>Location</th>
+          <th>Seats</th>
+          <th>Actions</th>
+        </tr>
+        </tr>
+        
+        {% for section in unregisteredSections %}
+        <tr>
+          <td>{{section.course.department.department_code}}{{section.course.code}}</td>
+          <td>{{section.course.name}}</td>
+          <td>{{section.tutor.username}}</td>
+          <td>{% for schedule in section.section_schedules_set.all %}
+            <p>{{schedule.day_of_week}} {{schedule.time.start_time}}-{{schedule.time.end_time}}</p>
+            {% endfor %}
+          </td>
+          <td>{{section.crn}}</td>
+          <td>{% for schedule in section.section_schedules_set.all %}
+            <p>{{schedule.location.building_code}} {{schedule.location.room_number}}</p>
+            {% endfor %}
+          </td>
+          <td>{{configs.Section_limit}}/{{section.student_registration_set.all|length}}</td>
+          <td>
+            {% if configs.Section_limit == section.student_registration_set.all|length %}
+              <p>Full</p>
+              {%elif user.profile.total_credits_earned == configs.credits_limit %}
+              <p>No enough credits</p>
+            {%else%}  
+            <form action="{% url 'section_register' section.crn user.id %}" method="post">
+                {% csrf_token%}
+                <button type="submit">Add</button>
+              </form>
+            {%endif %}
+          </td>
+        </tr>
+          {% endfor %}
+
+        </table>
     </div>
+    <div>
+      <h1 class="reg-registration-section-header"><img src="{% static 'icons/registration1.png'%}" alt="">Enrolled Courses</h1>
+      <table class="reg-registration-table">
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>Instructor</th>
+          <th>Time</th>
+          <th>CRN</th>
+          <th>Location</th>
+          <th>Seats</th>
+          <th>Actions</th>
+        </tr>
+        </tr>
+        
+        {% for section in registeredSections.all %}
+        <tr>
+          <td>{{section.course.department.department_code}}{{section.course.code}}</td>
+          <td>{{section.course.name}}</td>
+          <td>{{section.tutor.username}}</td>
+          <td>{% for schedule in section.section_schedules_set.all %}
+            <p>{{schedule.day_of_week}} {{schedule.time.start_time}}-{{schedule.time.end_time}}</p>
+            {% endfor %}
+          </td>
+          <td>{{section.crn}}</td>
+          <td>{% for schedule in section.section_schedules_set.all %}
+            <p>{{schedule.location.building_code}} {{schedule.location.room_number}}</p>
+            {% endfor %}</td>
+          <td>{{configs.Section_limit}}/{{section.student_registration_set.all|length}}</td>
+          <td>
+            <form action="{% url 'section_deregister' section.crn user.id %}" method="post">
+              {% csrf_token%}
+            <button type="submit">Remove</button>
+          </form>
+          </td>
+        </tr>
+          {% endfor %}
+        <tr>
+          <td>Total Registered Credits: {{user.profile.total_credits_earned}}</td>
+        </tr>
+      </table>
+    </div>      
+
   </div>
 
 
