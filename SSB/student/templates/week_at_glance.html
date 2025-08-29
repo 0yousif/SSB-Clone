@@ -72,7 +72,7 @@
       
       <!-- EVENTS -->
       {% for registration in user.student_registration_set.all %}
-        {% for event in registration.crn.section_schedules_set.all  %}
+        {% for event in registration.crn.section_schedules_set.all %}
         <div class="reg-calender-event day-{{event.day_of_week}} hour-start-{{event.time.start_time.hour}}-{% if event.time.start_time.minute == 0 %}00{% elif event.time.start_time.minute <= 20 %}20{%elif event.time.start_time.minute <= 40 %}40{%else%}60{%endif%} hour-end-{{event.time.end_time.hour}}-{% if event.time.end_time.minute == 0 %}00{% elif event.time.end_time.minute <= 20 %}20{%elif event.time.end_time.minute <= 40 %}40{%else%}60{%endif%}">
             <p class="montserrat-medium">{{registration.crn.course.name}}</p>
             <div class="reg-event-time">
