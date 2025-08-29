@@ -372,9 +372,33 @@ html {
   align-items: center;
   justify-content: left;
   gap: 1rem;
+  font-size: 1.5rem;
   border-bottom: 1px solid lightgrey;
 }
+.reg-registration-table-remove-button,
+.reg-registration-table-add-button{
+  color: #0C1E33;
+  border: none;
+  border-radius: 2px;
+  padding: 0.25rem 1rem;
+  transition: all 0.2s;
 
+  cursor: pointer;
+}
+.reg-registration-table-add-button {
+  background-color: #BAE5F5;
+}
+.reg-registration-table-add-button:hover {
+  background-color: #5d7b86;
+}
+
+.reg-registration-table-remove-button {
+  background-color: #CCEFBF;
+}
+
+.reg-registration-table-remove-button:hover {
+  background-color: #87a67b;
+}
 .reg-registration-section {
   width: 80%;
   margin: 2.5rem auto;
