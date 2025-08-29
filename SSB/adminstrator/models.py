@@ -155,10 +155,11 @@ class Profile(models.Model):
 
 #########################################################################
 
+
 class Semester(models.Model):
     semester_id = models.AutoField(primary_key=True, null=False)
     year = models.IntegerField(validators=[MaxValueValidator(
-        9999), MinValueValidator(2000)], null=False)
+        2), MinValueValidator(1)], null=False)
     semester = models.IntegerField(null=False)
     registration_start = models.DateField(null=False)
     registration_end = models.DateField(null=False)
