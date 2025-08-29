@@ -101,6 +101,13 @@ def section_deregister(request,section_id,user_id):
 def week_at_glance(request):
     return render(request,'week_at_glance.html')
 
+
+def enrolle_courses(request):
+    registeredSections,unregisteredSections = getUserSections(request)
+    configs =  Configurations.objects.first()
+    return render(request,'enrolled_courses.html',{"registeredSections":registeredSections,"configs":configs})
+
+
 @login_required
 def student_profile(request):
     profile = request.user.profile
