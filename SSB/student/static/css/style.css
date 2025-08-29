@@ -375,6 +375,22 @@ html {
   font-size: 1.5rem;
   border-bottom: 1px solid lightgrey;
 }
+.reg-registration-table-remove-button,
+.reg-registration-table-add-button{
+  color: #0C1E33;
+  border: none;
+  border-radius: 2px;
+  padding: 0.25rem 1rem;
+  transition: all 0.2s;
+
+  cursor: pointer;
+}
+.reg-registration-table-add-button {
+  background-color: #BAE5F5;
+}
+.reg-registration-table-add-button:hover {
+  background-color: #5d7b86;
+}
 
 .enrolle-courses-page{
   width: 80%;

@@ -39,6 +39,7 @@
       
       {% for section in unregisteredSections %}
       <tr data-unregisteredcourse="" data-department="{{section.course.department.department_code}}" data-code="{{section.course.code}}" data-crn="{{section.crn}}">
+
         <td>{{section.course.department.department_code}}{{section.course.code}}</td>
         <td>{{section.course.name}}</td>
         <td>{{section.tutor.username}}</td>
@@ -268,4 +269,5 @@
     })
 
 </script>
+
 {% endblock %}
