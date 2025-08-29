@@ -1,12 +1,58 @@
-{% extends 'base.html' %} {% block nav%} {% if user.is_superuser %}
-<li>
-  <a href="{% url 'admin_reg'%}">register student</a>
-</li>
-<li>
-  <a href="{% url 'admindex'%}">See users</a>
-</li>
-{% endif %} {% endblock%} {% block content %}
+{% extends 'base.html' %} {% load static %} {% block admin_nav %} 
+{% if user.is_superuser %}
+<p>Administrative</p>
+<a href="{% url 'admin_reg'%}">
+  <button class="poppins-semibold">
+    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />register
+    student
+  </button></a
+>
+
+<a href="{% url 'admindex'%}">
+  <button class="poppins-semibold">
+    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />See users
+  </button></a
+>
+
+<a href="{% url 'make_semester'%}">
+  <button class="poppins-semibold">
+    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />Make a
+    semester
+  </button></a
+>
+<a href="{% url 'list_semesters'%}">
+  <button class="poppins-semibold">
+    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />list
+    semesters
+  </button></a
+>
+
+<a href="{% url 'make_course'%}">
+  <button class="poppins-semibold">
+    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />Make a
+    course
+  </button></a
+>
+<a href="{% url 'List_courses'%}">
+  <button class="poppins-semibold">
+    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />list courses
+  </button></a
+>
+
+<a href="{% url 'make_section'%}">
+  <button class="poppins-semibold">
+    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />Make a
+    section
+  </button></a
+>
+<a href="{% url 'list_sections'%}">
+  <button class="poppins-semibold">
+    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />list
+    sections
+  </button></a
+>
+{% endif %} {% endblock %} {% block content %} {% if user.is_superuser %}
 
 <h1>Hello {{user.username}}</h1>
-
-{% endblock %}
+<h1>ID: {{user.profile.user_id}}</h1>
+{% endif %} {% endblock %}

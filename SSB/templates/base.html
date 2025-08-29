@@ -23,6 +23,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <!-- End of google fonts -->
   </head>
   <body class="base-body">
@@ -31,7 +36,9 @@
         <img onclick="slide()" src="{% static 'icons/menu.png' %}" alt="" />
       </div>
       <div class="base-nav-user-info">
-        <p class="base-user-name poppins-medium">{{ profile.first_name }}</p>
+        <p class="base-user-name poppins-medium">
+          {{ user.profile.first_name }}
+        </p>
         <div class="base-user-image-container">
           <img src="" alt="" />
         </div>
@@ -44,10 +51,17 @@
         </button>
       </div>
 
+
+
+
+
+
       <div class="side-bar-element-container">
+      {% if user.profile.user_type == 'student' %}
+
         <p>Student</p>
         <button
-          onclick="document.location.href = '{% url 'dashboard' %}'"
+          onclick="document.location.href = '{% url 'student_profile' %}'"
           class="poppins-semibold"
         >
           <img src="{% static 'icons/Vector.png' %}" alt="" />Student Profile
@@ -104,17 +118,46 @@
           <img src="{% static 'icons/dollar-square.png' %}" alt="" />Online
           Payment
         </button>
+
+              {% endif %}
+      {% if user.profile.user_type == 'tutor' %}
+ <p>Faculty</p>
+        <button
+          onclick="document.location.href = '{% url 'student_lookup' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/Vector.png' %}" alt="" />Student Lookup
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'dashboard' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/note-2.png' %}" alt="" />Attendance Sheet
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'dashboard' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/menu-board.png' %}" alt="" />Enrolled sections
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'dashboard' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/trend-up.png' %}" alt="" />assign grades
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'dashboard' %}'"
+          class="poppins-semibold"
+        >
+      {% endif %}
+
       </div>
 
       <div class="side-bar-element-container">
-        <p>Administrative</p>
-        <button button class="poppins-semibold">
-          <img src="{% static 'icons/Vector.png' %}" alt="" />Faculty
-        </button>
-        <button class="poppins-semibold">
-          <img src="{% static 'icons/Vector.png' %}" alt="" />Admin
-        </button>
+        {% block admin_nav %} {% endblock %}
       </div>
+      
 
       <div class="side-bar-element-container">
         <p>Settings</p>
@@ -131,7 +174,11 @@
         </form>
       </div>
     </div>
-    <main class="base-main">{% block content%} {% endblock %}</main>
+    <!-- <main class="base-main"> -->
+
+    {% block content %} {% endblock %}
+
+    <!-- </main> -->
     <footer class="base-footer"></footer>
   </body>
   <script>
@@ -145,5 +192,29 @@
       }
       isAppearing = !isAppearing
     }
+
+    let dateEl = document.getElementById("id_dob")
+    M.Datepicker.init(dateEl, {
+      format: "yyyy-mm-dd",
+      defaultDate: new Date(),
+      setDefaultDate: true,
+      autoClose: true,
+      changeYear: true,
+    })
+
+    let selectGender = document.getElementById("id_gender")
+
+    let selectType = document.getElementById("id_user_type")
+
+    // M.FormSelect.init(
+    //   selectGender,
+    //   selectDepartment,
+    //   selesctPrerequisite,
+    //   selectScheduleType,
+    //   selectCreditHours,
+    //   selectType,
+    //   selectDep,
+    //   selectSemester
+    // )
   </script>
 </html>

@@ -1,0 +1,41 @@
+{% extends 'base.html' %} {% block content %} {% if object %}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<h1>Edit <span class="teal-text">{{object.name}}</span></h1>
+{% else %} {% endif %}
+<h1>Make a course</h1>
+<div>
+  <form action="" method="post" class="form">
+    {% csrf_token %}
+    <table>
+      {{ form.as_p }}
+    </table>
+    <input type="submit" value="Submit!" class="btn" />
+  </form>
+</div>
+<script>
+  let selectCreditHours = document.getElementById('id_credit_hours')
+
+  let selectScheduleType = document.getElementById('id_schedule_type')
+
+  let selesctPrerequisite = document.getElementById('id_prerequisit_course')
+
+  let selectDepartment = document.getElementById('id_department')
+  let selectSemester = document.getElementById('id_semester')
+
+  let selectDep = document.getElementById('id_department_id')
+
+  let isActive = document.getElementById('id_is_active')
+
+  M.AutoInit()
+  M.FormSelect.init(selectScheduleType)
+  M.FormSelect.init(selectCreditHours)
+  M.FormSelect.init(selectDepartment)
+  M.FormSelect.init(selesctPrerequisite)
+  M.FormSelect.init(selectSemester)
+</script>
+
+{% endblock %}

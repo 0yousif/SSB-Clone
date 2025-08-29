@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
-from .models import Profile
+from .models import Profile, Semester, Course, Section
 from django.contrib.auth.models import User
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
 
 from .forms import UserForm, ProfileForm
+
 
 @login_required
 def signupUser(request):
@@ -25,12 +27,14 @@ def signupUser(request):
 
 # Create your views here.
 
+
 @login_required
 def adminregstudent(request, user_id):
     # print("request.user.profile", request.user)
     userProfile = Profile.objects.get(user_id=user_id)
     if request.method == 'POST':
-        profile_form = ProfileForm(request.POST, instance=userProfile)
+        profile_form = ProfileForm(
+            request.POST, request.FILES, instance=userProfile)
         if profile_form.is_valid():
             profile_form.save()
 
@@ -40,9 +44,11 @@ def adminregstudent(request, user_id):
 
     return render(request, 'registration/registerprofile.html', {'profile_form': profile_form, 'profile': userProfile})
 
+
 @login_required
 def adminhome(request):
     return render(request, 'home.html')
+
 
 @login_required
 def admindex(request):
@@ -50,3 +56,79 @@ def admindex(request):
     users = User.objects.all()
 
     return render(request, 'index.html', {'users': users, 'profiles': profiles})
+
+
+class SemesterCreate(CreateView):
+    model = Semester
+    fields = '__all__'
+
+
+class SemesterUpdate(UpdateView):
+    model = Semester
+    fields = '__all__'
+    success_url = '/administrator/'
+
+
+class SemesterList(ListView):
+    model = Semester
+
+
+class SemesterDetail(DetailView):
+    model = Semester
+
+
+class SemesterDelete(DeleteView):
+    model = Semester
+    success_url = '/administrator/semester/list'
+
+# courses
+
+
+class CourseCreate(CreateView):
+    model = Course
+    fields = '__all__'
+
+
+class CourseUpdate(UpdateView):
+    model = Course
+    fields = '__all__'
+    success_url = '/administrator/'
+
+
+class CourseList(ListView):
+    model = Course
+
+
+class CourseDetail(DetailView):
+    model = Course
+
+
+class CourseDelete(DeleteView):
+    model = Course
+    success_url = '/administrator/course/list/'
+
+#######################################################
+
+class SectionCreate(CreateView):
+    model = Section
+    fields = '__all__'
+
+
+class SectionUpdate(UpdateView):
+    model = Section
+    fields = '__all__'
+    success_url = '/administrator/'
+
+
+class SectionList(ListView):
+    model = Section
+
+
+class SectionDetail(DetailView):
+    model = Section
+
+
+class SectionDelete(DeleteView):
+    model = Section
+    success_url = '/administrator/section/list/'
+
