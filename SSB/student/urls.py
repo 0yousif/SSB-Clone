@@ -7,6 +7,4 @@ urlpatterns = [
     path('redirect/', views.redirect_user, name='redirect'),
     path('',views.dashboard, name="dashboard"),
     path('profile/', views.student_profile, name='student_profile'),
-    
-
 ]

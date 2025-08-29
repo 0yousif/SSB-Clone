@@ -48,10 +48,17 @@
         </button>
       </div>
 
+
+
+
+
+
       <div class="side-bar-element-container">
+      {% if user.profile.user_type == 'student' %}
+
         <p>Student</p>
         <button
-          onclick="document.location.href = '{% url 'dashboard' %}'"
+          onclick="document.location.href = '{% url 'student_profile' %}'"
           class="poppins-semibold"
         >
           <img src="{% static 'icons/Vector.png' %}" alt="" />Student Profile
@@ -108,11 +115,46 @@
           <img src="{% static 'icons/dollar-square.png' %}" alt="" />Online
           Payment
         </button>
+
+              {% endif %}
+      {% if user.profile.user_type == 'tutor' %}
+ <p>Faculty</p>
+        <button
+          onclick="document.location.href = '{% url 'student_lookup' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/Vector.png' %}" alt="" />Student Lookup
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'dashboard' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/note-2.png' %}" alt="" />Attendance Sheet
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'dashboard' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/menu-board.png' %}" alt="" />Enrolled sections
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'dashboard' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/trend-up.png' %}" alt="" />assign grades
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'dashboard' %}'"
+          class="poppins-semibold"
+        >
+      {% endif %}
+
       </div>
 
       <div class="side-bar-element-container">
         {% block admin_nav %} {% endblock %}
       </div>
+      
 
       <div class="side-bar-element-container">
         <p>Settings</p>
@@ -138,28 +180,28 @@
   </body>
   <script>
     let isAppearing = false
-    const sideBar = document.querySelector('#base-side-bar')
+    const sideBar = document.querySelector("#base-side-bar")
     const slide = () => {
       if (isAppearing) {
-        sideBar.style.transform = 'translate(-13rem)'
+        sideBar.style.transform = "translate(-13rem)"
       } else {
-        sideBar.style.transform = 'translate(0rem)'
+        sideBar.style.transform = "translate(0rem)"
       }
       isAppearing = !isAppearing
     }
 
-    let dateEl = document.getElementById('id_dob')
+    let dateEl = document.getElementById("id_dob")
     M.Datepicker.init(dateEl, {
-      format: 'yyyy-mm-dd',
+      format: "yyyy-mm-dd",
       defaultDate: new Date(),
       setDefaultDate: true,
       autoClose: true,
-      changeYear: true
+      changeYear: true,
     })
 
-    let selectGender = document.getElementById('id_gender')
+    let selectGender = document.getElementById("id_gender")
 
-    let selectType = document.getElementById('id_user_type')
+    let selectType = document.getElementById("id_user_type")
 
     // M.FormSelect.init(
     //   selectGender,

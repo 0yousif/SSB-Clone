@@ -1,0 +1,27 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Student List</h2>
+
+{% if students %}
+<table border="1" cellpadding="8" cellspacing="0">
+  <tr>
+    <th>Academic #</th>
+    <th>First Name</th>
+    <th>Last Name</th>
+    <th>Status</th>
+    <th>Action</th>
+  </tr>
+  {% for student in students %}
+  <tr>
+    <td>{{ student.academic_number }}</td>
+    <td>{{ student.first_name }}</td>
+    <td>{{ student.last_name }}</td>
+    <td>{{ student.status }}</td>
+    <td>
+      <a href="{% url 'student_detail' student.student_detail_id %}">View</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>No students found.</p>
+{% endif %} {% endblock %}
