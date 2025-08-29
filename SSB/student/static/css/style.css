@@ -118,6 +118,18 @@
     "wdth" 100;
 }
 
+
+.montserrat-medium{
+  font-family: Montserrat;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.montserrat-regular{
+  font-family: Montserrat;
+  font-weight: 400;
+  font-size: 0.75rem;
+}
 /* _____________________GOOGLE FONTS END____________________ */
 
 * {
@@ -176,26 +188,6 @@ html {
   border-radius: 10rem;
   aspect-ratio: 1/1;
 }
-
-/* @keyframes slide-in {
-  from {
-    transform: translate(-10rem);
-  }
-  
-  to {
-    transform: translate(0rem);
-  }
-}
-
-@keyframes slide-out {
-  from {
-    transform: translate(0rem);
-  }
-  
-  to {
-    transform: translate(-10rem);
-  }
-} */
 
 .slide-in-animation {
   animation-name: slide-in;
@@ -397,7 +389,6 @@ html {
 
 }
 
-
 .reg-registration-table {
   width: 100%;
 }
@@ -413,3 +404,4 @@ html {
 .reg-registration-table {
   text-align: left;
 }
+

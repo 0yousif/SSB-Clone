@@ -95,6 +95,10 @@ def section_deregister(request,section_id,user_id):
     "configs": configs
     })
 
+
+def week_at_glance(request):
+    return render(request,'week_at_glance.html')
+
 @login_required
 def student_profile(request):
     profile = request.user.profile

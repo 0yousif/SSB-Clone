@@ -9,5 +9,6 @@ urlpatterns = [
     path('',views.dashboard, name="dashboard"),
     path('profile/', views.student_profile, name='student_profile'),
     path('registration/section/<int:section_id>/add/<int:user_id>', views.section_register, name="section_register"),
-    path('registration/section/<int:section_id>/remove/<int:user_id>', views.section_deregister, name="section_deregister")
+    path('registration/section/<int:section_id>/remove/<int:user_id>', views.section_deregister, name="section_deregister"),
+    path('week_at_glance',views.week_at_glance, name='week_at_glance')
 ]
