@@ -16,6 +16,8 @@
       <th>Course Name</th>
       <th>Time</th>
       <th>Location</th>
+      <th>Students</th>
+      <th>Action</th>
     </tr>
 
     {% for section in sections %}
@@ -49,6 +51,10 @@
         {% empty %}
         <p>No location set</p>
         {% endfor %}
+      </td>
+      <td>{{ section.student_registration_set.count }} students</td>
+      <td>
+        <a href="{% url 'section_students' section.crn %}">View Student List</a>
       </td>
     </tr>
     {% endfor %}
