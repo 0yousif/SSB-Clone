@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from adminstrator.models import Profile, Attendance, Student_registration, Section, Section_schedules
+from adminstrator.models import Profile, Attendance, Student_registration, Section, Semester
 from django.utils import timezone
 
 @login_required
@@ -69,3 +69,20 @@ def take_attendance(request):
         'selected_section': selected_section,
         'attendance_submitted': attendance_submitted
     })
+
+
+@login_required
+def tutor_sections(request):
+    current_semester = Semester.objects.get(is_current=True)
+    
+    if current_semester:
+        sections = Section.objects.filter(
+            tutor=request.user,
+            semester=current_semester
+        ).select_related('course', 'course__department')
+    else:
+        sections = Section.objects.none()
+
+    
+    return render(request, 'faculty/tutor_sections.html',        {'sections': sections,'current_semester':current_semester,})
+
