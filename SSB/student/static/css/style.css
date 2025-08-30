@@ -392,6 +392,27 @@ html {
   background-color: #5d7b86;
 }
 
+.enrolle-courses-page{
+  width: 80%;
+  margin: 0 auto;
+}
+.reg-registration-table-remove-button,
+.reg-registration-table-add-button{
+  color: #0C1E33;
+  border: none;
+  border-radius: 2px;
+  padding: 0.25rem 1rem;
+  transition: all 0.2s;
+
+  cursor: pointer;
+}
+.reg-registration-table-add-button {
+  background-color: #BAE5F5;
+}
+.reg-registration-table-add-button:hover {
+  background-color: #5d7b86;
+}
+
 .reg-registration-table-remove-button {
   background-color: #CCEFBF;
 }
@@ -429,6 +450,80 @@ html {
 }
 
 
+.reg-registration-filters {
+  display: flex;
+  justify-content: space-between;
+  height: 2.5rem;
+  margin: 1rem 0;
+}
+
+/* Filters height */
+.reg-registration-search,
+#department-filter-select,
+#code-filter-select {
+  height: 2rem;
+  padding: 0.5rem 0.5rem;
+}
+
+
+#department-filter-select,
+#code-filter-select {
+  display: block;
+  text-align: center;
+  font-size: 1.1rem;
+  height:auto;
+  width: 15rem;
+  border-radius: 10rem;
+  background-color: #F4F6F7;
+  cursor: pointer;
+}
+
+#department-filter-select option,
+#code-filter-select option{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100rem;
+} 
+
+.reg-registration-search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F4F6F7;
+  padding: 0.25rem 0.5rem;
+  height: 100%;
+  border-radius: 10rem;
+}
+.reg-registration-search img {
+  height:75%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reg-registration-search img:hover {
+  filter: invert(50%);
+}
+
+.reg-registration-search img:active {
+  filter: invert(100%);
+}
+
+#reg-registration-search{
+  height: 100%;
+  border-bottom: none;
+}
+
+#reg-registration-search:focus{
+  box-shadow: none;
+}
+
+.reg-registration-filter {
+  display: flex;
+  width: 30%;
+  align-items: center;
+  gap: 0.5rem;
+}
 .form {
   display: flex;
   justify-self: center;
@@ -437,7 +532,6 @@ html {
   flex-direction: column;
   width: 70%;
   height: 100%;
-
   border: solid #2bbbad;
   border-radius: 25px;
   padding: 15px;
