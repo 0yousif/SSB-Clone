@@ -4,11 +4,13 @@ from adminstrator.models import Profile, Section, Course, Departments, Semester,
 import datetime
 from django.http import HttpResponse
 
+def home(request):
+    return render(request, 'home.html')
 
 def redirect_user(request):
     profile_type = request.user.profile.user_type
     if (request.user.is_superuser):
-        return redirect('/administrator')
+        return redirect('admin_home')
     if (profile_type == 'student'):
         return redirect('dashboard')
     if profile_type == 'tutor':

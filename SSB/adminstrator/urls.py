@@ -6,11 +6,15 @@ urlpatterns = [
     path('', views.adminhome, name='admin_home'),
     path('register/', views.signupUser, name='admin_reg'),
 
-    path('register/student/<int:user_id>', views.adminregstudent, name='admin_reg_student_profile'),
-    path('register/tutor/<int:user_id>', views.adminregtutor, name='admin_reg_tutor_profile'),
+    path('register/student/<int:user_id>', views.adminregstudent,
+         name='admin_reg_student_profile'),
+    path('register/tutor/<int:user_id>', views.adminregtutor,
+         name='admin_reg_tutor_profile'),
 
-    # # TEMP just to easily see all registered users for now
     path('index', views.admindex, name='admindex'),
+
+    path('login/student', views.student_login, name='student_login'),
+
 
     # semester CBVs
     path('semester/', views.SemesterCreate.as_view(), name='make_semester'),

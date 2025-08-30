@@ -1,20 +1,21 @@
-{% extends 'base.html' %}
-{% load static %} {% include 'admin_panel' %}   {% block content %}
+{% extends 'base.html' %} {% load static %} 
+{% include 'admin_panel' %}
+ {% block content %}
 <div>
-  <form method="GET">
+  <form method="GET" class="search-form">
     <div>
       <input
         type="text"
         name="q"
         class="form-control"
-        placeholder="Search by name, email or type"
+        placeholder="Search..."
         value="{{ request.GET.q }}"
       />
       <button type="submit">Search</button>
     </div>
   </form>
 
-  <table>
+  <table class="admin-table">
     <thead>
       <tr>
         <th>User ID</th>
@@ -44,7 +45,7 @@
         <td>{{ profile.last_name }}</td>
         <td>{{ profile.academic_number }}</td>
         <td>{{ profile.dob }}</td>
-        <td> {{profile.gender}}</td>
+        <td>{{profile.gender}}</td>
         <td>{{ profile.profession }}</td>
         <td>{{ profile.user_type }}</td>
         <td>{{ profile.major }}</td>

@@ -16,11 +16,12 @@ class UserForm(UserCreationForm):
 
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
-    email = forms.EmailField(required=False)
 
     class Meta(UserCreationForm):
         model = User
-        fields = '__all__'
+        # fields = '__all__'
+        fields = ("username", "first_name", "last_name",
+                  "password1", "password2", "user_type")
 
 
 # class ProfileForm(ModelForm):
@@ -43,3 +44,13 @@ class TutorProfile(ModelForm):
         model = Profile
         fields = ("first_name", "last_name", "dob", "gender",
                   "department_id", "profession", "status", "avatar")
+
+
+class studentLogin(forms.Form):
+    academic_number = forms.CharField(label="Academic ID")
+    password = forms.CharField(label="Password", widget=forms.PasswordInput)
+
+
+class TutorLogin(forms.Form):
+    username = forms.CharField(label="Username")
+    password = forms.CharField(label="Password", widget=forms.PasswordInput)

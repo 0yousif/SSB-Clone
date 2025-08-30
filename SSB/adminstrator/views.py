@@ -7,9 +7,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django import forms
 from django.db.models import Q
+from django.contrib.auth import authenticate, login
 
-
-from .forms import UserForm, StudentProfile, TutorProfile
+from .forms import UserForm, StudentProfile, TutorProfile, studentLogin, TutorLogin
 
 
 @login_required
@@ -22,7 +22,6 @@ def signupUser(request):
 
             user.first_name = form.cleaned_data.get("first_name")
             user.last_name = form.cleaned_data.get("last_name")
-            user.email = form.cleaned_data.get("email")
 
             user.save()
 
@@ -34,7 +33,7 @@ def signupUser(request):
                 user_type=user_type,
                 first_name=user.first_name,
                 last_name=user.last_name,
-                email=user.email,)
+            )
 
             if (user_type == 'student'):
                 return redirect('admin_reg_student_profile', user_id=user.id)
@@ -88,7 +87,7 @@ def adminregtutor(request, user_id):
 
 @login_required
 def adminhome(request):
-    return render(request, 'home.html')
+    return render(request, 'admin_home.html')
 
 
 @login_required
@@ -111,6 +110,45 @@ def admindex(request):
     return render(request, 'index.html', {'users': users, 'profiles': profiles})
 
 
+def student_login(request):
+    error_message = ""
+    if request.method == 'POST':
+        form = studentLogin(request.POST)
+        if form.is_valid():
+            academic_number = form.cleaned_data['academic_number']
+            password = form.cleaned_data['password']
+            try:
+                profile = Profile.objects.get(academic_number=academic_number)
+            except Profile.DoesNotExist:
+                error_message = "ID not found"
+                context = {"form": form, "error_message": error_message}
+                return render(request, 'adminstrator/studemt_login.html', context)
+
+            user = profile.user
+            user = authenticate(
+                request, username=user.username, password=password)
+            if user:
+                login(request, user)
+                return redirect('redirect')
+            else:
+                error_message = 'Error logging in'
+    else:
+        form = studentLogin()
+    context = {'form': form, 'error_message': error_message}
+    return render(request, 'auth/student_login.html', context)
+
+# def tutor_login(request):
+#     error_message = ""
+#     form = TutorLogin(request.POST)
+
+#     if(form.is_valid()):
+#         username = form.cleaned_data['username']
+#         password = form.cleaned_data['password']
+
+#         user = authenticate(request, username=username, password=password)
+
+
+########################## CBVs ###################################
 class SemesterCreate(CreateView):
     model = Semester
     fields = '__all__'
