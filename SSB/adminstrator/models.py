@@ -170,8 +170,9 @@ class Section(models.Model):
     def get_absolute_url(self):
         return reverse('section_detail', kwargs={'pk': self.crn})
 
-    def __str__(this):
-        return str(this.crn)
+    def __str__(self):
+        return f"Section {self.crn}: {self.course.name} ({self.tutor.username})"
+
 
 
 class Location(models.Model):
@@ -234,11 +235,11 @@ ATTENDANCE_CHOICES = (
 
 class Attendance(models.Model):    
     attendance_id = models.AutoField(primary_key=True,null=False)    
-    date = models.DateField(auto_now=True,null=False)    
+    date = models.DateField(null=False)    
     status = models.CharField(max_length=1,null=False,choices=ATTENDANCE_CHOICES)    
     timestamp = models.DateTimeField(auto_now_add=True,null=False)    
     tutor = models.ForeignKey(User,on_delete=models.PROTECT,null=False) 
-    registration_id = models.ForeignKey(Student_registration, on_delete=models.CASCADE)
+    registration = models.ForeignKey(Student_registration, on_delete=models.CASCADE)
     def __str__(self):        
         return f"Attendance {self.attendance_id}"
     
