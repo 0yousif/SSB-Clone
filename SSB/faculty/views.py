@@ -84,4 +84,12 @@ def tutor_sections(request):
         sections = Section.objects.none()
 
     
-    return render(request, 'faculty/tutor_sections.html',        {'sections': sections,'current_semester':current_semester,})
+    return render(request, 'faculty/tutor_sections.html',        {'sections': sections , 'current_semester':current_semester,})
+
+@login_required
+def section_students(request, crn):
+    section = Section.objects.get(crn=crn, tutor=request.user)
+    students = Student_registration.objects.filter(crn=section)
+    
+    return render(request, 'faculty/section_students.html', {    'section': section,
+        'students': students,})
