@@ -85,3 +85,4 @@ def tutor_sections(request):
 
     
     return render(request, 'faculty/tutor_sections.html',        {'sections': sections,'current_semester':current_semester,})
+

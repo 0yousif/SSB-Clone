@@ -9,4 +9,5 @@ urlpatterns = [
     path('enrolledsections/', views.tutor_sections, name='tutor_sections'),
 
 
+
 ]
