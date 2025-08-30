@@ -69,6 +69,14 @@
       {% endfor %}
       
     </table>
+    <div class="unregisteredSections-navigations">{% for num in unregisteredSections.paginator.page_range %}
+            {% if unregisteredSections.number == num %}
+                <strong>{{ num }}</strong>
+            {% else %}
+                <a href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+</div>
   </div>
   
   <div>

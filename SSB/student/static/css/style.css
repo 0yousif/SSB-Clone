@@ -536,3 +536,47 @@ html {
   border-radius: 25px;
   padding: 15px;
 }
+
+.unregisteredSections-navigations{
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: 0.5rem;
+}
+
+.unregisteredSections-navigations div{
+  display: flex;
+  margin: 0 auto;
+  gap: 1rem;
+  text-align: center;
+}
+
+
+.unregisteredSections-navigations a,
+.unregisteredSections-navigations strong
+{ 
+  color: #0C1E33;
+  border: none;
+  border-radius: 2px;
+  padding: 0.25rem 1rem;
+  transition: all 0.2s;
+  background-color: #E1D2FF;
+  cursor: pointer;
+}
+.unregisteredSections-navigations strong{
+  background-color: #CCEFBF;
+  box-shadow:  #d1ddcc 2px 2px 2px;
+  font-weight: bolder;
+}
+
+.unregisteredSections-navigations a:hover{
+  background-color: #8e83a4;
+}
+
+.unregisteredSections-navigations a:active{
+  background-color: #4e455f;
+}
+
+
+
+
