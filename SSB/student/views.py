@@ -39,7 +39,7 @@ def registration(request):
     registeredSections,unregisteredSections = getUserSections(request)
     
     # Paginator set up 
-    unregisteredSectionsPaginator = Paginator(unregisteredSections,1)
+    unregisteredSectionsPaginator = Paginator(unregisteredSections,10)
     pageNumber = request.GET.get('page')
     print(pageNumber)
     unregisteredSectionsPageObject = unregisteredSectionsPaginator.get_page(pageNumber)
