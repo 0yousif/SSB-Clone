@@ -23,7 +23,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
     <!-- End of google fonts -->
   </head>
   <body class="base-body">
@@ -183,28 +183,6 @@
       isAppearing = !isAppearing
     }
 
-    let dateEl = document.getElementById("id_dob")
-    M.Datepicker.init(dateEl, {
-      format: "yyyy-mm-dd",
-      defaultDate: new Date(),
-      setDefaultDate: true,
-      autoClose: true,
-      changeYear: true,
-    })
-
-    let selectGender = document.getElementById("id_gender")
-
-    let selectType = document.getElementById("id_user_type")
-
-    // M.FormSelect.init(
-    //   selectGender,
-    //   selectDepartment,
-    //   selesctPrerequisite,
-    //   selectScheduleType,
-    //   selectCreditHours,
-    //   selectType,
-    //   selectDep,
-    //   selectSemester
-    // )
+   
   </script>
 </html>

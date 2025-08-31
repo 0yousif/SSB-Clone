@@ -1,0 +1,8 @@
+{% block admin_nav %} {% if user.is_superuser %}
+
+<a href="{% url 'admin_home'%}">
+  <button class="poppins-semibold">
+    <img src="{% static 'icons/Vector.png' %}" alt="Faculty Icon" />Admin Panel
+  </button></a
+>
+{% endif %} {% endblock %}

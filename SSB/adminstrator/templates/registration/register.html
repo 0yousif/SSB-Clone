@@ -1,17 +1,22 @@
-{% extends 'base.html' %} {% block content %}
- {% if user.is_superuser %} 
+{% extends 'base.html' %} {% block content %} {% if user.is_superuser %} 
 {% if error_message %}
 <p class="red-text">{{ error_message }}</p>
 {% endif %}
 
-<h1>Add User</h1>
-<form class="form" method="post" action="{% url 'admin_reg' %}">
-  {% csrf_token %} {{ user_form.as_p }}
-  <hr />
-  <h3>User:</h3>
-  {{ form.as_p }}
-  <button type="submit">Create User</button>
-</form>
+<div class="form-container">
+  <h1>Create User</h1>
+
+  <form class="form" method="post" action="{% url 'admin_reg' %}">
+    {% csrf_token %} {{ form.as_p }}
+    <input type="submit" value="Submit" class="btn" />
+  </form>
+</div>
 {% else %}
 <h1>NOT ADMIN</h1>
-{% endif %} {% endblock %}
+{% endif %}
+
+<script>
+  let selectType = document.getElementById('id_user_type')
+  M.FormSelect.init(selectType)
+</script>
+{% endblock %}

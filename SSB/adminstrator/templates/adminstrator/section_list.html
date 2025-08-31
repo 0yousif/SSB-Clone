@@ -1,15 +1,18 @@
 {% extends 'base.html' %} {% block content %}
 
-<h1>Section List</h1>
-
-{% for section in section_list %}
-<a href="{% url 'section_detail' section.crn %}">
-  <div class="card">
-    <div class="card-content">
-      <span class="card-title">{{ section.name }}</span>
-      <h3>section CRN: {{section.crn}}</h3>
-      <h3>schedule type: {{section.schedule_type}}</h3>
+<h1 class="list-title">Section List</h1>
+<div class="card-grid">
+  {% for section in section_list %}
+  <a href="{% url 'section_detail' section.crn %}" class="card-link">
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title">{{ section.name }}</span>
+        <div class="card-details">
+          <h3>section CRN: {{section.crn}}</h3>
+          <h3>schedule type: {{section.schedule_type}}</h3>
+        </div>
+      </div>
     </div>
-  </div>
-</a>
+  </a>
+</div>
 {% endfor %} {% endblock %}

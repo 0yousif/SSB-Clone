@@ -97,8 +97,6 @@ class Departments(models.Model):
         return str(this.department_name)
 
 
-
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     student_detail_id = models.AutoField(validators=[MaxValueValidator(
@@ -152,7 +150,7 @@ class Course(models.Model):
         Semester, on_delete=models.SET_NULL, null=True)
 
     def __str__(this):
-        return f"{this.name}"
+        return f"{this.code} -{this.name}"
 
     def get_absolute_url(self):
         return reverse('course_detail', kwargs={'pk': self.course_id})
@@ -217,8 +215,7 @@ class Student_registration(models.Model):
     crn = models.ForeignKey(Section, on_delete=models.PROTECT)
 
     def __str__(this):
-        return str(this.registration_id)
-
+        return str(this.registration)
 
 class Configurations(models.Model):
     Section_limit = models.IntegerField(
@@ -249,3 +246,4 @@ class Grades(models.Model):
     registration_id = models.ForeignKey(Student_registration, on_delete=models.CASCADE)    
     def __str__(this):
         return this.grade_id
+
