@@ -381,13 +381,13 @@ html {
   margin: 0 auto;
 }
 .reg-registration-table-remove-button,
-.reg-registration-table-add-button{
+.reg-registration-table-add-button,
+.reg-registration-table-conflict-button{
   color: #0C1E33;
   border: none;
   border-radius: 2px;
   padding: 0.25rem 1rem;
   transition: all 0.2s;
-
   cursor: pointer;
 }
 .reg-registration-table-add-button {
@@ -399,6 +399,16 @@ html {
 
 .reg-registration-table-remove-button {
   background-color: #CCEFBF;
+}
+
+.reg-registration-table-conflict-button{
+  background-color: #E1D2FF;
+}
+.reg-registration-table-conflict-button:hover{
+  background-color: #8b7da6;
+}
+.reg-registration-table-conflict-button:active{
+  background-color: #4b435c;
 }
 
 .reg-registration-table-remove-button:hover {

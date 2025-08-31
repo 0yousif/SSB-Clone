@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required
 from adminstrator.models import Profile, Section, Course, Departments, Semester, Location, Time, Section_schedules,Student_registration,Configurations
 import datetime
 from django.http import HttpResponse
-
+from django.db.models import Value, F,ExpressionWrapper
+from django.db.models.fields import BooleanField,IntegerField,CharField # Or appropriate field type
 
 def redirect_user(request):
     profile_type = request.user.profile.user_type
@@ -18,8 +19,20 @@ def redirect_user(request):
 def dashboard(request):
     return render(request, 'dashboard.html')
 
+def conflictCheck(request,registeredSections,unregisteredSection):
+    unregisteredSchedules = Section_schedules.objects.filter(crn=unregisteredSection) 
+    registeredSchedules = Section_schedules.objects.filter(crn__in=registeredSections.values_list('crn'))
+    
 
-def getUserSections(request,):
+    #  Checks if the end/start of the unregistered course is withing one of the registered ones
+    for unregisteredSchedule in unregisteredSchedules:
+        for registeredSchedule in registeredSchedules:
+            if (registeredSchedule.time.start_time <= unregisteredSchedule.time.start_time and unregisteredSchedule.time.start_time <= registeredSchedule.time.end_time) or (registeredSchedule.time.start_time <= unregisteredSchedule.time.end_time and unregisteredSchedule.time.end_time <= registeredSchedule.time.end_time):      
+                return True
+    
+    return False
+@login_required
+def getUserSections(request):
     
     registeredSections = Section.objects.filter(
         crn__in=Student_registration.objects.filter(student=request.user).values_list('crn')
@@ -27,6 +40,9 @@ def getUserSections(request,):
     unregisteredSections = Section.objects.exclude(
         crn__in=Student_registration.objects.filter(student=request.user).values_list('crn')
     )
+    
+    for i in range(0, len(unregisteredSections)):
+        unregisteredSections[i].conflict = conflictCheck(request,registeredSections,unregisteredSections[i])
 
     return [registeredSections,unregisteredSections]
 
