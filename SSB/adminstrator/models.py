@@ -135,7 +135,6 @@ class Profile(models.Model):
 
 #########################################################################
 
-
 class Course(models.Model):
     course_id = models.AutoField(primary_key=True, null=False)
     department = models.ForeignKey(Departments, models.CASCADE, null=False)
@@ -189,8 +188,7 @@ class Time(models.Model):
     time_id = models.AutoField(primary_key=True, null=False)
     start_time = models.TimeField(null=False)
     end_time = models.TimeField(null=False)
-    period = models.IntegerField(null=False, validators=[
-                                 MaxValueValidator(2), MinValueValidator(1)])
+    period = models.IntegerField(null=False, validators=[MaxValueValidator(2), MinValueValidator(1)])
 
     def __str__(this):
         return str(this.time_id)

@@ -22,7 +22,6 @@ def dashboard(request):
 def conflictCheck(request,registeredSections,unregisteredSection):
     unregisteredSchedules = Section_schedules.objects.filter(crn=unregisteredSection) 
     registeredSchedules = Section_schedules.objects.filter(crn__in=registeredSections.values_list('crn'))
-    
 
     #  Checks if the end/start of the unregistered course is withing one of the registered ones
     for unregisteredSchedule in unregisteredSchedules:
@@ -31,6 +30,7 @@ def conflictCheck(request,registeredSections,unregisteredSection):
                 return True
     
     return False
+
 @login_required
 def getUserSections(request):
     
@@ -46,7 +46,6 @@ def getUserSections(request):
 
     return [registeredSections,unregisteredSections]
 
-
 def registration(request):
     if Profile.objects.get(user=request.user).user_type != "student":
         return HttpResponse("Unauthorized")
@@ -57,7 +56,6 @@ def registration(request):
         "registeredSections":registeredSections,
         "configs": configs
     })
-
 
 def isRegistered(request,section_id):
     sectionObj = Section.objects.get(crn=section_id)
@@ -82,15 +80,14 @@ def section_register(request, section_id, user_id):
     now = datetime.datetime.now()
 
     # if the user is not already registered and there is a space in the section and the user has enough credits, if so the system will accept the registration
-
-    if not isRegistered(request=request,section_id=section_id) and not isSectionFilled(section_id=section_id,max=configs.Section_limit) and doesHaveEnoughCredits(request=request,newCredits=course_credits,max=configs.credits_limit):
+    
+    registeredSections,unregisteredSections = getUserSections(request)
+    if not isRegistered(request=request,section_id=section_id) and not isSectionFilled(section_id=section_id,max=configs.Section_limit) and doesHaveEnoughCredits(request=request,newCredits=course_credits,max=configs.credits_limit) and not conflictCheck(request,registeredSections,section_id):
         Student_registration.objects.create(student = request.user, registration_status='registered',registered_date=f'{now.year}-{now.month}-{now.day}',crn=section)
         currentUserProfile.total_credits_earned += course_credits
         currentUserProfile.save()
 
-    
     registeredSections,unregisteredSections = getUserSections(request)
-
 
     return render(request, 'registration.html', {"unregisteredSections":unregisteredSections,"registeredSections":registeredSections,
     "configs":configs
@@ -113,18 +110,22 @@ def section_deregister(request,section_id,user_id):
     "configs": configs
     })
 
-
 def week_at_glance(request):
     return render(request,'week_at_glance.html')
-
 
 def enrolle_courses(request):
     registeredSections,unregisteredSections = getUserSections(request)
     configs =  Configurations.objects.first()
     return render(request,'enrolled_courses.html',{"registeredSections":registeredSections,"configs":configs})
 
-
 @login_required
 def student_profile(request):
     profile = request.user.profile
     return render(request, 'student_profile.html', {'profile': profile})
+
+@login_required
+def plan_ahead(request):
+
+
+    if 
+    return render(request, 'plan_ahead.html', {'profile': profile})
