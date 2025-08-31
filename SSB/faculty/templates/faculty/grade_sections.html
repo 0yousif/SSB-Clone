@@ -1,6 +1,13 @@
-{% extends 'base.html' %} {% block content %}
-<div class="grade-sections-page">
-  <h1>Sections</h1>
+{% extends 'base.html' %} {% load static %} {% block content %}
+<head>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+<div class="tutor-sections-body">
+<div class="tutor-sections-page">
+  <h1 class="section-header poppins-medium">
+    <img class="icon" src="{% static 'icons/registration1.png' %}" alt="" />
+    <strong>Assign Grades</strong>
+  </h1>
 
   {% if not sections %}
   <p>No sections assigned to you for grading.</p>
@@ -27,38 +34,4 @@
   {% endif %}
 </div>
 
-<style>
-  .grade-sections-page {
-    margin: 30px;
-    padding: 25px;
-  }
-
-  .sections-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-  }
-
-  .sections-table th,
-  .sections-table td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-
-  .sections-table th {
-    background-color: #cfcfcf;
-    color: rgb(0, 0, 0);
-    font-weight: bold;
-  }
-
-  .grade-link {
-    background: #ffffff;
-    color: rgb(0, 0, 0);
-    padding: 8px 16px;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: 500;
-  }
-</style>
 {% endblock %}
