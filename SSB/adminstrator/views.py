@@ -122,7 +122,7 @@ def student_login(request):
             except Profile.DoesNotExist:
                 error_message = "ID not found"
                 context = {"form": form, "error_message": error_message}
-                return render(request, 'adminstrator/studemt_login.html', context)
+                return render(request, 'adminstrator/student_login.html', context)
 
             user = profile.user
             user = authenticate(
