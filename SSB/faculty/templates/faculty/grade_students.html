@@ -1,89 +1,99 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0 auto;
-    line-height: 1.5;
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+    <style>
+   .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 20px;
   }
-
-  select {
-    display: block;
+  
+  .header-row form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
   }
-
-  h2 {
-    color: #000000;
-    padding-bottom: 10px;
+  
+  .header-row label, .current-date {
+    font-weight: 600;
+    white-space: nowrap;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 13px;
   }
+  
+  .header-row select {
+      padding: 8px 15px;
+      border: 1px solid #ddd;
+      border-radius: 30px;
+      min-width: 100px;
+    margin-left: 2rem;
+    font-size: 11px;
 
-  .header-row {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    margin-bottom: 20px;
   }
+ 
+  
 
-  select,
-  button {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+  .message-button-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 20px;
   }
-
-  button {
-    background: #000000;
-    color: white;
-    cursor: pointer;
-    border: none;
-    padding: 10px 20px;
-    margin-top: 15px;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-  }
-
-  th,
-  td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-
-  th {
-    background-color: #f8f9fa;
-    font-weight: bold;
-    border-bottom: 2px solid #ddd;
-  }
-
-  .grade-column {
-    text-align: center;
-    width: 150px;
-  }
-
+  
   .submitted {
-    color: #000000;
-    font-weight: bold;
-    margin: 15px 0;
+      color: #000000;
+      font-weight: 500;
+      padding: 8px 0;
+      margin: 0;
+  }
+  
+  .submit_attendance {
+      background-color: #CCEFBF;
+      color: rgb(0, 0, 0);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      white-space: nowrap;
+      margin: 0;
   }
 
-  select:disabled {
-    background-color: #f8f9fa;
-    color: #6c757d;
-    cursor: not-allowed;
-  }
 </style>
 
-<h2>Grade Students</h2>
+<div class="tutor-sections-body">
+<div class="tutor-sections-page">
+  <a href="{% url 'grade_sections' %}">Back to Grade Sections</a>
+
+  <h1 class="section-header poppins-medium">
+    <img class="icon" src="{% static 'icons/registration1.png' %}" alt="" />
+    <strong>Grade Students</strong>
+  </h1>
 
 {% if grades_submitted %}
+<div class="message-button-row">
 <div class="submitted">Grades already submitted for this section.</div>
-{% endif %} {% if students %}
+  {% else %}
+<div class="submitted"></div>
+  {% endif %} 
+
+  {% if students %}
 <form method="post">
   {% csrf_token %}
-
-  <table>
+   {% if not grades_submitted %}
+  <button type="submit" class="submit_attendance">Submit</button>
+  {% endif %}
+</div>
+  <table class="sections-table">
     <thead>
       <tr>
         <th>Student ID</th>
@@ -114,13 +124,10 @@
     </tbody>
   </table>
 
-  {% if not grades_submitted %}
-  <button type="submit" name="submit_grades">Submit Grades</button>
-  {% endif %}
+ 
 </form>
 {% else %}
 <p>No students found in this section.</p>
 {% endif %}
 
-<a href="{% url 'grade_sections' %}">Back to Grade Sections</a>
 {% endblock %}

@@ -81,7 +81,7 @@ def tutor_sections(request):
             semester=current_semester
         ).select_related('course', 'course__department')
     
-    return render(request, 'faculty/tutor_sections.html',        {'sections': sections , 'current_semester':current_semester,})
+    return render(request, 'faculty/tutor_sections.html',{'sections': sections , 'current_semester':current_semester,})
 
 
 @login_required

@@ -1,103 +1,120 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+<head>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0 auto;
-            line-height: 1.5;
-        }
-        select{
-            display: block;
-        }
-        h2 {
-            color: #2c3e50;
-            padding-bottom: 10px;
-        }
-        .header-row {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            margin-bottom: 20px;
-        }
-        select, button {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            color: white;
-            cursor: pointer;
-            border: none;
-            padding: 10px 20px;
-            margin-top: 15px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f8f9fa;
-            font-weight: bold;
-            border-bottom: 2px solid #ddd;
-        }
-        .status-column {
-            text-align: center;
-            width: 150px;
-        }
-        .message {
-            background: #e7f3fe;
-            border-left: 4px solid #2196F3;
-            padding: 12px;
-            margin: 15px 0;
-        }
-        .submitted {
-            color: #000000;
-            font-weight: bold;
-            margin: 15px 0;
-        }
-    </style>
+   .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 20px;
+  }
+  
+  .header-row form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+  }
+  
+  .header-row label, .current-date {
+    font-weight: 600;
+    white-space: nowrap;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 13px;
+  }
+  
+  .header-row select {
+      padding: 8px 15px;
+      border: 1px solid #ddd;
+      border-radius: 30px;
+      min-width: 100px;
+    margin-left: 2rem;
+    font-size: 11px;
 
-    <h2>Take Attendance</h2>
+  }
+ 
+  
 
+  .message-button-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 20px;
+  }
+  
+  .submitted {
+      color: #000000;
+      font-weight: 500;
+      padding: 8px 0;
+      margin: 0;
+  }
+  
+  .submit_attendance {
+      background-color: #CCEFBF;
+      color: rgb(0, 0, 0);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      white-space: nowrap;
+      margin: 0;
+  }
+
+</style>
+
+
+<div class="tutor-sections-body">
+<div class="tutor-sections-page">
+  <h1 class="section-header poppins-medium">
+    <img class="icon" src="{% static 'icons/registration1.png' %}" alt="" />
+    <strong>Attendance report</strong>
+  </h1>
+
+
+<form method="post">
+{% csrf_token %}
     <div class="header-row">
-        <form method="post">
-            {% csrf_token %}
             <label>
-                <strong>Section:</strong>
+                Section:
                 <select name="section" onchange="this.form.submit()">
                    <option value="">Select Section</option>
                     {% for section in sections %}
                     <option value="{{ section.crn }}" {% if selected_section and selected_section.crn == section.crn %}selected{% endif %}>
-                        {{ section.course.name }} (CRN: {{ section.crn }})
+                        {{ section.course.code }} (CRN: {{ section.crn }})
                     </option>
                     {% endfor %}
                 </select>
             </label>
-        </form>
         
-        <p><strong>Date:</strong> {{ today }}</p>
+        <p class="current-date">Date:  {{today }}</p>
     </div>
 
-    {% if selected_section %}
-        {% if attendance_submitted %}
-        <div class="submitted">
-            Attendance already taken for today.
+      {% if selected_section %}
+        <div class="message-button-row">
+            {% if attendance_submitted %}
+            <div class="submitted">
+                Attendance already taken for today.
+            </div>
+            {% else %}
+            <div class="submitted"></div>
+            {% endif %}
+            {%if not attendance_submitted%}
+            <button type="submit" name="submit_attendance" class="submit_attendance">Submit</button>
+            {%endif%}
         </div>
-        {% endif %}
-        
+
         {% if students %}
-        <form method="post">
-            {% csrf_token %}
             <input type="hidden" name="section" value="{{ selected_section.crn }}">
             
-            <table>
+        <table class="sections-table">
                 <thead>
                     <tr>
                         <th>Student ID</th>
@@ -110,11 +127,12 @@
                     <tr>
                         <td>{{ student.student.profile.academic_number }}</td>
                         <td>{{ student.student.profile.first_name }} {{ student.student.profile.last_name }}</td>
-                        <td class="status-column">
+                        <td class="last-column">
                             <select name="status_{{ student.pk }}" {% if attendance_submitted %}disabled{% endif %}>
                                 <option value="P">Present</option>
                                 <option value="A">Absent</option>
                                 <option value="L">Late</option>
+                                <option value="E">Excused</option>
                             </select>
                         </td>
                     </tr>
@@ -122,12 +140,14 @@
                 </tbody>
             </table>
             
-            {% if not attendance_submitted %}
-            <button type="submit" name="submit_attendance">Submit Attendance</button>
-            {% endif %}
-        </form>
+           
         {% else %}
-        <p>No students found in this section.</p>
+<p class="no-sections">No students found.</p>
         {% endif %}
     {% endif %}
+
+</form>
+</div>
+</div>
+
 {% endblock %}
