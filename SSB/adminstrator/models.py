@@ -250,7 +250,7 @@ GRADE_CHOICES = (
 )
 
 class Grades(models.Model):    
-    grade_id = models.AutoFiseld(primary_key=True,null=False)    
+    grade_id = models.AutoField(primary_key=True,null=False)    
     grade = models.CharField(max_length=1, choices=GRADE_CHOICES)    
     registration_id = models.ForeignKey(Student_registration, on_delete=models.CASCADE)    
     def __str__(this):
