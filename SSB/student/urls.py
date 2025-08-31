@@ -11,5 +11,6 @@ urlpatterns = [
     path('registration/section/<int:section_id>/add/<int:user_id>', views.section_register, name="section_register"),
     path('registration/section/<int:section_id>/remove/<int:user_id>', views.section_deregister, name="section_deregister"),
     path('week_at_glance/',views.week_at_glance, name='week_at_glance'),
-    path('enrolled_courses/',views.enrolled_courses, name='enrolled_courses')
+    path('enrolle_courses/',views.enrolle_courses, name='enrolle_courses'),
+    path('plan_ahead/',views.plan_ahead, name='plan_ahead')
 ]

@@ -28,7 +28,20 @@
     padding: 0.2rem;
 }
 
-.reg-calender-event img {
+
+.reg-conflict-event{
+    background-color: #ffd2d2;
+    color:#e95252;
+    border-left: 5px solid #e95252;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 0.2rem;
+}
+
+.reg-calender-event img,
+.reg-conflict-event img {
     height: 0.5rem;
     aspect-ratio: 1/1;
 }
