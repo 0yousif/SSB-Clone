@@ -79,9 +79,9 @@
   </h1>
 
 
+<form method="post">
+{% csrf_token %}
     <div class="header-row">
-        <form method="post">
-            {% csrf_token %}
             <label>
                 Section:
                 <select name="section" onchange="this.form.submit()">
@@ -93,7 +93,6 @@
                     {% endfor %}
                 </select>
             </label>
-        </form>
         
         <p class="current-date">Date:  {{today }}</p>
     </div>
@@ -113,8 +112,6 @@
         </div>
 
         {% if students %}
-        <form method="post">
-            {% csrf_token %}
             <input type="hidden" name="section" value="{{ selected_section.crn }}">
             
         <table class="sections-table">
@@ -135,6 +132,7 @@
                                 <option value="P">Present</option>
                                 <option value="A">Absent</option>
                                 <option value="L">Late</option>
+                                <option value="E">Excused</option>
                             </select>
                         </td>
                     </tr>
@@ -143,9 +141,13 @@
             </table>
             
            
-        </form>
         {% else %}
 <p class="no-sections">No students found.</p>
         {% endif %}
     {% endif %}
+
+</form>
+</div>
+</div>
+
 {% endblock %}

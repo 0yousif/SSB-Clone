@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from adminstrator.models import Profile, Section, Course, Departments, Semester, Location, Time, Section_schedules,Student_registration,Configurations
+from adminstrator.models import Profile, Section, Course, Departments, Semester, Location, Time, Section_schedules,Student_registration,Configurations, Attendance
 import datetime
 from django.http import HttpResponse
 
@@ -114,3 +114,31 @@ def enrolle_courses(request):
 def student_profile(request):
     profile = request.user.profile
     return render(request, 'student_profile.html', {'profile': profile})
+
+
+
+
+
+@login_required
+def student_attendance(request):
+        user = request.user
+        current_semester = Semester.objects.get(is_current=True)
+        registrations = Student_registration.objects.filter(student=user, crn__semester=current_semester)
+
+        attendance_data = []
+        for registration in registrations:
+            course = registration.crn.course
+            total_classes = 24  
+            total_absences = Attendance.objects.filter(registration=registration, status='A').count()
+            absence_rate = (total_absences / total_classes) * 100 if total_classes > 0 else 0
+
+            attendance_data.append({
+                'course_code': course.code, 
+                'course_name': course.name,
+                'crn': registration.crn.crn,
+                'absence_rate': round(absence_rate, 2),
+                'total_absences': total_absences,
+                'total_classes': total_classes
+            })
+
+        return render(request, 'student_attendance.html', {'attendance_data':attendance_data})
