@@ -1,20 +1,14 @@
 {% extends 'base.html' %} {% block content %} {% if user.is_superuser %}
-<h3>User Profile</h3>
-<form class="form" action="" method="post" enctype="multipart/form-data">
-  {% csrf_token %} {{ profile_form.as_table }}
-  <button type="submit">Create Profile</button>
-</form>
+<div class="form-container">
+  <h1>User Profile</h1>
+
+  <form class="form" action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %} {{ profile_form.as_p }}
+    <input type="submit" value="Submit" class="btn" />
+  </form>
+</div>
 
 <script>
-  let dateEl = document.getElementById('id_dob')
-  M.Datepicker.init(dateEl, {
-    format: 'yyyy-mm-dd',
-    defaultDate: new Date(),
-    setDefaultDate: true,
-    autoClose: true,
-    changeYear: true
-  })
-
   let selectGender = document.getElementById('id_gender')
   M.FormSelect.init(selectGender)
 
