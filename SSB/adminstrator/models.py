@@ -222,7 +222,7 @@ class Configurations(models.Model):
         validators=[MaxValueValidator(200), MinValueValidator(0)], null=False)
     credits_limit = models.IntegerField(null=False, default=60)
     time_limit = models.IntegerField(null=False)
-    
+
 ATTENDANCE_CHOICES = (
         ('P', 'Present'),
         ('A', 'Absent'),
