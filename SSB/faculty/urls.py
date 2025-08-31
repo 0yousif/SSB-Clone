@@ -6,8 +6,16 @@ urlpatterns = [
     path('students/', views.student_lookup, name='student_lookup'),
     path('students/<int:student_id>/', views.student_detail, name='student_detail'),
     path('attendance/', views.take_attendance, name='take_attendance'),
+
+
     path('sections/', views.tutor_sections, name='tutor_sections'),
     path('sections/students/<int:crn>/', views.section_students, name='section_students'),
+
+
+
+    path('grading/<int:crn>/', views.grade_students, name='grade_students'),
+    path('grading/', views.grade_sections, name='grade_sections'),
+
 
 
 
