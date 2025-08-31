@@ -23,7 +23,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-   
+
     <!-- End of google fonts -->
   </head>
   <body class="base-body">
@@ -63,7 +63,7 @@
           <img src="{% static 'icons/note-2.png' %}" alt="" />Registration
         </button>
         <button
-          onclick="document.location.href = '{% url 'dashboard' %}'"
+          onclick="document.location.href = '{% url 'week_at_glance' %}'"
           class="poppins-semibold"
         >
           <img src="{% static 'icons/menu-board.png' %}" alt="" />Week at glance
@@ -76,7 +76,7 @@
           Transcript
         </button>
         <button
-          onclick="document.location.href = '{% url 'dashboard' %}'"
+          onclick="document.location.href = '{% url 'enrolle_courses' %}'"
           class="poppins-semibold"
         >
           <img src="{% static 'icons/book.png' %}" alt="" />Enrolled Courses
@@ -119,13 +119,13 @@
           <img src="{% static 'icons/Vector.png' %}" alt="" />Student Lookup
         </button>
         <button
-          onclick="document.location.href = '{% url 'dashboard' %}'"
+          onclick="document.location.href = '{% url 'take_attendance' %}'"
           class="poppins-semibold"
         >
           <img src="{% static 'icons/note-2.png' %}" alt="" />Attendance Sheet
         </button>
         <button
-          onclick="document.location.href = '{% url 'dashboard' %}'"
+          onclick="document.location.href = '{% url 'tutor_sections' %}'"
           class="poppins-semibold"
         >
           <img src="{% static 'icons/menu-board.png' %}" alt="" />Enrolled sections

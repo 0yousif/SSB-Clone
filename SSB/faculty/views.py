@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from adminstrator.models import Profile
+from adminstrator.models import Profile, Attendance, Student_registration, Section, Semester
+from django.utils import timezone
 
 @login_required
 def faculty_dashboard(request):
@@ -29,3 +30,66 @@ def student_detail(request, student_id):
     student = Profile.objects.get(student_detail_id=student_id, user_type='student')
     return render(request, 'student_profile.html', {'profile': student})
 
+@login_required
+def take_attendance(request):
+    sections = Section.objects.filter(tutor=request.user)
+    today = timezone.now().date()
+    selected_section = None
+    students = []
+    attendance_submitted = False
+    
+    if request.method == 'POST':
+        section_id = request.POST.get('section')
+        
+        if section_id:
+                selected_section = Section.objects.get(crn=section_id, tutor=request.user)
+                
+                attendance_submitted = Attendance.objects.filter(
+                    date=today,
+                    registration__crn=selected_section
+                ).exists()
+                
+                students = Student_registration.objects.filter(crn=selected_section)
+                
+                if 'submit_attendance' in request.POST and not attendance_submitted:
+                    for student in students:
+                        status = request.POST.get(f'status_{student.pk}', 'P')
+                        Attendance.objects.create(
+                            date=today,
+                            status=status,
+                            tutor=request.user,
+                            registration=student
+                        )
+                    attendance_submitted = True
+    
+    return render(request, 'faculty/attendance.html', {
+        'sections': sections,
+        'students': students,
+        'today': today,
+        'selected_section': selected_section,
+        'attendance_submitted': attendance_submitted
+    })
+
+
+@login_required
+def tutor_sections(request):
+    current_semester = Semester.objects.get(is_current=True)
+    
+    if current_semester:
+        sections = Section.objects.filter(
+            tutor=request.user,
+            semester=current_semester
+        ).select_related('course', 'course__department')
+    else:
+        sections = Section.objects.none()
+
+    
+    return render(request, 'faculty/tutor_sections.html',        {'sections': sections , 'current_semester':current_semester,})
+
+@login_required
+def section_students(request, crn):
+    section = Section.objects.get(crn=crn, tutor=request.user)
+    students = Student_registration.objects.filter(crn=section)
+    
+    return render(request, 'faculty/section_students.html', {    'section': section,
+        'students': students,})

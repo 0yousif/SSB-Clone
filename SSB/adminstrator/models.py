@@ -168,8 +168,9 @@ class Section(models.Model):
     def get_absolute_url(self):
         return reverse('section_detail', kwargs={'pk': self.crn})
 
-    def __str__(this):
-        return str(this.crn)
+    def __str__(self):
+        return f"Section {self.crn}: {self.course.name} ({self.tutor.username})"
+
 
 
 class Location(models.Model):
@@ -216,9 +217,33 @@ class Student_registration(models.Model):
     def __str__(this):
         return str(this.registration)
 
-
 class Configurations(models.Model):
     Section_limit = models.IntegerField(
         validators=[MaxValueValidator(200), MinValueValidator(0)], null=False)
     credits_limit = models.IntegerField(null=False, default=60)
     time_limit = models.IntegerField(null=False)
+
+ATTENDANCE_CHOICES = (
+        ('P', 'Present'),
+        ('A', 'Absent'),
+        ('L', 'Late'),
+        ('E', 'Excused'),
+)
+
+class Attendance(models.Model):    
+    attendance_id = models.AutoField(primary_key=True,null=False)    
+    date = models.DateField(null=False)    
+    status = models.CharField(max_length=1,null=False,choices=ATTENDANCE_CHOICES)    
+    timestamp = models.DateTimeField(auto_now_add=True,null=False)    
+    tutor = models.ForeignKey(User,on_delete=models.PROTECT,null=False) 
+    registration = models.ForeignKey(Student_registration, on_delete=models.CASCADE)
+    def __str__(self):        
+        return f"Attendance {self.attendance_id}"
+    
+class Grades(models.Model):    
+    grade_id = models.AutoField(primary_key=True,null=False)    
+    grade = models.CharField(max_length=1)    
+    registration_id = models.ForeignKey(Student_registration, on_delete=models.CASCADE)    
+    def __str__(this):
+        return this.grade_id
+
