@@ -16,7 +16,6 @@ class UserForm(UserCreationForm):
 
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
-   
 
     class Meta(UserCreationForm):
         model = User
@@ -35,7 +34,7 @@ class UserForm(UserCreationForm):
 class StudentProfile(ModelForm):
     class Meta:
         model = Profile
-        fields = ('first_name', 'last_name', 'dob',  'gender', 'department_id', "major", "school",
+        fields = ('first_name', 'last_name', 'dob',  'gender', 'department_id', "major", "school", "personal_email",
                   "current_semester", "status", "avatar")
 
 
@@ -48,10 +47,11 @@ class TutorProfile(ModelForm):
 
 
 class studentLogin(forms.Form):
-    academic_number = forms.CharField(label="Academic ID")
+    academic_number = forms.IntegerField(label="Academic ID")
     password = forms.CharField(label="Password", widget=forms.PasswordInput)
 
 
 class TutorLogin(forms.Form):
     username = forms.CharField(label="Username")
     password = forms.CharField(label="Password", widget=forms.PasswordInput)
+

@@ -43,4 +43,9 @@ urlpatterns = [
     path('section/<int:pk>', views.SectionDetail.as_view(), name='section_detail'),
     path('section/<int:pk>/delete',
          views.SectionDelete.as_view(), name='delete_section'),
+
+     ##admissions CBVs
+     path('admissions/',views.AdmissionsList.as_view(), name='admin_admission'),
+     path("admissions/<int:admission_id>/", views.admission_session, name="admission_session"),
+     
 ]

@@ -375,8 +375,8 @@ html {
   border-bottom: 1px solid lightgrey;
 }
 .reg-registration-table-remove-button,
-.reg-registration-table-add-button{
-  color: #0C1E33;
+.reg-registration-table-add-button {
+  color: #0c1e33;
   border: none;
   border-radius: 2px;
   padding: 0.25rem 1rem;
@@ -385,19 +385,19 @@ html {
   cursor: pointer;
 }
 .reg-registration-table-add-button {
-  background-color: #BAE5F5;
+  background-color: #bae5f5;
 }
 .reg-registration-table-add-button:hover {
   background-color: #5d7b86;
 }
 
-.enrolle-courses-page{
+.enrolle-courses-page {
   width: 80%;
   margin: 0 auto;
 }
 .reg-registration-table-remove-button,
-.reg-registration-table-add-button{
-  color: #0C1E33;
+.reg-registration-table-add-button {
+  color: #0c1e33;
   border: none;
   border-radius: 2px;
   padding: 0.25rem 1rem;
@@ -406,14 +406,14 @@ html {
   cursor: pointer;
 }
 .reg-registration-table-add-button {
-  background-color: #BAE5F5;
+  background-color: #bae5f5;
 }
 .reg-registration-table-add-button:hover {
   background-color: #5d7b86;
 }
 
 .reg-registration-table-remove-button {
-  background-color: #CCEFBF;
+  background-color: #ccefbf;
 }
 
 .reg-registration-table-remove-button:hover {
@@ -448,8 +448,22 @@ html {
 
 body.home-page {
   margin: 0;
+  display: flex;
+
 }
 
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 5vh;
+}
+body.home-page p {
+  font-size: 3vh;
+}
+
+body.home-page h1 {
+  font-size: 8vh;
+}
 .reg-registration-filters {
   display: flex;
   justify-content: space-between;
@@ -465,38 +479,37 @@ body.home-page {
   padding: 0.5rem 0.5rem;
 }
 
-
 #department-filter-select,
 #code-filter-select {
   display: block;
   text-align: center;
   font-size: 1.1rem;
-  height:auto;
+  height: auto;
   width: 15rem;
   border-radius: 10rem;
-  background-color: #F4F6F7;
+  background-color: #f4f6f7;
   cursor: pointer;
 }
 
 #department-filter-select option,
-#code-filter-select option{
+#code-filter-select option {
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 100rem;
-} 
+}
 
 .reg-registration-search {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #F4F6F7;
+  background-color: #f4f6f7;
   padding: 0.25rem 0.5rem;
   height: 100%;
   border-radius: 10rem;
 }
 .reg-registration-search img {
-  height:75%;
+  height: 75%;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -509,12 +522,12 @@ body.home-page {
   filter: invert(100%);
 }
 
-#reg-registration-search{
+#reg-registration-search {
   height: 100%;
   border-bottom: none;
 }
 
-#reg-registration-search:focus{
+#reg-registration-search:focus {
   box-shadow: none;
 }
 
@@ -524,13 +537,7 @@ body.home-page {
   align-items: center;
   gap: 0.5rem;
 }
-.form {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 5vh;
-}
+
 body.home-page p {
   font-size: 3vh;
 }
@@ -578,7 +585,6 @@ body.home-page h1 {
   margin: 80px auto;
   width: 70%;
   height: 100%;
-  border: solid #2bbbad;
   border-radius: 25px;
 
   overflow: hidden;
@@ -609,7 +615,7 @@ body.home-page h1 {
   padding: 15px;
   margin: 10px;
 
-  border: none;
+  border: 1px solid #0a2c61;
   border-radius: 10px;
 }
 
@@ -633,7 +639,7 @@ body.home-page h1 {
 .form-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
 
   max-width: 40px auto;
   margin: 40px auto;
@@ -644,7 +650,14 @@ body.home-page h1 {
 
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 }
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
 
+  flex-direction: column;
+  gap: 5vh;
+}
 .form-container h1 {
   text-align: center;
 
@@ -811,13 +824,12 @@ body.home-page h1 {
 }
 
 .admin-table thead {
-  background:#0a2c61;
+  background: #0a2c61;
   color: white;
-
 }
 
 .admin-table thead th {
-  padding: 12px ;
+  padding: 12px;
 
   text-align: center;
 
@@ -827,13 +839,11 @@ body.home-page h1 {
 }
 
 .admin-table tbody td {
-  padding: 12px ;
+  padding: 12px;
   border-bottom: 1px #0a2c61;
 
   font-size: 1rem;
   text-align: center;
-
-  
 }
 
 .admin-table tbody tr:hover {
@@ -841,7 +851,7 @@ body.home-page h1 {
 }
 
 .admin-table a {
-  padding: 8px ;
+  padding: 8px;
   background: #0a2c61;
 
   color: white;
@@ -852,9 +862,20 @@ body.home-page h1 {
   font-size: 1rem;
 }
 
-  .admin-table a:hover {
-    background: #133d82;
-  }
+.admin-table a:hover {
+  background: #133d82;
+}
+
+.error-message{
+  color: rgba(255, 0, 0, 0.63);
+
+  background-color: #fff6f6;
+
+  border: 1px solid rgba(255, 0, 0, 0.63);
+
+  border-radius: 30px;
+
+}
 
 
   /* FACULTY CSS */

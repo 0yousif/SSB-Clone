@@ -116,8 +116,7 @@ class Profile(models.Model):
     major = models.CharField(max_length=50, null=True)
     school = models.CharField(max_length=50, null=True)
     start_date = models.DateField(auto_now_add=True, null=True, blank=True)
-    current_semester = models.IntegerField(
-        validators=[MaxValueValidator(10), MinValueValidator(1)], null=True, default=1)
+    current_semester = models.IntegerField(validators=[MaxValueValidator(10), MinValueValidator(1)], null=True, default=1)
     gpa = models.DecimalField(
         max_digits=3, decimal_places=2, null=True, default=0)
     total_credits_earned = models.IntegerField(
@@ -125,6 +124,7 @@ class Profile(models.Model):
     status = models.CharField(
         choices=USER_STATUS_CHOICES, default=USER_STATUS_CHOICES[0][0], null=False)
     email = models.CharField(max_length=50, null=True)
+    personal_email = models.CharField(max_length=50, null=True)
     avatar = models.ImageField(
         upload_to='adminstrator/static/user_profiles', default='')
 
@@ -172,7 +172,6 @@ class Section(models.Model):
         return f"Section {self.crn}: {self.course.name} ({self.tutor.username})"
 
 
-
 class Location(models.Model):
     location_id = models.AutoField(primary_key=True, null=False)
     room_number = models.IntegerField(
@@ -217,29 +216,50 @@ class Student_registration(models.Model):
     def __str__(this):
         return str(this.registration)
 
+
 class Configurations(models.Model):
     Section_limit = models.IntegerField(
         validators=[MaxValueValidator(200), MinValueValidator(0)], null=False)
     credits_limit = models.IntegerField(null=False, default=60)
     time_limit = models.IntegerField(null=False)
 
+
 ATTENDANCE_CHOICES = (
-        ('P', 'Present'),
-        ('A', 'Absent'),
-        ('L', 'Late'),
-        ('E', 'Excused'),
+    ('P', 'Present'),
+    ('A', 'Absent'),
+    ('L', 'Late'),
+    ('E', 'Excused'),
 )
 
-class Attendance(models.Model):    
-    attendance_id = models.AutoField(primary_key=True,null=False)    
-    date = models.DateField(null=False)    
-    status = models.CharField(max_length=1,null=False,choices=ATTENDANCE_CHOICES)    
-    timestamp = models.DateTimeField(auto_now_add=True,null=False)    
-    tutor = models.ForeignKey(User,on_delete=models.PROTECT,null=False) 
-    registration = models.ForeignKey(Student_registration, on_delete=models.CASCADE)
-    def __str__(self):        
+
+class Attendance(models.Model):
+    attendance_id = models.AutoField(primary_key=True, null=False)
+    date = models.DateField(null=False)
+    status = models.CharField(max_length=1, null=False,
+                              choices=ATTENDANCE_CHOICES)
+    timestamp = models.DateTimeField(auto_now_add=True, null=False)
+    tutor = models.ForeignKey(User, on_delete=models.PROTECT, null=False)
+    registration = models.ForeignKey(
+        Student_registration, on_delete=models.CASCADE)
+
+    def __str__(self):
         return f"Attendance {self.attendance_id}"
 
+
+
+
+class Admissions(models.Model):
+    first_name = models.CharField(max_length=50, null=True, blank=True)
+    last_name = models.CharField(max_length=50, null=True, blank=True)
+    email = models.CharField(max_length=50, null=True, blank=True)
+    CPR = models.IntegerField(null=False)
+    gender = models.CharField(
+        max_length=1, choices=GENDERS, default=GENDERS[0][0], null=True)
+    school = models.CharField(max_length=50, null=True)
+    dob = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.CPR} - admission"
 
 GRADE_CHOICES = (
     ('A', 'A'),

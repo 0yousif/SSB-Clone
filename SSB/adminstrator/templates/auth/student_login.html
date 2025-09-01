@@ -1,5 +1,6 @@
 {% extends 'base.html' %} {% block content %} 
 <div class="login-container">
+
   <div class="login-left">
     <h2>SSB</h2>
   </div>
@@ -8,15 +9,21 @@
     <div class="login-right">
 
   <h1>Student Login</h2>
-  {% if error_message %}
-  <p class="red-text">{{ error_message }}</p>
-  {% endif %}
-
+  
   <form method="post">
     {% csrf_token %} {{ form.as_p }}
-          <input type="submit" class="btn" value="LOGIN" />
+        <input type="submit" class="btn" value="LOGIN" />
 
+        {% if error_message %}
+          <p class="error-message">{{ error_message }}</p>
+          {% endif %}
+            {%for message in messages %}
+  <p>{{message}}</p>
+  {% endfor %}
+    <a href="/apply/"><p>Not a student? Apply now!</p></a>
   </form>
 </div>
+
 </div>
+
 {% endblock %}
