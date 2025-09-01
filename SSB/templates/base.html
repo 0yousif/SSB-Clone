@@ -24,6 +24,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <!-- End of google fonts -->
   </head>
@@ -48,7 +54,7 @@
         </button>
       </div>
       <div class="side-bar-element-container">
-      {% if user.profile.user_type == 'student' %}
+        {% if user.profile.user_type == 'student' %}
 
         <p>Student</p>
         <button
@@ -89,7 +95,7 @@
           <img src="{% static 'icons/archive-book.png' %}" alt="" />Plan Ahead
         </button>
         <button
-          onclick="document.location.href = '{% url 'dashboard' %}'"
+          onclick="document.location.href = '{% url 'attendance_report' %}'"
           class="poppins-semibold"
         >
           <img src="{% static 'icons/calendar-tick.png' %}" alt="" />Attendance
@@ -110,9 +116,8 @@
           Payment
         </button>
 
-              {% endif %}
-      {% if user.profile.user_type == 'tutor' %}
- <p>Faculty</p>
+        {% endif %} {% if user.profile.user_type == 'tutor' %}
+        <p>Faculty</p>
         <button
           onclick="document.location.href = '{% url 'student_lookup' %}'"
           class="poppins-semibold"
@@ -120,35 +125,31 @@
           <img src="{% static 'icons/Vector.png' %}" alt="" />Student Lookup
         </button>
         <button
-          onclick="document.location.href = '{% url 'dashboard' %}'"
+          onclick="document.location.href = '{% url 'take_attendance' %}'"
           class="poppins-semibold"
         >
           <img src="{% static 'icons/note-2.png' %}" alt="" />Attendance Sheet
         </button>
         <button
-          onclick="document.location.href = '{% url 'dashboard' %}'"
+          onclick="document.location.href = '{% url 'tutor_sections' %}'"
           class="poppins-semibold"
         >
-          <img src="{% static 'icons/menu-board.png' %}" alt="" />Enrolled sections
+          <img src="{% static 'icons/menu-board.png' %}" alt="" />Enrolled
+          sections
         </button>
         <button
-          onclick="document.location.href = '{% url 'dashboard' %}'"
+          onclick="document.location.href = '{% url 'grade_sections' %}'"
           class="poppins-semibold"
         >
           <img src="{% static 'icons/trend-up.png' %}" alt="" />assign grades
         </button>
-        <button
-          onclick="document.location.href = '{% url 'dashboard' %}'"
-          class="poppins-semibold"
-        >
-      {% endif %}
 
+        {% endif %}
       </div>
 
       <div class="side-bar-element-container">
         {% block admin_nav %} {% endblock %}
       </div>
-      
 
       <div class="side-bar-element-container">
         <p>Settings</p>
@@ -184,28 +185,6 @@
       isAppearing = !isAppearing
     }
 
-    let dateEl = document.getElementById("id_dob")
-    M.Datepicker.init(dateEl, {
-      format: "yyyy-mm-dd",
-      defaultDate: new Date(),
-      setDefaultDate: true,
-      autoClose: true,
-      changeYear: true,
-    })
-
-    let selectGender = document.getElementById("id_gender")
-
-    let selectType = document.getElementById("id_user_type")
-
-    // M.FormSelect.init(
-    //   selectGender,
-    //   selectDepartment,
-    //   selesctPrerequisite,
-    //   selectScheduleType,
-    //   selectCreditHours,
-    //   selectType,
-    //   selectDep,
-    //   selectSemester
-    // )
+   
   </script>
 </html>

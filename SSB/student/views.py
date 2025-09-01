@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from adminstrator.models import Profile, Section, Course, Departments, Semester, Location, Time, Section_schedules,Student_registration,Configurations
+
+from adminstrator.models import Profile, Section, Course, Departments, Semester, Location, Time, Section_schedules,Student_registration,Configurations, Attendance
 import datetime
 from django.http import HttpResponse
 from django.core.paginator import Paginator
@@ -8,15 +9,32 @@ from django.db.models import Value, F,ExpressionWrapper
 from django.db.models.fields import BooleanField,IntegerField,CharField 
 from .models import Student_plan
 from .forms import StudentPlanForm
+from django.views.generic.edit import CreateView
+from django.urls import reverse
+from django.contrib import messages
+
+
+from adminstrator.models import Admissions
+
+
+def home(request):
+    return render(request, 'home.html')
+
 
 def redirect_user(request):
+    try:
+        profile = Profile.objects.get(user_id=request.user.id)
+    except Profile.DoesNotExist:
+        return redirect('admin_home')
+
     profile_type = request.user.profile.user_type
     if (request.user.is_superuser):
-        return redirect('/administrator')
+        return redirect('admin_home')
     if (profile_type == 'student'):
         return redirect('dashboard')
     if profile_type == 'tutor':
         return redirect('faculty_dashboard')
+
 
 @login_required
 def dashboard(request):
@@ -50,7 +68,7 @@ def getUserSections(request):
     for i in range(0, len(unregisteredSections)):
         unregisteredSections[i].conflict = conflictCheck(request,registeredSections,unregisteredSections[i])
 
-    return [registeredSections,unregisteredSections]
+    return [registeredSections, unregisteredSections]
 
 
 @login_required
@@ -73,16 +91,19 @@ def registration(request):
 
 def isRegistered(request,section_id):
     sectionObj = Section.objects.get(crn=section_id)
-    if Student_registration.objects.filter(student = request.user, crn=sectionObj).exists():
+    if Student_registration.objects.filter(student=request.user, crn=sectionObj).exists():
         return True
     else:
         return False
 
-def isSectionFilled(section_id,max):
-    return Student_registration.objects.filter(crn=section_id).count() >= max 
 
-def doesHaveEnoughCredits(request,newCredits, max):
-    return (Profile.objects.get(user=request.user).total_credits_earned + newCredits ) <= max
+def isSectionFilled(section_id, max):
+    return Student_registration.objects.filter(crn=section_id).count() >= max
+
+
+def doesHaveEnoughCredits(request, newCredits, max):
+    return (Profile.objects.get(user=request.user).total_credits_earned + newCredits) <= max
+
 
 @login_required
 def section_register(request, section_id, user_id):
@@ -98,7 +119,8 @@ def section_register(request, section_id, user_id):
     
     configs =  Configurations.objects.first()
     section = Section.objects.get(crn=section_id)
-    course_credits = Course.objects.get(course_id=section.course_id).credit_hours
+    course_credits = Course.objects.get(
+        course_id=section.course_id).credit_hours
     now = datetime.datetime.now()
     # if the user is not already registered and there is a space in the section and the user has enough credits, if so the system will accept the registration
 
@@ -132,16 +154,14 @@ def section_deregister(request,section_id,user_id):
         user_profile =  Profile.objects.get(user=request.user)
         user_profile.total_credits_earned -= course_credits
         user_profile.save()
-    
-    registeredSections,unregisteredSections = getUserSections(request)
-    
-    configs =  Configurations.objects.first()
-    return render(request, 'registration.html', {"unregisteredSections":unregisteredSections,"registeredSections":registeredSections,
-    "configs": configs
-    })
+
+    registeredSections, unregisteredSections = getUserSections(request)
+
+    configs = Configurations.objects.first()
+    return render(request, 'registration.html', {"unregisteredSections": unregisteredSections, "registeredSections": registeredSections,"configs": configs})
 
 def week_at_glance(request):
-    return render(request,'week_at_glance.html')
+    return render(request, 'week_at_glance.html')
 
 def enrolled_courses(request):
     registeredSections,unregisteredSections = getUserSections(request)
@@ -203,3 +223,42 @@ def delete_plan(request, plan_id):
         return redirect('plan_ahead')
         
     return redirect('plan_ahead')
+
+class admissionCreate(CreateView):
+    model = Admissions
+    fields = '__all__'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Your admission was submitted successfully!")
+        return response
+
+
+    def get_success_url(self):
+        return reverse('student_login')
+
+
+
+@login_required
+def student_attendance(request):
+        user = request.user
+        current_semester = Semester.objects.get(is_current=True)
+        registrations = Student_registration.objects.filter(student=user, crn__semester=current_semester)
+
+        attendance_data = []
+        for registration in registrations:
+            course = registration.crn.course
+            total_classes = 24  
+            total_absences = Attendance.objects.filter(registration=registration, status='A').count()
+            absence_rate = (total_absences / total_classes) * 100 if total_classes > 0 else 0
+
+            attendance_data.append({
+                'course_code': course.code, 
+                'course_name': course.name,
+                'crn': registration.crn.crn,
+                'absence_rate': round(absence_rate, 2),
+                'total_absences': total_absences,
+                'total_classes': total_classes
+            })
+
+        return render(request, 'student_attendance.html', {'attendance_data':attendance_data})
