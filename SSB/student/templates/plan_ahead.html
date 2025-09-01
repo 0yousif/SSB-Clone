@@ -25,12 +25,11 @@
             {% endif %}
           </div>
           <div class="plan-added-sections">
-            <div class="plan-added-section" >
-              <p>System Analysis & Design<br>CRN:12</p><button>Remove</button>
-            </div>
-            <div class="plan-added-section" >
-              <p>System Analysis & Design<br>CRN:12</p><button>Remove</button>
-            </div>
+            {%for section in currentPlan.sections.all %}            
+              <div class="plan-added-section" >
+                <p>{{section.course.name}}<br>CRN:{{section.crn}}</p><button>Remove</button>
+              </div>
+            {% endfor %}
           </div>
         </div>
         <div class="reg-calender">
