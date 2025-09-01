@@ -1,9 +1,195 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-
 <link rel="stylesheet" href="{% static 'css/calender.css' %}" />
+  
+  <div class="plan-section">
+    <h1 class="reg-registration-section-header"><img src="{% static 'icons/registration1.png'%}" alt="">Plan</h1>
+    <div class="plan-plans">
+        <div class="plan-plan-control">
+          <div>
+            <select onchange="document.location.href = `?plan=${this.value}`" >
+              {% if not currentPlan %}
+              <option>Choose</option> 
+              {% endif %}
+              {% for plan in plans %}
+                <option value="{{ plan.plan_id }}" {% if currentPlan.plan_id == plan.plan_id %}selected{% endif %}>{{plan}}</option>
+              {% endfor %}
+            </select>
+            <button>+</button>
+            {% if currentPlan %}
+              <form action="{% url 'delete_plan' currentPlan.plan_id  %}" method="post">
+                {% csrf_token %}
+                <button>-</button>
+              </form>
+            {% endif %}
+          </div>
+          <div class="plan-added-sections">
+            <div class="plan-added-section" >
+              <p>System Analysis & Design<br>CRN:12</p><button>Remove</button>
+            </div>
+            <div class="plan-added-section" >
+              <p>System Analysis & Design<br>CRN:12</p><button>Remove</button>
+            </div>
+          </div>
+        </div>
+        <div class="reg-calender">
+    <div class="reg-calender-calender-grid" id="reg-calender-calender-grid">
+      <!-- DAYS  -->
+      <p class="calender-days ">Week</p>
+      <p class="calender-days">Sun</p>
+      <p class="calender-days">Mon</p>
+      <p class="calender-days">Tue</p>
+      <p class="calender-days">Wed</p>
+      <p class="calender-days">Thu</p>
+      <p class="calender-days">Fri</p>
+      <p class="calender-days">Sat</p>
+      
+      <!-- HOURS -->
+      <p class="calender-hours">8:00</p>
+      
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours">9:00</p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours">10:00</p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours">11:00</p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours">12:00</p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours">13:00</p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours">14:00</p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours">15:00</p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours">16:00</p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours">17:00</p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours">18:00</p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours">19:00</p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours">20:00</p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      <p class="calender-hours"></p>
+      
+      <!-- EVENTS -->
+      {% for registration in user.student_registration_set.all %}
+        {% for event in registration.crn.section_schedules_set.all  %}
+        <div class="reg-calender-event day-{{event.day_of_week}} hour-start-{{event.time.start_time.hour}}-{% if event.time.start_time.minute == 0 %}00{% elif event.time.start_time.minute <= 20 %}20{%elif event.time.start_time.minute <= 40 %}40{%else%}60{%endif%} hour-end-{{event.time.end_time.hour}}-{% if event.time.end_time.minute == 0 %}00{% elif event.time.end_time.minute <= 20 %}20{%elif event.time.end_time.minute <= 40 %}40{%else%}60{%endif%}">
+            <p class="montserrat-medium">{{registration.crn.course.name}}</p>
+            <div class="reg-event-time">
+              <img src="{% static 'icons/clock.png' %}" alt="">
+              <p class="montserrat-regular">{{event.time.start_time.hour}}:{{event.time.start_time.minute}} - {{event.time.end_time.hour}}:{{event.time.end_time.minute}}</p>
+            </div>
+         </div>
+        {% endfor %}
+      {%endfor%}
+    </div>
+        </div>
 
+    </div>
+  </div>
+  {%if currentPlan %}
+
+  <div class="plan-section">
+    <h1 class="reg-registration-section-header"><img src="{% static 'icons/registration1.png'%}" alt="">Courses</h1>
+      <table class="plan-courses-table">
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>CRN</th>
+          <th>Instructor</th>
+          <th>Time</th>
+          <th>Location</th>
+          <th>Actions</th>
+        </tr>
+
+        <tr>
+          <td>IT7001</td>
+          <td>System Analysis & Design</td>
+          <td>
+            <select name="" id="">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">3</option>
+            </select>
+          </td>
+          <td>Mr ahmed</td>
+          <td>
+            <p>MO 10:00 - 12:00 AM</p>
+            <p>MO 10:00 - 12:00 AM</p>
+          </td>
+          <td>
+            <p>B19.250</p>
+            <p>B19.250</p>
+          </td>
+          <td><button>Add</button></td>
+        </tr>
+      </tr>
+
+      {% for course in courses%}
+      <tr>
+        <td>{{course.department.department_code}}{{course.code}}</td>
+        <td>{{course.name}}</td>
+        <td>
+          <select name="" id="">
+            <option value="none">CRN</option>
+            {%for section in course.section_set.all %}
+            <option value="{{section}}">{{section}}</option>
+            {%endfor%}
+          </select>
+        </td>
+        <td></td>
+        <td>
+        </td>
+        <td>
+          
+        </td>
+        <td><button>Show</button></td>
+      </tr>
+      {%endfor%}
+      </table>
+  </div>
+  </div>
+  {%endif%}
+
+  <div class="plan-new-plan-form">
+    <p>Create a new plan</p>
+    <form action="{% url 'new_plan' %}" method="post">
+      {%csrf_token%}
+      {{newPlanForm.as_p}}
+      <button type="submit">Create</button>
+    </form>
+  </div>
 
 
 {% endblock %}

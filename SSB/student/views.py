@@ -5,7 +5,10 @@ import datetime
 from django.http import HttpResponse
 from django.core.paginator import Paginator
 from django.db.models import Value, F,ExpressionWrapper
-from django.db.models.fields import BooleanField,IntegerField,CharField # Or appropriate field type
+from django.db.models.fields import BooleanField,IntegerField,CharField 
+from .models import Student_plan
+from .forms import StudentPlanForm
+from django.urls import reverse
 
 def redirect_user(request):
     profile_type = request.user.profile.user_type
@@ -21,8 +24,6 @@ def dashboard(request):
     return render(request, 'dashboard.html')
 
 @login_required
-def getUserSections(request):
-    currentSemester = Semester.objects.get(is_current=True)
 def conflictCheck(request,registeredSections,unregisteredSection):
     unregisteredSchedules = Section_schedules.objects.filter(crn=unregisteredSection) 
     registeredSchedules = Section_schedules.objects.filter(crn__in=registeredSections.values_list('crn'))
@@ -37,6 +38,7 @@ def conflictCheck(request,registeredSections,unregisteredSection):
 
 @login_required
 def getUserSections(request):
+    currentSemester = Semester.objects.get(is_current=True)
     
     registeredSections = Section.objects.filter(
         crn__in=Student_registration.objects.filter(student=request.user).values_list('crn')
@@ -61,7 +63,6 @@ def registration(request):
     # Paginator set up 
     unregisteredSectionsPaginator = Paginator(unregisteredSections,10)
     pageNumber = request.GET.get('page')
-    print(pageNumber)
     unregisteredSectionsPageObject = unregisteredSectionsPaginator.get_page(pageNumber)
     
     configs =  Configurations.objects.first()
@@ -143,7 +144,7 @@ def section_deregister(request,section_id,user_id):
 def week_at_glance(request):
     return render(request,'week_at_glance.html')
 
-def enrolle_courses(request):
+def enrolled_courses(request):
     registeredSections,unregisteredSections = getUserSections(request)
     configs =  Configurations.objects.first()
     return render(request,'enrolled_courses.html',{"registeredSections":registeredSections,"configs":configs})
@@ -155,4 +156,56 @@ def student_profile(request):
 
 @login_required
 def plan_ahead(request):
-    return render(request, 'plan_ahead.html', {'profile': profile})
+    courses = Course.objects.all()
+    plans = Student_plan.objects.filter(student=request.user)
+    newPlanForm = StudentPlanForm()
+    currentPlan = ''
+    if (request.GET.get('plan')):
+        if plans.get(plan_id=int(request.GET.get('plan'))):
+            currentPlan = plans.get(plan_id=int(request.GET.get('plan')))
+        elif plans.get(plan_id=0):
+            currentPlan = plans.get(plan_id=0)
+    else:
+        try:
+            if plans.get(plan_id=0):
+                currentPlan = plans.get(plan_id=0)
+        except:
+            currentPlan = ''
+
+
+
+    return render(request, 'plan_ahead.html',{"courses":courses,"plans":plans,"newPlanForm":newPlanForm,'currentPlan':currentPlan})
+
+
+@login_required
+def new_plan(request):
+    courses = Course.objects.all()
+    plans = Student_plan.objects.filter(student=request.user)
+    newPlanForm = StudentPlanForm()
+
+    if request.method == 'POST':
+        form = StudentPlanForm(request.POST)
+        print(request.POST)
+        if form.is_valid():
+           new_plan_form = form.save(commit=False) 
+           new_plan_form.student = request.user
+           new_plan_form.save()
+           print("plan created") 
+
+    return render(request, 'plan_ahead.html',{"courses":courses,"plans":plans,"newPlanForm":newPlanForm})
+
+@login_required
+def delete_plan(request, plan_id):
+    courses = Course.objects.all()
+    plans = Student_plan.objects.filter(student=request.user)
+    newPlanForm = StudentPlanForm()
+    request.GET.get('plan')
+    plan_id
+    try:
+        plan_to_delete = Student_plan.objects.get(plan_id=plan_id)
+        if plan_to_delete.student == request.user:
+            plan_to_delete.delete()
+    except:
+        return redirect('plan_ahead')
+    
+    return redirect('plan_ahead')

@@ -407,6 +407,7 @@ a {
   border: none;
   border-radius: 2px;
   padding: 0.25rem 1rem;
+  
   transition: all 0.2s;
   cursor: pointer;
 }
@@ -447,32 +448,39 @@ a {
 
 }
 
-.reg-registration-table {
+.reg-registration-table,
+.plan-courses-table{
   width: 100%;
   border-collapse: collapse;
 }
 
 .reg-registration-table td,
-.reg-registration-table th {
+.reg-registration-table th,
+.plan-courses-table td,
+.plan-courses-table th{
     padding:15px 5px;
     display: table-cell;
     text-align: left;
     vertical-align: middle;
 }
 
-.reg-registration-table tr{
+.reg-registration-table tr,
+.plan-courses-table tr{
   border-bottom:  solid rgba(0,0,0,0.12) 1px
 }
 
 
-.reg-registration-table tr:nth-of-type(even){
+.reg-registration-table tr:nth-of-type(even),
+.plan-courses-table tr:nth-of-type(even){
   background-color: #F4F6F7;
 }
-.reg-registration-table:nth-of-type(1) tr:last-of-type{
+.reg-registration-table:nth-of-type(1) tr:last-of-type
+.plan-courses-table:nth-of-type(1) tr:last-of-type{
   background-color: #F4F6F7;
 }
 
-.reg-registration-table {
+.reg-registration-table,
+.plan-courses-table {
   text-align: left;
 }
 
@@ -614,6 +622,78 @@ a {
   background-color: #4e455f;
 }
 
+.plan-section{
+    width: 80%;
+    margin: 2.5rem auto;  
+}
+.plan-plans .reg-calender{
+  width: 65%;
+  margin: 0;
+}
+
+.plan-section .reg-registration-section-header{
+  margin-bottom:2.5rem;
+}
+.plan-plans{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: flex-start;
+}
+.plan-plan-control > div:nth-of-type(1){
+  display: flex;
+  gap: 1rem;
+}
+.plan-plan-control > div:nth-of-type(1){
+  height: 1.5rem;
+  margin-bottom:1rem ;
+}
+.plan-plan-control > div:nth-of-type(1) select{
+  background-color: #F4F6F7;
+  width:7rem;
+  border: none;
+  text-align: center;
+  font-size: 0.9rem;
+  border-radius: 10rem;
+  padding: 0.1rem 0.25rem; 
+  cursor: pointer;
+}
+
+.plan-plan-control > div:nth-of-type(1) button{
+  background-color: #F4F6F7;
+  border-radius: 10rem;
+  height: 100%;
+  aspect-ratio: 1/1;
+  border: none;
+  cursor: pointer;
+}
+
+.plan-added-sections{
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.plan-added-section {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.plan-added-section button{
+  height: 1.25rem;
+  padding: 0.5rem 0.5rem;  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
 
 
-
+.plan-new-plan-form {
+  position: fixed;
+  top: 3rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: ;
+}

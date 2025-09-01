@@ -6,6 +6,12 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Student_plan(models.Model):
     plan_id = models.AutoField(primary_key=True,null=False)
-    plan_name = models.CharField(max_length=100, null=False)
+    name = models.CharField(max_length=100, null=False)
     student = models.ForeignKey(User, on_delete=models.CASCADE)
     sections = models.ManyToManyField(Section)
+
+    def __str__(this):
+        return str(this.name)
+
+
+        
