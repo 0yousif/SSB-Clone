@@ -262,16 +262,24 @@ class Admissions(models.Model):
         return f"{self.CPR} - admission"
 
 GRADE_CHOICES = (
-    ('A', 'A'),
-    ('B', 'B'), 
-    ('C', 'C'),
-    ('D', 'D'),
-    ('F', 'F'),
+    ('A', 4.0),
+    ('B', 3.0),
+    ('C', 2.0),
+    ('D', 1.0),
+    ('F', 0.0),
 )
+
 
 class Grades(models.Model):    
     grade_id = models.AutoField(primary_key=True,null=False)    
     grade = models.CharField(max_length=1, choices=GRADE_CHOICES)    
-    registration_id = models.ForeignKey(Student_registration, on_delete=models.CASCADE)    
+    registration = models.ForeignKey(Student_registration, on_delete=models.CASCADE)    
     def __str__(this):
         return f"{this.grade_id} - {this.grade}"
+
+
+class Transcript(models.Model):
+    student = models.OneToOneField(Profile, on_delete=models.CASCADE, primary_key=True)
+
+    def __str__(self):
+        return f"Transcript for {self.student.user.username}"

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
-from adminstrator.models import Profile, Section, Course, Departments, Semester, Location, Time, Section_schedules,Student_registration,Configurations, Attendance
+from adminstrator.models import Profile, Section, Course, Departments, Semester, Location, Time, Section_schedules,Student_registration,Configurations, Attendance, Transcript, Grades, GRADE_CHOICES
 import datetime
 from django.http import HttpResponse
 from django.views.generic.edit import CreateView
@@ -10,6 +10,7 @@ from django.contrib import messages
 
 
 from adminstrator.models import Admissions
+
 
 
 def home(request):
@@ -177,3 +178,81 @@ def student_attendance(request):
             })
 
         return render(request, 'student_attendance.html', {'attendance_data':attendance_data})
+
+
+#FORMULA
+#TGPA =	Total of Semester Grade Points (sum of all GPV x sum of all Course Credits attempted) / Total of all Course Credits for the Semester
+
+# Cumulative CGPA =	Total of all Grade Points (sum of all GPV x sum of all Course Credits) / Total of All Course Credits of all Semesters
+
+
+@login_required
+def transcript(request):
+    grade_dict = dict(GRADE_CHOICES)
+    
+    grades = Grades.objects.filter(
+        registration__student=request.user
+    ).select_related(
+        'registration__crn__semester',
+        'registration__crn__course',
+        'registration__crn__course__department',
+        'registration'  
+    ).order_by('-registration__crn__semester__semester_id')
+    
+    semesters = {}
+    for grade in grades:
+        semester_id = grade.registration.crn.semester.semester_id
+        course_credits = grade.registration.crn.course.credit_hours
+        registration_year = grade.registration.registered_date.year
+        
+        if semester_id not in semesters:
+            semesters[semester_id] = {
+                'id': semester_id,
+                'year': registration_year,  
+                'grades': [],
+                'total_grade_points': 0,
+                'total_attempted_credits': 0,
+                'total_passed_credits': 0,
+                'gpa': 0
+            }
+        
+        grade_point = grade_dict.get(grade.grade, 0)
+        gpv = grade_point * course_credits
+        
+        semesters[semester_id]['grades'].append(grade)
+        semesters[semester_id]['total_grade_points'] += gpv
+        semesters[semester_id]['total_attempted_credits'] += course_credits
+        
+        if grade.grade != 'F':
+            semesters[semester_id]['total_passed_credits'] += course_credits
+    
+    semester_data = []
+    cumulative_grade_points = 0
+    overall_attempted_credits = 0
+    overall_passed_credits = 0
+    
+    for semester_id, data in sorted(semesters.items(), reverse=True):
+        semester_gpa = data['total_grade_points'] / data['total_attempted_credits'] if data['total_attempted_credits'] > 0 else 0
+        
+        semester_data.append({
+            'id': data['id'],
+            'year': data['year'],  
+            'grades': data['grades'],
+            'gpa': semester_gpa,
+            'total_attempted_credits': data['total_attempted_credits'],
+            'total_passed_credits': data['total_passed_credits']
+        })
+        
+        cumulative_grade_points += data['total_grade_points']
+        overall_attempted_credits += data['total_attempted_credits']
+        overall_passed_credits += data['total_passed_credits']
+    
+    overall_gpa = cumulative_grade_points / overall_attempted_credits if overall_attempted_credits > 0 else 0
+
+    return render(request, 'transcript.html', {
+        'semester_data': semester_data,
+        'overall_gpa': overall_gpa,
+        'overall_attempted_credits': overall_attempted_credits,
+        'overall_passed_credits': overall_passed_credits
+    })
+
