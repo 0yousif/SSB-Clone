@@ -183,8 +183,8 @@
   {%endif%}
 
   <div class="plan-new-plan-form">
-    <p>Create a new plan</p>
     <form action="{% url 'new_plan' %}" method="post">
+      <p>Create a new</p>
       {%csrf_token%}
       {{newPlanForm.as_p}}
       <button type="submit">Create</button>

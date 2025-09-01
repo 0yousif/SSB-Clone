@@ -8,7 +8,6 @@ from django.db.models import Value, F,ExpressionWrapper
 from django.db.models.fields import BooleanField,IntegerField,CharField 
 from .models import Student_plan
 from .forms import StudentPlanForm
-from django.urls import reverse
 
 def redirect_user(request):
     profile_type = request.user.profile.user_type
@@ -179,10 +178,6 @@ def plan_ahead(request):
 
 @login_required
 def new_plan(request):
-    courses = Course.objects.all()
-    plans = Student_plan.objects.filter(student=request.user)
-    newPlanForm = StudentPlanForm()
-
     if request.method == 'POST':
         form = StudentPlanForm(request.POST)
         print(request.POST)
@@ -191,9 +186,8 @@ def new_plan(request):
            new_plan_form.student = request.user
            new_plan_form.save()
            print("plan created") 
-
-    return render(request, 'plan_ahead.html',{"courses":courses,"plans":plans,"newPlanForm":newPlanForm})
-
+    
+    return redirect('plan_ahead')
 @login_required
 def delete_plan(request, plan_id):
     courses = Course.objects.all()
@@ -207,5 +201,5 @@ def delete_plan(request, plan_id):
             plan_to_delete.delete()
     except:
         return redirect('plan_ahead')
-    
+        
     return redirect('plan_ahead')
