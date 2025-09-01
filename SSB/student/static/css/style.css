@@ -489,6 +489,8 @@ body.home-page {
   flex-direction: column;
   gap: 5vh;
 }
+
+
 body.home-page p {
   font-size: 3vh;
 }
@@ -496,6 +498,8 @@ body.home-page p {
 body.home-page h1 {
   font-size: 8vh;
 }
+
+
 .reg-registration-filters {
   display: flex;
   justify-content: space-between;

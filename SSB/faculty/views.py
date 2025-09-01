@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from adminstrator.models import Profile, Attendance, Student_registration, Section, Semester, Grades
+from adminstrator.models import Profile, Attendance, Student_registration, Section, Semester, Grades, Transcript
 from django.utils import timezone
 
 @login_required

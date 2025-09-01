@@ -20,4 +20,5 @@ urlpatterns = [
     path('plan_ahead/<int:plan_id>/section/remove/<int:crn>',views.plan_remove_section, name='plan_remove_section'),
     path('apply/', views.admissionCreate.as_view(), name='admission'),
     path('attendance/', views.student_attendance, name='attendance_report'),
+    path('transcript/', views.transcript, name='transcript'),
 ]
