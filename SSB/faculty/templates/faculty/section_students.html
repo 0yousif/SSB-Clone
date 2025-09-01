@@ -1,13 +1,20 @@
-{% extends 'base.html' %} {% block content %}
-<div class="student-list-page">
-  <a href="{% url 'tutor_sections' %}">Back</a>
+{% extends 'base.html' %}  {% load static %}  {% block content %}
+<head>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
 
-  <h1>Students in {{ section.course.name }}</h1>
+<div class="tutor-sections-body">
+<div class="tutor-sections-page">
+    <a href="{% url 'tutor_sections' %}">Back</a>
+
+  <h1 class="section-header poppins-medium">
+    <img class="icon" src="{% static 'icons/registration1.png' %}" alt="" />
+<strong>Students in {{ section.course.name }}</strong> </h1>
 
   {% if not students %}
-  <p>No students enrolled.</p>
+  <p class="no-sections">No students enrolled.</p>
   {% else %}
-  <table class="students-table">
+  <table class="sections-table">
     <tr>
       <th>Academic Number</th>
       <th>First Name</th>
@@ -29,29 +36,7 @@
   </table>
   {% endif %}
 </div>
+</div>
 
-<style>
-  .student-list-page {
-    margin: 30px;
-    padding: 25px;
-  }
-  .students-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-  }
-  .students-table th,
-  .students-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  .students-table th {
-    background-color: #f8f9fa;
-    font-weight: bold;
-  }
-  .students-table tr:hover {
-    background-color: #f0f0f0;
-  }
-</style>
+
 {% endblock %}

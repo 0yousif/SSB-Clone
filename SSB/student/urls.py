@@ -14,4 +14,6 @@ urlpatterns = [
     path('week_at_glance/',views.week_at_glance, name='week_at_glance'),
     path('enrolle_courses/',views.enrolle_courses, name='enrolle_courses'),
     path('apply/', views.admissionCreate.as_view(), name='admission')
+    path('attendance/', views.student_attendance, name='attendance_report'),
+
 ]

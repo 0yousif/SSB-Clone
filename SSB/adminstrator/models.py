@@ -246,14 +246,6 @@ class Attendance(models.Model):
         return f"Attendance {self.attendance_id}"
 
 
-class Grades(models.Model):
-    grade_id = models.AutoField(primary_key=True, null=False)
-    grade = models.CharField(max_length=1)
-    registration_id = models.ForeignKey(
-        Student_registration, on_delete=models.CASCADE)
-
-    def __str__(this):
-        return this.grade_id
 
 
 class Admissions(models.Model):
@@ -268,3 +260,18 @@ class Admissions(models.Model):
 
     def __str__(self):
         return f"{self.CPR} - admission"
+
+GRADE_CHOICES = (
+    ('A', 'A'),
+    ('B', 'B'), 
+    ('C', 'C'),
+    ('D', 'D'),
+    ('F', 'F'),
+)
+
+class Grades(models.Model):    
+    grade_id = models.AutoField(primary_key=True,null=False)    
+    grade = models.CharField(max_length=1, choices=GRADE_CHOICES)    
+    registration_id = models.ForeignKey(Student_registration, on_delete=models.CASCADE)    
+    def __str__(this):
+        return f"{this.grade_id} - {this.grade}"

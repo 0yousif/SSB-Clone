@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from adminstrator.models import Profile, Attendance, Student_registration, Section, Semester
+from adminstrator.models import Profile, Attendance, Student_registration, Section, Semester, Grades
 from django.utils import timezone
 
 @login_required
@@ -80,16 +80,62 @@ def tutor_sections(request):
             tutor=request.user,
             semester=current_semester
         ).select_related('course', 'course__department')
-    else:
-        sections = Section.objects.none()
-
     
-    return render(request, 'faculty/tutor_sections.html',        {'sections': sections , 'current_semester':current_semester,})
+    return render(request, 'faculty/tutor_sections.html',{'sections': sections , 'current_semester':current_semester,})
+
 
 @login_required
 def section_students(request, crn):
     section = Section.objects.get(crn=crn, tutor=request.user)
     students = Student_registration.objects.filter(crn=section)
     
-    return render(request, 'faculty/section_students.html', {    'section': section,
+    return render(request, 'faculty/section_students.html', {'section': section,
         'students': students,})
+
+
+
+@login_required
+def grade_students(request, crn):
+    section = Section.objects.get(crn=crn, tutor=request.user)  
+    students = Student_registration.objects.filter(crn=section)
+    grades_submitted = Grades.objects.filter(registration_id__crn=section).exists()
+    
+    if request.method == 'POST' and not grades_submitted:
+        for student in students:
+            grade_value = request.POST.get(f'grade_{student.registration}')
+            if grade_value:
+                Grades.objects.update_or_create(
+                    registration_id=student,
+                    defaults={'grade': grade_value}
+                )
+                
+                if grade_value == 'F':
+                    student.registration_status = 'failed'
+                    
+                    profile = student.student.profile
+                    course_credits = section.course.credit_hours 
+                    profile.total_credits_earned = max(0, profile.total_credits_earned - course_credits)
+                    profile.save()
+                
+                elif student.registration_status == 'failed':
+                    student.registration_status = 'active'
+                
+                student.save()
+        
+        grades_submitted = True
+    
+    return render(request, 'faculty/grade_students.html', {
+        'section': section, 
+        'students': students,
+        'grades_submitted': grades_submitted,
+    })
+
+@login_required
+def grade_sections(request):
+    current_semester = Semester.objects.get(is_current=True)
+    sections = Section.objects.filter(tutor=request.user, semester=current_semester)
+    return render(request, 'faculty/grade_sections.html', {
+        'sections': sections,
+        'current_semester': current_semester,
+
+    })
