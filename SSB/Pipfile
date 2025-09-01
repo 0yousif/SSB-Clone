@@ -1,0 +1,9 @@
+[packages]
+django = "*"
+psycopg2-binary = "*"
+python-dotenv = "*"
+whitenoise = "*"
+gunicorn = "*"
+dj-database-url = "*"
+
+[dev-packages]
