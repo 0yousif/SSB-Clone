@@ -174,24 +174,38 @@ def student_profile(request):
     return render(request, 'student_profile.html', {'profile': profile})
 
 @login_required
+def get_current_plan(request,planGet):
+    if (planGet):
+        if plans.get(plan_id=int(planGet)):
+            return plans.get(plan_id=int(planGet))
+        elif plans.get(plan_id=0):
+            return plans.get(plan_id=0)
+    else:
+        try:
+            if plans.get(plan_id=0):
+                return plans.get(plan_id=0)
+        except:
+            return ''
+    return ''
+
+@login_required
 def plan_ahead(request):
     courses = Course.objects.all()
     plans = Student_plan.objects.filter(student=request.user)
     newPlanForm = StudentPlanForm()
     currentPlan = ''
+
     if (request.GET.get('plan')):
         if plans.get(plan_id=int(request.GET.get('plan'))):
-            currentPlan = plans.get(plan_id=int(request.GET.get('plan')))
+            currentPlan =  plans.get(plan_id=int(request.GET.get('plan')))
         elif plans.get(plan_id=0):
             currentPlan = plans.get(plan_id=0)
     else:
         try:
             if plans.get(plan_id=0):
-                currentPlan = plans.get(plan_id=0)
+                currentPlan =  plans.get(plan_id=0)
         except:
             currentPlan = ''
-
-
 
     return render(request, 'plan_ahead.html',{"courses":courses,"plans":plans,"newPlanForm":newPlanForm,'currentPlan':currentPlan})
 
@@ -208,6 +222,8 @@ def new_plan(request):
            print("plan created") 
     
     return redirect('plan_ahead')
+
+
 @login_required
 def delete_plan(request, plan_id):
     courses = Course.objects.all()
@@ -222,6 +238,32 @@ def delete_plan(request, plan_id):
     except:
         return redirect('plan_ahead')
         
+    return redirect('plan_ahead')
+
+@login_required
+def plan_add_section(request,plan_id,crn):
+    if Student_plan.objects.filter(plan_id=plan_id,student=request.user,sections=crn).exists():
+        courses = Course.objects.all()
+        plans = Student_plan.objects.filter(student=request.user)
+        newPlanForm = StudentPlanForm()
+        currentPlan = get_current_plan(plan_id)
+
+        return render(request, 'plan_ahead.html',{"courses":courses,"plans":plans,"newPlanForm":newPlanForm,'currentPlan':currentPlan})
+        Student_plan.objects.filter(plan_id=plan_id,student=request.user).sections.add(crn)
+    courses = Course.objects.all()
+    plans = Student_plan.objects.filter(student=request.user)
+    newPlanForm = StudentPlanForm()
+    currentPlan = get_current_plan(plan_id)
+
+    return render(request, 'plan_ahead.html',{"courses":courses,"plans":plans,"newPlanForm":newPlanForm,'currentPlan':currentPlan})
+
+        
+
+
+
+@login_required
+def plan_remove_section(request,plan_id,crn):
+    print("section added to the plan")
     return redirect('plan_ahead')
 
 class admissionCreate(CreateView):

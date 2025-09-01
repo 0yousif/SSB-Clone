@@ -16,6 +16,8 @@ urlpatterns = [
     path('plan_ahead/',views.plan_ahead, name='plan_ahead'),
     path('plan_ahead/new_plan',views.new_plan, name='new_plan'),
     path('plan_ahead/delete_plan/<int:plan_id>',views.delete_plan, name='delete_plan'),
+    path('plan_ahead/<int:plan_id>/section/add/<int:crn>',views.plan_add_section, name='plan_add_section'),
+    path('plan_ahead/<int:plan_id>/section/remove/<int:crn>',views.plan_remove_section, name='plan_remove_section'),
     path('apply/', views.admissionCreate.as_view(), name='admission'),
     path('attendance/', views.student_attendance, name='attendance_report'),
 ]

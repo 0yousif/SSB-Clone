@@ -385,7 +385,6 @@ a {
   border-radius: 2px;
   padding: 0.25rem 1rem;
   transition: all 0.2s;
-
   cursor: pointer;
 }
 .reg-registration-table-add-button {
@@ -716,6 +715,62 @@ body.home-page h1 {
   width: 100%;
   align-items: flex-start;
 }
+
+
+.plan-section-combinations{
+  flex-wrap: wrap;
+  flex-direction: column;
+  width: 80%;
+  
+}
+
+.plan-plans-combinations {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.plan-plans-combination{
+  width: 30%;
+  height: 5rem;
+}
+
+.plan-plans-combination .reg-calender{
+  width: 100%;
+  margin: 0;
+}
+
+.plan-combination-sections{
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.plan-combination-section{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  height: 1rem;
+  flex-wrap: nowrap;
+}
+
+.plan-combination-section-course{
+  display: flex;
+  gap: 5px;
+}
+
+.plan-combination-section-course-color{
+  height: 100%;
+  aspect-ratio: 1/1;
+  background-color: #0C1E33;
+
+}
+
+
+
+.plan-count{
+  font-size: 3rem;
+}
+
 .plan-plan-control > div:nth-of-type(1){
   display: flex;
   gap: 1rem;
@@ -768,8 +823,9 @@ body.home-page h1 {
   position: fixed;
   top: 3rem;
   width: 100%;
-  display: flex;
+  display: none;
   justify-content: center;
+  transition: all 0.2s;
 }
 
 .plan-new-plan-form form {
@@ -785,6 +841,24 @@ body.home-page h1 {
   border: 1px solid #0a2c61;
   border-radius: 10px;
 }
+
+.plan-new-plan-form form a,
+.plan-new-plan-form form button{
+  color: #0C1E33;
+  border: none;
+  border-radius: 2px;
+  padding: 0.25rem 1rem;
+  transition: all 0.2s;
+  cursor: pointer;
+  font-size: 0.75rem;
+  background-color: #ccefbf;
+}
+
+.plan-new-plan-form form a:hover,
+.plan-new-plan-form form button:hover{
+  background-color: #87a67b;
+}
+
 
 .login-right .btn {
   background-color: #0a2c61;
@@ -1105,3 +1179,5 @@ body.home-page h1 {
       margin: 8px 0;
       line-height: 1.4;
     }
+
+    

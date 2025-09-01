@@ -12,6 +12,3 @@ class Student_plan(models.Model):
 
     def __str__(this):
         return str(this.name)
-
-
-        

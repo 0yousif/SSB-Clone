@@ -3,6 +3,85 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/calender.css' %}" />
   
+<script>
+/*
+
+    Expected Object:
+
+    Courses {
+         'IT6001':{
+             name: 'System Analysis & Design',
+             course_code:'6001',
+             department_code: 'IT'
+             sections: [
+              {
+                crn: '1'
+                instructor: 'Mr ahmed',
+                schedules: [
+                  {
+                    start_time: {
+                      hour: 1
+                      minute: 10
+                      }
+                    end_time: {
+                      hour: 1
+                      minute: 10
+                    }
+                    location: 32 320
+                  }
+                ]
+                },
+             ]
+          }
+       }
+*/
+
+  const courses = {
+    {% for course in courses %}
+      "{{course.department.department_code}}{{course.code}}":{
+        'name':'{{course.name}}',
+        'course_code':'{{course.code}}',
+        'department_code':'{{course.department.department_code}}',
+        'sections':[
+          {% for section in course.section_set.all %}
+            {
+              'crn': '{{section.crn}}',
+              'instructor':'{{section.tutor.username}}',
+              'schedules': [
+                {% for schedule in section.section_schedules_set.all %}
+                  {
+                    'start_time': {
+                      'hour':'{{schedule.time.start_time.hour}}',
+                      'minute':'{{schedule.time.start_time.minute}}',
+                    },                    
+                    'end_time': {
+                      'hour':'{{event.time.end_time.hour}}',
+                      'minute':'{{schedule.time.end_time.minute}}',
+                    },
+                    'location':'{{schedule.location.building_code}} {{schedule.location.room_number}}'
+                  },
+                {% endfor %}
+              ]
+            },
+          {% endfor %}
+        ],
+      },
+    {% endfor %}
+  }
+
+
+  const sectionsInThePlan = [
+    {% for section in currentPlan.sections.all %}
+      {
+        course: '{{section.course.department.department_code}}{{section.course.code}}',
+        crn:'{{section.crn}}'
+        {% endfor %}
+      },
+  ]
+      
+  const shownCourses = []
+</script>
+
   <div class="plan-section">
     <h1 class="reg-registration-section-header"><img src="{% static 'icons/registration1.png'%}" alt="">Plan</h1>
     <div class="plan-plans">
@@ -16,7 +95,7 @@
                 <option value="{{ plan.plan_id }}" {% if currentPlan.plan_id == plan.plan_id %}selected{% endif %}>{{plan}}</option>
               {% endfor %}
             </select>
-            <button>+</button>
+            <button onclick="document.getElementById('plan-new-plan-form').style.display = 'flex'">+</button>
             {% if currentPlan %}
               <form action="{% url 'delete_plan' currentPlan.plan_id  %}" method="post">
                 {% csrf_token %}
@@ -100,10 +179,10 @@
       <p class="calender-hours"></p>
       
       <!-- EVENTS -->
-      {% for registration in user.student_registration_set.all %}
-        {% for event in registration.crn.section_schedules_set.all  %}
+      {% for section in currentPlan.sections.all %}
+        {% for event in section.section_schedules_set.all  %}
         <div class="reg-calender-event day-{{event.day_of_week}} hour-start-{{event.time.start_time.hour}}-{% if event.time.start_time.minute == 0 %}00{% elif event.time.start_time.minute <= 20 %}20{%elif event.time.start_time.minute <= 40 %}40{%else%}60{%endif%} hour-end-{{event.time.end_time.hour}}-{% if event.time.end_time.minute == 0 %}00{% elif event.time.end_time.minute <= 20 %}20{%elif event.time.end_time.minute <= 40 %}40{%else%}60{%endif%}">
-            <p class="montserrat-medium">{{registration.crn.course.name}}</p>
+            <p class="montserrat-medium">{{section.course.name}}</p>
             <div class="reg-event-time">
               <img src="{% static 'icons/clock.png' %}" alt="">
               <p class="montserrat-regular">{{event.time.start_time.hour}}:{{event.time.start_time.minute}} - {{event.time.end_time.hour}}:{{event.time.end_time.minute}}</p>
@@ -156,16 +235,19 @@
       </tr>
 
       {% for course in courses%}
-      <tr>
+      {% if course.name != 'no pre req' %}
+            <tr>
         <td>{{course.department.department_code}}{{course.code}}</td>
         <td>{{course.name}}</td>
         <td>
-          <select name="" id="">
-            <option value="none">CRN</option>
-            {%for section in course.section_set.all %}
-            <option value="{{section}}">{{section}}</option>
-            {%endfor%}
-          </select>
+          <form action="" id="{{course.department.department_code}}{{course.code}}-form">
+            <select  name="" id="">
+              <option value="none">CRN</option>
+              {%for section in course.section_set.all %}
+              <option value="{{section.crn}}">{{section.crn}}</option>
+              {%endfor%}
+            </select>
+          </form>
         </td>
         <td></td>
         <td>
@@ -173,21 +255,128 @@
         <td>
           
         </td>
-        <td><button>Show</button></td>
+        <td id="{{course.department.department_code}}{{course.code}}-actions">
+          <button>Show</button>
+        </td>
       </tr>
+      {%endif%}
+
       {%endfor%}
       </table>
   </div>
-  </div>
+  
   {%endif%}
 
-  <div class="plan-new-plan-form">
-    <form action="{% url 'new_plan' %}" method="post">
+  <div class="plan-new-plan-form" id="plan-new-plan-form">
+    <form action="{% url 'new_plan' %}" id="new_plan" method="post">
       <p>Create a new</p>
       {%csrf_token%}
       {{newPlanForm.as_p}}
-      <button type="submit">Create</button>
+      <div>
+        <a onclick="document.getElementById('plan-new-plan-form').style.display = 'none'">Cancel</a>
+      </div>
+      
     </form>
+    <button form="new_plan" type="submit">Create</button>
+  </div>
+
+  <div class="plan-section plan-section-combinations">
+    <h1 class="reg-registration-section-header"><img src="{% static 'icons/registration1.png'%}" alt="">Combinations</h1>
+    
+    <div class="plan-plans-combinations">
+      <div class="plan-plans-combination">
+        <p class="plan-count poppins-bold">1</p>
+        <div class="reg-calender">
+        <div class="reg-calender-calender-grid" id="reg-calender-calender-grid">
+          <!-- DAYS  -->
+          <p class="calender-days ">Week</p>
+          <p class="calender-days">Sun</p>
+          <p class="calender-days">Mon</p>
+          <p class="calender-days">Tue</p>
+          <p class="calender-days">Wed</p>
+          <p class="calender-days">Thu</p>
+          <p class="calender-days">Fri</p>
+          <p class="calender-days">Sat</p>
+          
+          <!-- HOURS -->
+          <p class="calender-hours">8:00</p>
+          
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">9:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">10:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">11:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">12:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">13:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">14:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">15:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">16:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">17:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">18:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">19:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">20:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          
+          <!-- EVENTS -->
+          {% for section in currentPlan.sections.all %}
+            {% for event in section.section_schedules_set.all  %}
+            <div class="reg-calender-event day-{{event.day_of_week}} hour-start-{{event.time.start_time.hour}}-{% if event.time.start_time.minute == 0 %}00{% elif event.time.start_time.minute <= 20 %}20{%elif event.time.start_time.minute <= 40 %}40{%else%}60{%endif%} hour-end-{{event.time.end_time.hour}}-{% if event.time.end_time.minute == 0 %}00{% elif event.time.end_time.minute <= 20 %}20{%elif event.time.end_time.minute <= 40 %}40{%else%}60{%endif%}">
+              {{section.course.code}}
+            </div>
+            {% endfor %}
+          {%endfor%}
+    
+        </div>
+        </div>
+        <div class="plan-combination-sections">
+          <div class="plan-combination-section">
+            <div class="plan-combination-section-course">
+              <div class="plan-combination-section-course-color"></div>
+              <p>IT6001 | System Analysis & Design</p>
+            </div>
+            <p class="plan-combination-section-crn">CRN: 12</p>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
   </div>
 
 
