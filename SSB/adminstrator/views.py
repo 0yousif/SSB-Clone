@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Profile, Semester, Course, Section
+from .models import Profile, Semester, Course, Section, Admissions
 from django.contrib.auth.models import User
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
@@ -15,6 +15,8 @@ from .forms import UserForm, StudentProfile, TutorProfile, studentLogin, TutorLo
 @login_required
 def signupUser(request):
     error_message = ""
+    admission_data = request.session.get('admission_data')
+    print("Admission data from session:", admission_data)
     if request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
@@ -43,6 +45,8 @@ def signupUser(request):
                 return redirect('admindex')
         else:
             error_message = 'Invalid Signup - Try Again...'
+    elif admission_data:
+        form = UserForm(initial=admission_data)
     else:
         form = UserForm()
     context = {'form': form, 'error_message': error_message}
@@ -54,14 +58,22 @@ def signupUser(request):
 @login_required
 def adminregstudent(request, user_id):
     # print("request.user.profile", request.user)
+    print(request.session['admission_data']['id'])
+    admission_data = request.session.get('admission_data')
     userProfile = Profile.objects.get(user_id=user_id)
     if request.method == 'POST':
         profile_form = StudentProfile(
             request.POST, request.FILES, instance=userProfile)
         if profile_form.is_valid():
             profile_form.save()
-
+            admission = Admissions.objects.get(
+                id=request.session['admission_data']['id'])
+            admission.delete()
+            del request.session['admission_data']
             return redirect('admindex')
+    elif admission_data:
+        profile_form = StudentProfile(initial=admission_data)
+
     else:
         profile_form = StudentProfile(instance=userProfile)
 
@@ -87,6 +99,9 @@ def adminregtutor(request, user_id):
 
 @login_required
 def adminhome(request):
+    if 'admission_data' in request.session:
+        del request.session['admission_data']
+
     return render(request, 'admin_home.html')
 
 
@@ -122,7 +137,7 @@ def student_login(request):
             except Profile.DoesNotExist:
                 error_message = "ID not found"
                 context = {"form": form, "error_message": error_message}
-                return render(request, 'adminstrator/student_login.html', context)
+                return render(request, 'auth/student_login.html', context)
 
             user = profile.user
             user = authenticate(
@@ -137,15 +152,29 @@ def student_login(request):
     context = {'form': form, 'error_message': error_message}
     return render(request, 'auth/student_login.html', context)
 
-# def tutor_login(request):
-#     error_message = ""
-#     form = TutorLogin(request.POST)
 
-#     if(form.is_valid()):
-#         username = form.cleaned_data['username']
-#         password = form.cleaned_data['password']
+class AdmissionsList(ListView):
+    model = Admissions
 
-#         user = authenticate(request, username=username, password=password)
+
+def admission_session(request, admission_id):
+    admission = Admissions.objects.get(id=admission_id)
+
+    request.session['admission_data'] = {
+        'id': admission.id,
+        'username': admission.CPR,
+        'first_name': admission.first_name,
+        'last_name': admission.last_name,
+        'personal_email': admission.email,
+        'password1': admission.CPR,
+        'school': admission.school,
+        'gender': admission.gender,
+        'dob': (admission.dob).isoformat(),
+    }
+    print("Admission from session:", request.session['admission_data'])
+    print("Admission_____:", request.session['admission_data']['id'])
+
+    return redirect('admin_reg')
 
 
 ########################## CBVs ###################################
