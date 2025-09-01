@@ -58,7 +58,7 @@ def signupUser(request):
 @login_required
 def adminregstudent(request, user_id):
     # print("request.user.profile", request.user)
-    print(request.session['admission_data']['id'])
+
     admission_data = request.session.get('admission_data')
     userProfile = Profile.objects.get(user_id=user_id)
     if request.method == 'POST':
@@ -66,19 +66,19 @@ def adminregstudent(request, user_id):
             request.POST, request.FILES, instance=userProfile)
         if profile_form.is_valid():
             profile_form.save()
-            admission = Admissions.objects.get(
-                id=request.session['admission_data']['id'])
-            admission.delete()
-            del request.session['admission_data']
+            if  admission_data is not None:
+                admission = Admissions.objects.get(
+                    id=request.session['admission_data']['id'])
+                admission.delete()
+                del request.session['admission_data']
             return redirect('admindex')
-    elif admission_data:
+    elif admission_data is not None:
         profile_form = StudentProfile(initial=admission_data)
 
     else:
         profile_form = StudentProfile(instance=userProfile)
 
     return render(request, 'registration/registerprofile.html', {'profile_form': profile_form, 'profile': userProfile})
-
 
 @login_required
 def adminregtutor(request, user_id):
@@ -182,31 +182,25 @@ class SemesterCreate(CreateView):
     model = Semester
     fields = '__all__'
 
-
 class SemesterUpdate(UpdateView):
     model = Semester
     fields = '__all__'
     success_url = '/administrator/'
 
-
 class SemesterList(ListView):
     model = Semester
 
-
 class SemesterDetail(DetailView):
     model = Semester
-
 
 class SemesterDelete(DeleteView):
     model = Semester
     success_url = '/administrator/semester/list'
 
-# courses
-
-
 class CourseCreate(CreateView):
     model = Course
     fields = '__all__'
+    success_url = '/administrator/'
 
 
 class CourseUpdate(UpdateView):
@@ -233,6 +227,7 @@ class CourseDelete(DeleteView):
 class SectionCreate(CreateView):
     model = Section
     fields = '__all__'
+    success_url = '/administrator/'
 
 
 class SectionUpdate(UpdateView):

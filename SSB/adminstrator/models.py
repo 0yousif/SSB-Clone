@@ -133,7 +133,6 @@ class Profile(models.Model):
 
 #########################################################################
 
-
 class Course(models.Model):
     course_id = models.AutoField(primary_key=True, null=False)
     department = models.ForeignKey(Departments, models.CASCADE, null=False)
@@ -162,8 +161,8 @@ class Section(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False)
     tutor = models.ForeignKey(User, on_delete=models.PROTECT, null=False)
     schedule_type = models.CharField(choices=SCHEDULE_TYPES, null=False)
-    semester = models.ForeignKey(
-        Semester, on_delete=models.CASCADE, null=False)
+    semester = models.IntegerField(
+        validators=[MaxValueValidator(10),MinValueValidator(1)], null=False)
 
     def get_absolute_url(self):
         return reverse('section_detail', kwargs={'pk': self.crn})
@@ -187,8 +186,7 @@ class Time(models.Model):
     time_id = models.AutoField(primary_key=True, null=False)
     start_time = models.TimeField(null=False)
     end_time = models.TimeField(null=False)
-    period = models.IntegerField(null=False, validators=[
-                                 MaxValueValidator(2), MinValueValidator(1)])
+    period = models.IntegerField(null=False, validators=[MaxValueValidator(2), MinValueValidator(1)])
 
     def __str__(this):
         return str(this.time_id)
