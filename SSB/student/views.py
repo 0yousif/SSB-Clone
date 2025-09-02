@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
+
 from adminstrator.models import Profile, Section, Course, Departments, Semester, Location, Time, Section_schedules,Student_registration,Configurations, Attendance, Transcript, Grades, GRADE_CHOICES
 import datetime
 from django.http import HttpResponse
@@ -12,6 +13,7 @@ from .forms import StudentPlanForm
 from django.views.generic.edit import CreateView
 from django.urls import reverse
 from django.contrib import messages
+from django import forms
 
 
 from adminstrator.models import Admissions
@@ -273,20 +275,23 @@ def plan_remove_section(request,plan_id,crn):
 class admissionCreate(CreateView):
     model = Admissions
     fields = '__all__'
+    widgets = {
+        'dob': forms.DateInput(attrs={'type': 'date'}),
+    }
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, "Your admission was submitted successfully!")
+        messages.success(
+            self.request, "Your admission was submitted successfully!")
         return response
-
 
     def get_success_url(self):
         return reverse('student_login')
 
 
-
 @login_required
 def student_attendance(request):
+
         user = request.user
         current_semester = Semester.objects.get(is_current=True)
         registrations = Student_registration.objects.filter(student=user, crn__semester=current_semester)

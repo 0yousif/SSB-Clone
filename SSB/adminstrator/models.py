@@ -116,7 +116,8 @@ class Profile(models.Model):
     major = models.CharField(max_length=50, null=True)
     school = models.CharField(max_length=50, null=True)
     start_date = models.DateField(auto_now_add=True, null=True, blank=True)
-    current_semester = models.IntegerField(validators=[MaxValueValidator(10), MinValueValidator(1)], null=True, default=1)
+    current_semester = models.IntegerField(
+        validators=[MaxValueValidator(10), MinValueValidator(1)], null=True, default=1)
     gpa = models.DecimalField(
         max_digits=3, decimal_places=2, null=True, default=0)
     total_credits_earned = models.IntegerField(
@@ -127,7 +128,6 @@ class Profile(models.Model):
     personal_email = models.CharField(max_length=50, null=True)
     avatar = models.ImageField(
         upload_to='adminstrator/static/user_profiles', default='')
-
     def __str__(self):
         return str(self.user.username)
 
@@ -161,6 +161,10 @@ class Section(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False)
     tutor = models.ForeignKey(User, on_delete=models.PROTECT, null=False)
     schedule_type = models.CharField(choices=SCHEDULE_TYPES, null=False)
+
+    # @property
+    # def crn_pad(self):
+    #     return str(self.crn).zfill(5)
     semester = models.IntegerField(
         validators=[MaxValueValidator(10),MinValueValidator(1)], null=False)
 
@@ -220,6 +224,8 @@ class Configurations(models.Model):
         validators=[MaxValueValidator(200), MinValueValidator(0)], null=False)
     credits_limit = models.IntegerField(null=False, default=60)
     time_limit = models.IntegerField(null=False)
+    year = models.IntegerField(default=date.today().year)
+    id_counter = models.IntegerField(default=0)
 
 
 ATTENDANCE_CHOICES = (
@@ -244,6 +250,18 @@ class Attendance(models.Model):
         return f"Attendance {self.attendance_id}"
 
 
+MAJOR_CHOICES = (
+    ('Computer Engineering', 'Computer Engineering'),
+    ('Mechanical Engineering', 'Mechanical Engineering'),
+    ('Civil Engineering', 'Civil Engineering'),
+    ('Architecture', 'Architecture'),
+    ('Chemical Engineering', 'Chemical Engineering'),
+    ('Information Systems', 'Information Systems'),
+    ('Cybersecurity', 'Cybersecurity'),
+    ('Computer Science', 'Computer Science'),
+    ('Marketing', 'Marketing'),
+    ('Computer Science', 'Computer Science'),
+)
 
 
 class Admissions(models.Model):
@@ -255,9 +273,12 @@ class Admissions(models.Model):
         max_length=1, choices=GENDERS, default=GENDERS[0][0], null=True)
     school = models.CharField(max_length=50, null=True)
     dob = models.DateField(null=True, blank=True)
+    major = models.CharField(max_length=50, null=True,
+                             choices=MAJOR_CHOICES, default=MAJOR_CHOICES[0][0])
 
     def __str__(self):
         return f"{self.CPR} - admission"
+
 
 GRADE_CHOICES = (
     ('A', 4.0),

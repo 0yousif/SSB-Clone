@@ -8,19 +8,7 @@
   </form>
 </div>
 
-<script>
-  let selectGender = document.getElementById('id_gender')
-  M.FormSelect.init(selectGender)
 
-  let selectDep = document.getElementById('id_department_id')
-  M.FormSelect.init(selectDep)
-
-  let selectType = document.getElementById('id_user_type')
-  M.FormSelect.init(selectType)
-
-  let selectStatus = document.getElementById('id_status')
-  M.FormSelect.init(selectStatus)
-</script>
 {% else %}
 <h1>NOT ADMIN</h1>
 {% endif %} {% endblock %}

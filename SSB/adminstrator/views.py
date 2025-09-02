@@ -1,22 +1,25 @@
 from django.shortcuts import render, redirect
-from .models import Profile, Semester, Course, Section, Admissions
+from django.urls import reverse
+from .models import Profile, Semester, Course, Section, Admissions, Section_schedules, Time, Location
 from django.contrib.auth.models import User
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.decorators import login_required
-from django import forms
 from django.db.models import Q
 from django.contrib.auth import authenticate, login
-
-from .forms import UserForm, StudentProfile, TutorProfile, studentLogin, TutorLogin
+from django.core.mail import send_mail
+from SSB.settings import EMAIL_HOST_USER
+from .forms import UserForm, StudentProfile, TutorProfile, studentLogin, Sections, SectionSchedule
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 @login_required
 def signupUser(request):
     error_message = ""
     admission_data = request.session.get('admission_data')
-    print("Admission data from session:", admission_data)
     if request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
@@ -57,7 +60,6 @@ def signupUser(request):
 
 @login_required
 def adminregstudent(request, user_id):
-    # print("request.user.profile", request.user)
 
     admission_data = request.session.get('admission_data')
     userProfile = Profile.objects.get(user_id=user_id)
@@ -66,7 +68,21 @@ def adminregstudent(request, user_id):
             request.POST, request.FILES, instance=userProfile)
         if profile_form.is_valid():
             profile_form.save()
-            if  admission_data is not None:
+
+            # Email
+            subject = 'Acceptance of Admission'
+            message = f"""
+            Dear {userProfile.first_name} {userProfile.last_name},
+            Your academic number is: {userProfile.academic_number}
+            Your password is: {userProfile.user.username}
+
+            """
+            address = str(userProfile.personal_email)
+            send_mail(subject, message, EMAIL_HOST_USER,
+                      [address], fail_silently=False)
+
+            if admission_data is not None:
+
                 admission = Admissions.objects.get(
                     id=request.session['admission_data']['id'])
                 admission.delete()
@@ -82,7 +98,6 @@ def adminregstudent(request, user_id):
 
 @login_required
 def adminregtutor(request, user_id):
-    # print("request.user.profile", request.user)
     userProfile = Profile.objects.get(user_id=user_id)
     if request.method == 'POST':
         profile_form = TutorProfile(
@@ -157,6 +172,7 @@ class AdmissionsList(ListView):
     model = Admissions
 
 
+@login_required
 def admission_session(request, admission_id):
     admission = Admissions.objects.get(id=admission_id)
 
@@ -166,84 +182,136 @@ def admission_session(request, admission_id):
         'first_name': admission.first_name,
         'last_name': admission.last_name,
         'personal_email': admission.email,
-        'password1': admission.CPR,
+        'password': admission.CPR,
+        'password2': admission.CPR,
         'school': admission.school,
         'gender': admission.gender,
         'dob': (admission.dob).isoformat(),
+        'major': admission.major,
     }
-    print("Admission from session:", request.session['admission_data'])
-    print("Admission_____:", request.session['admission_data']['id'])
 
     return redirect('admin_reg')
 
 
-########################## CBVs ###################################
-class SemesterCreate(CreateView):
+@login_required
+def section_schedule(request, pk):
+    section = Section.objects.get(pk=pk)
+
+    try:
+        schedule = Section_schedules.objects.get(crn=pk)
+    except Section_schedules.DoesNotExist:
+        schedule = None
+
+    if request.method == 'POST':
+        form = SectionSchedule(request.POST)
+
+        if form.is_valid():
+            set_schedule = form.save(commit=False)
+            set_schedule.crn = section
+            set_schedule.save()
+            return redirect('section_detail', pk=section.crn)
+    else:
+        form = SectionSchedule(instance=schedule)
+
+    return render(request, 'edit_section_schedule.html', {'form': form, 'section': section})
+
+
+################## CBVs #################
+class SemesterCreate(LoginRequiredMixin, CreateView):
     model = Semester
     fields = '__all__'
+    success_url = '/administrator/semester/list'
 
-class SemesterUpdate(UpdateView):
+    
+
+class SemesterUpdate(LoginRequiredMixin, UpdateView):
+
     model = Semester
     fields = '__all__'
-    success_url = '/administrator/'
+    success_url = '/administrator/semester/list'
 
-class SemesterList(ListView):
+
+class SemesterList(LoginRequiredMixin, ListView):
     model = Semester
 
-class SemesterDetail(DetailView):
+
+class SemesterDetail(LoginRequiredMixin, DetailView):
     model = Semester
 
-class SemesterDelete(DeleteView):
+
+class SemesterDelete(LoginRequiredMixin, DeleteView):
     model = Semester
     success_url = '/administrator/semester/list'
 
-class CourseCreate(CreateView):
+# courses
+
+
+class CourseCreate(LoginRequiredMixin, CreateView):
     model = Course
     fields = '__all__'
-    success_url = '/administrator/'
+    success_url = '/administrator/course/list'
 
 
-class CourseUpdate(UpdateView):
+class CourseUpdate(LoginRequiredMixin, UpdateView):
     model = Course
     fields = '__all__'
-    success_url = '/administrator/'
+    success_url = '/administrator/course/list'
 
 
-class CourseList(ListView):
+class CourseList(LoginRequiredMixin, ListView):
     model = Course
 
 
-class CourseDetail(DetailView):
+class CourseDetail(LoginRequiredMixin, DetailView):
     model = Course
 
 
-class CourseDelete(DeleteView):
+class CourseDelete(LoginRequiredMixin, DeleteView):
     model = Course
-    success_url = '/administrator/course/list/'
+    success_url = '/administrator/course/list'
 
 #######################################################
 
 
-class SectionCreate(CreateView):
+class SectionCreate(LoginRequiredMixin, CreateView):
+    model = Section
+    form_class = Sections
+    success_url = '/administrator/section/list'
+
+
+
+class SectionUpdate(LoginRequiredMixin, UpdateView):
     model = Section
     fields = '__all__'
-    success_url = '/administrator/'
+    success_url = '/administrator/section/list'
 
 
-class SectionUpdate(UpdateView):
+class SectionList(LoginRequiredMixin, ListView):
     model = Section
+
+
+class SectionDetail(LoginRequiredMixin, DetailView):
+    model = Section
+
+
+class SectionDelete(LoginRequiredMixin, DeleteView):
+    model = Section
+    success_url = '/administrator/section/list'
+
+##### Time and place ###
+
+
+class TimeEdit(LoginRequiredMixin, CreateView):
+    model = Time
     fields = '__all__'
-    success_url = '/administrator/'
+
+    def get_success_url(self):
+        return self.request.GET.get('next', '/administrator/section/list')
 
 
-class SectionList(ListView):
-    model = Section
+class LocationEdit(LoginRequiredMixin, CreateView):
+    model = Location
+    fields = '__all__'
 
-
-class SectionDetail(DetailView):
-    model = Section
-
-
-class SectionDelete(DeleteView):
-    model = Section
-    success_url = '/administrator/section/list/'
+    def get_success_url(self):
+        return self.request.GET.get('next', '/administrator/section/list')

@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% block content %} 
 <div class="form-container">
   <form action="" method="post" class="form">
-    <h1>Make a section</h1>
+    <h1>Edit locations</h1>
     {% csrf_token %} {{ form.as_p }}
     
     <input type="submit" value="Submit" class="btn" />

@@ -1,3 +1,4 @@
+
 /* Google Fonts */
 .poppins-thin {
   font-family: 'Poppins', sans-serif;
@@ -310,8 +311,8 @@ a {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
-  gap: 2rem;
+  justify-content: center;
+  gap: 5rem;
 }
 
 .dashboard-get-started-box {
@@ -973,12 +974,10 @@ body.home-page h1 {
 }
 
 .card-grid {
-  display: grid;
-
-  grid-template-columns: repeat(auto-fit, 1fr);
+  display: flex;
+  flex-wrap: wrap;
 
   gap: 25px;
-  padding: 10px;
 
   border: #0a2c61;
 }
@@ -986,10 +985,11 @@ body.home-page h1 {
 .card-link {
   text-decoration: none;
   color: inherit;
+
 }
 
 .card-link:hover {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.12);
 }
 
 .card {
@@ -1111,7 +1111,7 @@ body.home-page h1 {
   background: #133d82;
 }
 
-.error-message{
+.error-message {
   color: rgba(255, 0, 0, 0.63);
 
   background-color: #fff6f6;
@@ -1119,9 +1119,16 @@ body.home-page h1 {
   border: 1px solid rgba(255, 0, 0, 0.63);
 
   border-radius: 30px;
-
 }
 
+/* FACULTY CSS */
+
+.tutor-sections-body {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 10px;
+}
 
   /* FACULTY CSS */
 
