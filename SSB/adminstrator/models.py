@@ -161,8 +161,7 @@ class Section(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False)
     tutor = models.ForeignKey(User, on_delete=models.PROTECT, null=False)
     schedule_type = models.CharField(choices=SCHEDULE_TYPES, null=False)
-    semester = models.IntegerField(
-        validators=[MaxValueValidator(10),MinValueValidator(1)], null=False)
+    semester = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True) 
 
     def get_absolute_url(self):
         return reverse('section_detail', kwargs={'pk': self.crn})

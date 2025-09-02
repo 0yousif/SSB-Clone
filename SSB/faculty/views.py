@@ -40,6 +40,9 @@ def student_detail(request, student_id):
     student = Profile.objects.get(student_detail_id=student_id, user_type='student')
     return render(request, 'student_profile.html', {'profile': student})
 
+
+
+
 @login_required
 def take_attendance(request):
     sections = Section.objects.filter(tutor=request.user)
@@ -47,6 +50,7 @@ def take_attendance(request):
     selected_section = None
     students = []
     attendance_submitted = False
+    student_attendance = []
     
     if request.method == 'POST':
         section_id = request.POST.get('section')
@@ -71,15 +75,25 @@ def take_attendance(request):
                             registration=student
                         )
                     attendance_submitted = True
+                
+                for student in students:
+                        attendance = Attendance.objects.get(
+                            date=today,
+                            registration=student
+                        )
+                        student_attendance.append({
+                            'student': student,
+                            'status': attendance.status
+                        })
     
     return render(request, 'faculty/attendance.html', {
         'sections': sections,
         'students': students,
         'today': today,
         'selected_section': selected_section,
-        'attendance_submitted': attendance_submitted
+        'attendance_submitted': attendance_submitted,
+        'student_attendance': student_attendance
     })
-
 
 @login_required
 def tutor_sections(request):
@@ -101,7 +115,6 @@ def section_students(request, crn):
     
     return render(request, 'faculty/section_students.html', {'section': section,
         'students': students,})
-
 
 
 @login_required
@@ -134,11 +147,25 @@ def grade_students(request, crn):
         
         grades_submitted = True
     
+    student_grades = []
+    for student in students:
+        grade = Grades.objects.get(registration_id=student)
+        student_grades.append({
+            'student': student,
+            'grade': grade.grade
+        })
+    
+
     return render(request, 'faculty/grade_students.html', {
         'section': section, 
         'students': students,
         'grades_submitted': grades_submitted,
+        'student_grades': student_grades
     })
+
+
+
+
 
 @login_required
 def grade_sections(request):

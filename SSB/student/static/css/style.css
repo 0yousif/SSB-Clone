@@ -1185,3 +1185,31 @@ body.home-page h1 {
     }
 
     
+      .grade-display {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 500;
+      display: inline-block;
+      text-align: center;
+      min-width: 30px;
+  }
+  
+  .grades { background-color: #d4edda; color: #155724; }
+  .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+  }
+  
+  .status-passed { background-color: #CCEFBF; color: black; }
+  .status-failed { background-color: #FDE1AC; color: black; }
+  
+  .success-message {
+      background-color: #CCEFBF;
+      color: #155724;
+      padding: 12px 20px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      border-left: 4px solid #28a745;
+  }
