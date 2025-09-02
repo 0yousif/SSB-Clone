@@ -1,6 +1,4 @@
-{% extends 'base.html' %} {% block content %} {% if object %}
-<h1>Edit <span class="teal-text">{{object.name}}</span></h1>
-{% else %} {% endif %}
+{% extends 'base.html' %} {% block content %} 
 <div class="form-container">
   <h1>Make a semester</h1>
   <form action="" method="post" class="form">
@@ -25,5 +23,4 @@
     <input type="submit" value="Submit" class="btn" />
   </form>
 </div>
-<script></script>
 {% endblock %}

@@ -43,9 +43,15 @@ urlpatterns = [
     path('section/<int:pk>', views.SectionDetail.as_view(), name='section_detail'),
     path('section/<int:pk>/delete',
          views.SectionDelete.as_view(), name='delete_section'),
+    path('section/<int:pk>/schedules',
+         views.section_schedule, name='edit_section_schedule'),
 
-     ##admissions CBVs
-     path('admissions/',views.AdmissionsList.as_view(), name='admin_admission'),
-     path("admissions/<int:admission_id>/", views.admission_session, name="admission_session"),
-     
+    # admissions CBVs
+    path('admissions/', views.AdmissionsList.as_view(), name='admin_admission'),
+    path("admissions/<int:admission_id>/",
+         views.admission_session, name="admission_session"),
+
+     path('locations/', views.LocationEdit.as_view(), name='edit_locations'),
+     path('times/', views.TimeEdit.as_view(), name='edit_times'),
+
 ]

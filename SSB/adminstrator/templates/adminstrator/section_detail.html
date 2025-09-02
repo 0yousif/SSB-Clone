@@ -16,6 +16,9 @@
       <div class="card-action">
         <a href="{% url 'update_section' section.crn %}">Edit</a>
         <a href="{% url 'delete_section' section.crn %}">Delete</a>
+        <a href="{% url 'edit_section_schedule' section.crn %}"
+          >Edit schedule</a
+        >
       </div>
     </div>
   </div>

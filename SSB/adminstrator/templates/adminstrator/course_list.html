@@ -1,6 +1,7 @@
 {% extends 'base.html' %} {% block content %}
 
 <h1 class="list-title">Course List</h1>
+<a class="button-logins" href="{% url 'make_course'%}"><button >Add Course</button></a>
 
 <div class="card-grid">
   {% for course in course_list %}

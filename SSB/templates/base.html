@@ -45,7 +45,19 @@
     </nav>
     <div class="base-side-bar" id="base-side-bar">
       <div class="side-bar-hide-container">
-        <button class="poppins-semibold active-bar-option">
+        
+        {% if user.is_superuser %}
+        <button class="poppins-semibold active-bar-option" onclick="document.location.href = 
+        '{% url 'admin_home' %}'">
+        {% elif user.profile.user_type == 'student' %}
+        <button class="poppins-semibold active-bar-option" onclick="document.location.href = 
+        '{% url 'dashboard' %}'">
+        {% else %}
+        <button class="poppins-semibold active-bar-option" onclick="document.location.href = 
+        '{% url 'faculty_dashboard' %}'">
+        {% endif %}
+
+
           <img src="{% static 'icons/element-4.png' %}" alt="" /> Dashboard
         </button>
       </div>

@@ -1,6 +1,10 @@
 {% extends 'base.html' %} {% block content %}
 
 <h1 class="list-title">Section List</h1>
+<a class="button-logins" href="{% url 'make_section'%}"
+  ><button>Add section</button></a
+>
+
 <div class="card-grid">
   {% for section in section_list %}
   <a href="{% url 'section_detail' section.crn %}" class="card-link">
@@ -15,4 +19,7 @@
     </div>
   </a>
 </div>
+{% empty %}
+<p>No items found.</p>
+
 {% endfor %} {% endblock %}

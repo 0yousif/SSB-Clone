@@ -116,7 +116,8 @@ class Profile(models.Model):
     major = models.CharField(max_length=50, null=True)
     school = models.CharField(max_length=50, null=True)
     start_date = models.DateField(auto_now_add=True, null=True, blank=True)
-    current_semester = models.IntegerField(validators=[MaxValueValidator(10), MinValueValidator(1)], null=True, default=1)
+    current_semester = models.IntegerField(
+        validators=[MaxValueValidator(10), MinValueValidator(1)], null=True, default=1)
     gpa = models.DecimalField(
         max_digits=3, decimal_places=2, null=True, default=0)
     total_credits_earned = models.IntegerField(
@@ -127,7 +128,6 @@ class Profile(models.Model):
     personal_email = models.CharField(max_length=50, null=True)
     avatar = models.ImageField(
         upload_to='adminstrator/static/user_profiles', default='')
-
     def __str__(self):
         return str(self.user.username)
 
@@ -164,6 +164,10 @@ class Section(models.Model):
     schedule_type = models.CharField(choices=SCHEDULE_TYPES, null=False)
     semester = models.ForeignKey(
         Semester, on_delete=models.CASCADE, null=False)
+    
+    # @property
+    # def crn_pad(self):
+    #     return str(self.crn).zfill(5)
 
     def get_absolute_url(self):
         return reverse('section_detail', kwargs={'pk': self.crn})
@@ -222,6 +226,8 @@ class Configurations(models.Model):
         validators=[MaxValueValidator(200), MinValueValidator(0)], null=False)
     credits_limit = models.IntegerField(null=False, default=60)
     time_limit = models.IntegerField(null=False)
+    year = models.IntegerField(default=date.today().year)
+    id_counter = models.IntegerField(default=0)
 
 
 ATTENDANCE_CHOICES = (
@@ -246,6 +252,18 @@ class Attendance(models.Model):
         return f"Attendance {self.attendance_id}"
 
 
+MAJOR_CHOICES = (
+    ('Computer Engineering', 'Computer Engineering'),
+    ('Mechanical Engineering', 'Mechanical Engineering'),
+    ('Civil Engineering', 'Civil Engineering'),
+    ('Architecture', 'Architecture'),
+    ('Chemical Engineering', 'Chemical Engineering'),
+    ('Information Systems', 'Information Systems'),
+    ('Cybersecurity', 'Cybersecurity'),
+    ('Computer Science', 'Computer Science'),
+    ('Marketing', 'Marketing'),
+    ('Computer Science', 'Computer Science'),
+)
 
 
 class Admissions(models.Model):
@@ -257,21 +275,27 @@ class Admissions(models.Model):
         max_length=1, choices=GENDERS, default=GENDERS[0][0], null=True)
     school = models.CharField(max_length=50, null=True)
     dob = models.DateField(null=True, blank=True)
+    major = models.CharField(max_length=50, null=True,
+                             choices=MAJOR_CHOICES, default=MAJOR_CHOICES[0][0])
 
     def __str__(self):
         return f"{self.CPR} - admission"
 
+
 GRADE_CHOICES = (
     ('A', 'A'),
-    ('B', 'B'), 
+    ('B', 'B'),
     ('C', 'C'),
     ('D', 'D'),
     ('F', 'F'),
 )
 
-class Grades(models.Model):    
-    grade_id = models.AutoField(primary_key=True,null=False)    
-    grade = models.CharField(max_length=1, choices=GRADE_CHOICES)    
-    registration_id = models.ForeignKey(Student_registration, on_delete=models.CASCADE)    
+
+class Grades(models.Model):
+    grade_id = models.AutoField(primary_key=True, null=False)
+    grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    registration_id = models.ForeignKey(
+        Student_registration, on_delete=models.CASCADE)
+
     def __str__(this):
         return f"{this.grade_id} - {this.grade}"
