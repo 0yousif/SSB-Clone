@@ -14,6 +14,7 @@ from django.views.generic.edit import CreateView
 from django.urls import reverse
 from django.contrib import messages
 from django import forms
+from SSB.decorators import role_permission
 
 
 from adminstrator.models import Admissions
@@ -23,7 +24,7 @@ from adminstrator.models import Admissions
 def home(request):
     return render(request, 'home.html')
 
-
+@login_required
 def redirect_user(request):
     try:
         profile = Profile.objects.get(user_id=request.user.id)
@@ -37,13 +38,16 @@ def redirect_user(request):
         return redirect('dashboard')
     if profile_type == 'tutor':
         return redirect('faculty_dashboard')
+    return redirect('home_page')
 
 
 @login_required
+@role_permission('student')
 def dashboard(request):
     return render(request, 'dashboard.html')
 
 @login_required
+@role_permission('student')
 def conflictCheck(request,registeredSections,unregisteredSection):
     unregisteredSchedules = Section_schedules.objects.filter(crn=unregisteredSection) 
     registeredSchedules = Section_schedules.objects.filter(crn__in=registeredSections.values_list('crn'))
@@ -57,6 +61,7 @@ def conflictCheck(request,registeredSections,unregisteredSection):
     return False
 
 @login_required
+@role_permission('student')
 def getUserSections(request):
     currentSemester = Semester.objects.get(is_current=True)
     
@@ -75,6 +80,7 @@ def getUserSections(request):
 
 
 @login_required
+@role_permission('student')
 def registration(request):
     if Profile.objects.get(user=request.user).user_type != "student":
         return HttpResponse("Unauthorized")
@@ -109,6 +115,7 @@ def doesHaveEnoughCredits(request, newCredits, max):
 
 
 @login_required
+@role_permission('student')
 def section_register(request, section_id, user_id):
     currentUserProfile = Profile.objects.get(user=request.user) 
     currentSemester = Semester.objects.get(is_current=True)
