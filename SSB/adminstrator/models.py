@@ -122,6 +122,7 @@ class Profile(models.Model):
         max_digits=3, decimal_places=2, null=True, default=0)
     total_credits_earned = models.IntegerField(
         validators=[MaxValueValidator(999)], null=True, default=0)
+    total_credits_attempted = models.IntegerField(default=0)
     status = models.CharField(
         choices=USER_STATUS_CHOICES, default=USER_STATUS_CHOICES[0][0], null=False)
     email = models.CharField(max_length=50, null=True)

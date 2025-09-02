@@ -48,7 +48,6 @@ def student_detail(request, student_id):
 
 
 
-
 @login_required
 def take_attendance(request):
     sections = Section.objects.filter(tutor=request.user)
@@ -82,14 +81,24 @@ def take_attendance(request):
                         )
                     attendance_submitted = True
                 
+                attendance_records = Attendance.objects.filter(
+                    date=today,
+                    registration__in=students
+                ).select_related('registration')
+                
+                attendance_dict = {record.registration_id: record for record in attendance_records}
+                
                 for student in students:
-                        attendance = Attendance.objects.get(
-                            date=today,
-                            registration=student
-                        )
+                    attendance = attendance_dict.get(student.pk)
+                    if attendance:
                         student_attendance.append({
                             'student': student,
                             'status': attendance.status
+                        })
+                    else:
+                        student_attendance.append({
+                            'student': student,
+                            'status': 'P'  
                         })
     
     return render(request, 'faculty/attendance.html', {
