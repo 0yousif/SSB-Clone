@@ -721,17 +721,22 @@ body.home-page h1 {
   flex-wrap: wrap;
   flex-direction: column;
   width: 80%;
+
+  
+
 }
 
 .plan-plans-combinations {
   display: flex;
   width: 100%;
   flex-wrap: wrap;
+  height: auto;
+  gap: 3rem;
 }
 
 .plan-plans-combination {
   width: 30%;
-  height: 5rem;
+  height: auto;
 }
 
 .plan-plans-combination .reg-calender {

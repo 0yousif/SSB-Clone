@@ -62,13 +62,11 @@
       },
     {% endfor %}
   }
-
-  const convertMinute = (string) =>{
-    if (string){
-      const minutes = Number(getMinute(string))
-      if (minutes < 20){
+  const convertMinute = (minute) =>{
+    if (minute){
+      if (minute < 20){
         return "20"
-      }else if(minutes < 40) {
+      }else if(minute < 40) {
         return "40"
      } else {
         return "60"
@@ -100,34 +98,40 @@
   }
 
   const bulkConflictCheck = (sectionsList) =>{
-    sectionsList.forEach((section1)=>{
+    let result = false
+     sectionsList.forEach((section1)=>{
       sectionsList.forEach((section2)=>{
         if (section1 !== section2){
-          isConflict = false
           section1.schedules.forEach((section1Schedule)=>{
             section2.schedules.forEach((section2Schedule)=>{
-
+              if (conflictCheck(section1Schedule,section2Schedule)){
+                result = true 
+              }
             })
           })
         }
       })
     })
-    return false 
+    return result
   }
 
   // Components
-  const combinationComponent = (eventsList, index)=>{
+  const combinationComponent = (sectionsList, index)=>{
     eventObjectsString = ''
-
-    eventsList.forEach((event)=>(
-            eventObjectsString += `<div class="reg-calender-event day-${event.day_of_week} hour-start-${event.start_time.hour}-${convertMinute(event.start_time.minute)} hour-end-${event.end_time.hour}-${convertMinute(event.end_time.minute)}">
-            <div class="reg-event-time">
-            ${event.course}
-            </div>`  
-    ))
-
-    let htmlElementsString = `
-        <div class="plan-plans-combination">
+    colors = ['purple','green','blue','yellow']
+    sectionsList.forEach((section,sectionIndex)=>{
+      section.schedules.forEach((event)=>(
+        eventObjectsString += `<div class="reg-calender-event-${colors[sectionIndex % colors.length]} day-${event.day_of_week} hour-start-${event.start_time.hour}-${convertMinute(event.start_time.minute)} hour-end-${event.end_time.hour}-${convertMinute(event.end_time.minute)}">
+        <div class="reg-event-time">
+          ${event.course}
+        </div>
+        </div>
+        `  
+      ))
+    })
+    console.log
+    return `
+          <div class="plan-plans-combination">
         <p class="plan-count poppins-bold">${index}</p>
         <div class="reg-calender">
         <div class="reg-calender-calender-grid" id="reg-calender-calender-grid">
@@ -197,8 +201,20 @@
           <p class="calender-hours"></p>
           
           <!-- EVENTS -->
-            ${eventObjectsString}
+        ${eventObjectsString}
+    
+        </div>
+        </div>
+        <div class="plan-combination-sections">
+          <div class="plan-combination-section">
+            <div class="plan-combination-section-course">
+              <div class="plan-combination-section-course-color"></div>
+              <p>IT6001 | System Analysis & Design</p>
             </div>
+            <p class="plan-combination-section-crn">CRN: 12</p>
+          </div>
+        </div>
+      </div>
     `
   }
   
@@ -227,8 +243,6 @@
   const cartesianProduct = (arrays) => arrays.reduce((acc, curr) => acc.flatMap(a => curr.map(b => [...a, b])),[[]]);
 
   const updateCombinations = () =>{
-    // const neededMatches = sectionsInThePlan.length + shownCourses.length + pickedSections.length
-    
     cartesianProductBaseList = []
     
     let tempList = []
@@ -242,13 +256,21 @@
     })
     
     possibleCombinations = cartesianProduct(cartesianProductBaseList).filter(combination=>!bulkConflictCheck(combination))
-    console.log("all combinations", cartesianProduct(cartesianProductBaseList))
-    console.log("possibleCombinations",possibleCombinations)
+
+    const combinationsSection = document.getElementById('plan-section-combinations') 
+    combinationsSection.innerHTML = ''
+    
+    possibleCombinations.forEach((possibleCombination,index)=>{
+      combinationsSection.innerHTML += combinationComponent(possibleCombination,index)
+    })
+  
+    // console.log('all possibilities',cartesianProduct(cartesianProductBaseList))
+    // console.log("possibleCombinations",possibleCombinations)
   } 
   
   const showCourse = (course)=>{
     shownCourses.push(course)
-    document.getElementById(`${course}-actions`).innerHTML = hideCourseButtonComponent(courses)
+    document.getElementById(`${course}-actions`).innerHTML = hideCourseButtonComponent(course)
     updateCombinations()
   }
   
@@ -289,7 +311,7 @@
             {% endfor %}
           </div>
         </div>
-        <div class="reg-calender">
+    <div class="reg-calender">
     <div class="reg-calender-calender-grid" id="reg-calender-calender-grid">
       <!-- DAYS  -->
       <p class="calender-days ">Week</p>
@@ -388,28 +410,6 @@
           <th>Actions</th>
         </tr>
 
-        <tr>
-          <td>IT7001</td>
-          <td>System Analysis & Design</td>
-          <td>
-            <select name="" id="">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">3</option>
-            </select>
-          </td>
-          <td>Mr ahmed</td>
-          <td>
-            <p>MO 10:00 - 12:00 AM</p>
-            <p>MO 10:00 - 12:00 AM</p>
-          </td>
-          <td>
-            <p>B19.250</p>
-            <p>B19.250</p>
-          </td>
-          <td><button>Add</button></td>
-        </tr>
       </tr>
 
       {% for course in courses%}
@@ -443,103 +443,14 @@
       </table>
   </div>
   
-    <div class="plan-section plan-section-combinations">
+    <div class="plan-section plan-section-combinations" >
     <h1 class="reg-registration-section-header"><img src="{% static 'icons/registration1.png'%}" alt="">Combinations</h1>
     
-    <div class="plan-plans-combinations">
-      <div class="plan-plans-combination">
-        <p class="plan-count poppins-bold">1</p>
-        <div class="reg-calender">
-        <div class="reg-calender-calender-grid" id="reg-calender-calender-grid">
-          <!-- DAYS  -->
-          <p class="calender-days ">Week</p>
-          <p class="calender-days">Sun</p>
-          <p class="calender-days">Mon</p>
-          <p class="calender-days">Tue</p>
-          <p class="calender-days">Wed</p>
-          <p class="calender-days">Thu</p>
-          <p class="calender-days">Fri</p>
-          <p class="calender-days">Sat</p>
-          
-          <!-- HOURS -->
-          <p class="calender-hours">8:00</p>
-          
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">9:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">10:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">11:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">12:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">13:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">14:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">15:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">16:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">17:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">18:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">19:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">20:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          
-          <!-- EVENTS -->
-          {% for section in currentPlan.sections.all %}
-            {% for event in section.section_schedules_set.all  %}
-            <div class="reg-calender-event day-{{event.day_of_week}} hour-start-{{event.time.start_time.hour}}-{% if event.time.start_time.minute == 0 %}00{% elif event.time.start_time.minute <= 20 %}20{%elif event.time.start_time.minute <= 40 %}40{%else%}60{%endif%} hour-end-{{event.time.end_time.hour}}-{% if event.time.end_time.minute == 0 %}00{% elif event.time.end_time.minute <= 20 %}20{%elif event.time.end_time.minute <= 40 %}40{%else%}60{%endif%}">
-              {{section.course.code}}
-            </div>
-            {% endfor %}
-          {%endfor%}
+    <div class="plan-plans-combinations" id="plan-section-combinations">
     
-        </div>
-        </div>
-        <div class="plan-combination-sections">
-          <div class="plan-combination-section">
-            <div class="plan-combination-section-course">
-              <div class="plan-combination-section-course-color"></div>
-              <p>IT6001 | System Analysis & Design</p>
-            </div>
-            <p class="plan-combination-section-crn">CRN: 12</p>
-          </div>
-        </div>
-      </div>
-
-
     </div>
+    
+
   </div>
   {%endif%}
 
