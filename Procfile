@@ -1,1 +1,1 @@
-web: gunicorn SSB.app
+web: gunicorn SSB.wsgi
