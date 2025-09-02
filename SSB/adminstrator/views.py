@@ -60,6 +60,7 @@ def signupUser(request):
 
 @login_required
 def adminregstudent(request, user_id):
+
     admission_data = request.session.get('admission_data')
     userProfile = Profile.objects.get(user_id=user_id)
     if request.method == 'POST':
@@ -81,6 +82,7 @@ def adminregstudent(request, user_id):
                       [address], fail_silently=False)
 
             if admission_data is not None:
+
                 admission = Admissions.objects.get(
                     id=request.session['admission_data']['id'])
                 admission.delete()
@@ -93,7 +95,6 @@ def adminregstudent(request, user_id):
         profile_form = StudentProfile(instance=userProfile)
 
     return render(request, 'registration/registerprofile.html', {'profile_form': profile_form, 'profile': userProfile})
-
 
 @login_required
 def adminregtutor(request, user_id):
@@ -224,6 +225,7 @@ class SemesterCreate(LoginRequiredMixin, CreateView):
     
 
 class SemesterUpdate(LoginRequiredMixin, UpdateView):
+
     model = Semester
     fields = '__all__'
     success_url = '/administrator/semester/list'
@@ -275,6 +277,7 @@ class SectionCreate(LoginRequiredMixin, CreateView):
     model = Section
     form_class = Sections
     success_url = '/administrator/section/list'
+
 
 
 class SectionUpdate(LoginRequiredMixin, UpdateView):

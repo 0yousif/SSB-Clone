@@ -1,8 +1,104 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/calender.css' %}" />
 
+<link rel="stylesheet" href="{% static 'css/calender.css' %}" />
+<script>
+  // string = 10:50 a.m.
+      const getHour = (string) =>{
+        if (string){
+          
+          return string.split(" ")[1][0] === 'a'? string.split(":")[0]: Number(string.split(":")[0]) + 12 
+        }else return 
+      }
+      
+      const getMinute= (string) =>{
+        if (string){
+          return string.split(" ")[0].split(":")[1] 
+        }else return
+      }
+      
+      const convertMinute = (string) =>{        
+        if (string){
+          const minutes = Number(getMinute(string))
+          if (minutes < 20){
+            return "20"
+          }else if(minutes < 40) {
+            return "40"
+         } else {
+            return "60"
+
+          }
+        }else return
+      }
+
+
+      const addConflict = (department_code,course_code,course_name,tutor_username,schedules,section_crn,section_limit,registered_students_count) => {
+      let registeredSectionElement =`
+      <tr data-registeredcourse="" data-department="${department_code}" data-code="${course_code}" data-crn="${section_crn}">
+        <td>${department_code}${course_code}</td>
+        <td>${course_name}</td>
+        <td>${tutor_username}</td>
+        <td>`
+          // expected object: 
+          // schedules = [{day_of_week, start_time,end_time,building_code,room_number}]
+          
+          schedules.forEach(schedule => {
+            registeredSectionElement += `<p>${schedule.day_of_week} ${schedule.start_time}-${schedule.end_time}</p>`
+          });
+          
+          registeredSectionElement += `</td>
+          <td>${section_crn}</td>
+          <td>
+            `
+            
+            schedules.forEach(schedule => {
+              registeredSectionElement += `<p>${schedule.building_code} ${schedule.room_number}</p>`
+            });
+            
+            registeredSectionElement += `
+            </td>
+            <td>${section_limit}/${registered_students_count}</td>
+            <td>
+              <button class="reg-registration-table-conflict-button" onclick="removeConflict('${department_code}','${course_code}', '${course_name}','${section_crn}')">Remove</button>
+              </td>
+              </tr>`
+              
+              document.querySelector('#registered-courses-table tr:nth-of-type(1)').insertAdjacentHTML("afterend",registeredSectionElement)
+              document.querySelector(`[data-unregisteredcourse][data-department="${department_code}"][data-code="${course_code}"][data-crn="${section_crn}"]`).style.display = "none"
+              
+              // schedules = [{day_of_week, start_time,end_time,building_code,room_number}]
+              
+              
+              for (let i = 0;i < schedules.length;i++){
+                document.querySelector('#reg-calender-calender-grid').innerHTML +=`
+                
+            <div class="reg-conflict-event day-${schedules[i].day_of_week} hour-start-${getHour(schedules[i].start_time)}-${convertMinute(schedules[i].start_time)} hour-end-${getHour(schedules[i].end_time)}-${convertMinute(schedules[i].end_time)}" data-conflictevent="" data-crn="${section_crn}">
+            <p class="montserrat-medium">${course_name}</p>
+            <div class="reg-event-time">
+              <img src="{% static 'icons/clock.png' %}" alt
+              ="">
+              <p class="montserrat-regular">${getHour(schedules[i].start_time)}:${getMinute(schedules[i].start_time)} - ${getHour(schedules[i].end_time)}:${getMinute(schedules[i].end_time)}</p>
+            </div>
+         </div>                `
+            }
+
+              
+      
+    }
+    
+    const removeConflict = (department_code, course_code, course_name, section_crn) => {
+      
+      document.querySelector(`[data-unregisteredcourse][data-department="${department_code}"][data-code="${course_code}"][data-crn="${section_crn}"]`).style.display = "table-row"
+      document.querySelector(`[data-registeredcourse][data-department="${department_code}"][data-code="${course_code}"][data-crn="${section_crn}"]`).remove()
+
+      document.querySelectorAll(`[data-conflictevent][data-crn='${section_crn}']`).forEach((element)=>{
+        element.remove()
+      })
+      
+    }
+
+</script>
   <div class="reg-registration-section">
     <div class="reg-registration-table">
       <h1 class="reg-registration-section-header"><img src="{% static 'icons/registration1.png'%}" alt="">Registration</h1>
@@ -58,7 +154,9 @@
           <p>Full</p>
           {%elif user.profile.total_credits_earned == configs.credits_limit %}
           <p>No enough credits</p>
-          {%else%}  
+          {%elif section.conflict%}
+            <button class="reg-registration-table-conflict-button" onclick="addConflict('{{section.course.department.department_code}}','{{section.course.code}}','{{section.course.name}}','{{section.tutor.username}}',[{% for schedule in section.section_schedules_set.all %}{day_of_week:'{{schedule.day_of_week}}',start_time:'{{schedule.time.start_time}}',end_time:'{{schedule.time.end_time}}', building_code:'{{schedule.location.building_code}}',room_number:'{{schedule.location.room_number}}' },{% endfor %}],'{{section.crn}}','{{configs.Section_limit}}','{{section.student_registration_set.all|length}}')">Conflict</button>
+          {%else%}
           <form action="{% url 'section_register' section.crn user.id %}" method="post">
             {% csrf_token%}
             <button class="reg-registration-table-add-button" type="submit">Add</button>
@@ -69,11 +167,19 @@
       {% endfor %}
       
     </table>
+    <div class="unregisteredSections-navigations">{% for num in unregisteredSections.paginator.page_range %}
+            {% if unregisteredSections.number == num %}
+                <strong>{{ num }}</strong>
+            {% else %}
+                <a href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+</div>
   </div>
   
   <div>
     <h1 class="reg-registration-section-header"><img src="{% static 'icons/registration1.png'%}" alt="">Enrolled Courses</h1>
-    <table class="reg-registration-table">
+    <table class="reg-registration-table" id="registered-courses-table">
       <tr>
         <th>Code</th>
         <th>Name</th>
@@ -117,7 +223,7 @@
 </div>
   <div class="reg-calender">
     <h1 class="reg-registration-section-header"><img src="{% static 'icons/registration1.png'%}" alt="">Registration</h1>
-    <div class="reg-calender-calender-grid">
+    <div class="reg-calender-calender-grid" id="reg-calender-calender-grid">
       <!-- DAYS  -->
       <p class="calender-days ">Week</p>
       <p class="calender-days">Sun</p>
@@ -198,7 +304,7 @@
     </div>
   </div>
 
-  <script>
+  <script defer>
     let uniqueValues = (query, value)=>{
       const objectsList = document.querySelectorAll(query)
       let values = []
@@ -208,9 +314,10 @@
       values = values.filter((value,index,array)=>{
         return array.indexOf(value) === index;
       })
-      console.log(values)
       return values
     }
+
+    
 
     let allsections = document.querySelectorAll('[data-unregisteredcourse]')
     let departmentsList = uniqueValues('[data-unregisteredcourse][data-department]','department')
@@ -235,7 +342,6 @@
         allsections[i].style.display = 'none'
       }
       
-
       for (let i = 0; i < allsections.length; i++){
         if ((departmentFilterSelect.value !== 'none' && allsections[i].dataset.department !== departmentFilterSelect.value) 
         || (codeFilterSelect.value !== 'none' && allsections[i].dataset.code !== codeFilterSelect.value )
@@ -248,7 +354,6 @@
 
 
     for (let i = 0; i < departmentsList.length; i++){
-      console.log(departmentsList[i])
       departmentFilterSelect.innerHTML += `<option value="${departmentsList[i]}">${departmentsList[i]}</option>`
     }
 

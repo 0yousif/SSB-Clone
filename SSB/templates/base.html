@@ -20,6 +20,10 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -84,20 +88,20 @@
           <img src="{% static 'icons/menu-board.png' %}" alt="" />Week at glance
         </button>
         <button
-          onclick="document.location.href = '{% url 'dashboard' %}'"
+          onclick="document.location.href = '{% url 'transcript' %}'"
           class="poppins-semibold"
         >
           <img src="{% static 'icons/trend-up.png' %}" alt="" />academic
           Transcript
         </button>
         <button
-          onclick="document.location.href = '{% url 'enrolle_courses' %}'"
+          onclick="document.location.href = '{% url 'enrolled_courses' %}'"
           class="poppins-semibold"
         >
           <img src="{% static 'icons/book.png' %}" alt="" />Enrolled Courses
         </button>
         <button
-          onclick="document.location.href = '{% url 'dashboard' %}'"
+          onclick="document.location.href = '{% url 'plan_ahead' %}'"
           class="poppins-semibold"
         >
           <img src="{% static 'icons/archive-book.png' %}" alt="" />Plan Ahead
@@ -174,8 +178,7 @@
         </form>
       </div>
     </div>
-    <!-- <main class="base-main"> -->
-
+    
     {% block content %} {% endblock %}
 
     <!-- </main> -->

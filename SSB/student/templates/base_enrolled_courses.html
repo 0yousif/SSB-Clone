@@ -1,0 +1,40 @@
+{% load static %}
+<div class="tutor-sections-body">
+<div class="tutor-sections-page">
+  <h1 class="section-header poppins-medium">
+    <img class="icon" src="{% static 'icons/registration1.png' %}" alt="" />
+    <strong>Enrolled Courses</strong>
+  </h1>
+  
+  <table class="sections-table">
+    <tr>
+      <th>Code</th>
+      <th>Name</th>
+      <th>Instructor</th>
+      <th>Time</th>
+      <th>CRN</th>
+      <th>Location</th>
+    </tr>
+    {% for section in registeredSections.all %}
+    <tr>
+      <td>{{section.course.department.department_code}}{{section.course.code}}</td>
+      <td>{{section.course.name}}</td>
+      <td>{{section.tutor.username}}</td>
+      <td>
+        {% for schedule in section.section_schedules_set.all %}
+        <p>{{schedule.day_of_week}} {{schedule.time.start_time}}-{{schedule.time.end_time}}</p>
+        {% endfor %}
+      </td>
+      <td>{{section.crn}}</td>
+      <td>
+        {% for schedule in section.section_schedules_set.all %}
+        <p>{{schedule.location.building_code}} {{schedule.location.room_number}}</p>
+        {% endfor %}
+      </td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <td>Total Registered Credits: {{user.profile.total_credits_earned}}</td>
+    </tr>
+  </table>
+</div>
