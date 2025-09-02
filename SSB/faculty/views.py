@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from adminstrator.models import Profile, Attendance, Student_registration, Section, Semester, Grades, Transcript
 from django.utils import timezone
+from django.db.models import Q
+
 
 @login_required
 def faculty_dashboard(request):
@@ -22,6 +24,14 @@ def student_lookup(request):
             return redirect('/administrator')
     
     students = Profile.objects.filter(user_type='student').order_by('last_name', 'first_name') 
+    q = request.GET.get('q')
+    if q:
+        students = students.filter(
+            Q(user__first_name__icontains=q) |
+            Q(user__last_name__icontains=q) |
+            Q(academic_number__icontains=q)
+        )
+
     
     return render(request, 'faculty/student_lookup.html', {'students': students})
 
