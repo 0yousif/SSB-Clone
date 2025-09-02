@@ -78,7 +78,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'SSB.wsgi.application'
+# WSGI_APPLICATION = 'SSB.wsgi.application'
 
 
 # Database
@@ -98,6 +98,8 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': os.getenv('DATABASENAME'),
+            "PASSWORD": os.getenv('DATABASEPASSWORD'),
+            "USER":'postgres'
             # The value of 'NAME' should match the value of 'NAME' you replaced.
         }
     }
