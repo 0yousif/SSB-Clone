@@ -51,7 +51,8 @@
                       'minute':'{{schedule.time.end_time.minute}}',
                     },
                     'location':'{{schedule.location.building_code}} {{schedule.location.room_number}}',
-                    'day_of_week':'{{schedule.day_of_week}}'
+                    'day_of_week':'{{schedule.day_of_week}}',
+                    'course':'{{course.department.department_code}}{{course.code}}'
                   },
                 {% endfor %}
               ]
@@ -115,10 +116,19 @@
   }
 
   // Components
-  const combinationComponent = (eventsList)=>{
+  const combinationComponent = (eventsList, index)=>{
+    eventObjectsString = ''
+
+    eventsList.forEach((event)=>(
+            eventObjectsString += `<div class="reg-calender-event day-${event.day_of_week} hour-start-${event.start_time.hour}-${convertMinute(event.start_time.minute)} hour-end-${event.end_time.hour}-${convertMinute(event.end_time.minute)}">
+            <div class="reg-event-time">
+            ${event.course}
+            </div>`  
+    ))
+
     let htmlElementsString = `
-            <div class="plan-plans-combination">
-        <p class="plan-count poppins-bold">1</p>
+        <div class="plan-plans-combination">
+        <p class="plan-count poppins-bold">${index}</p>
         <div class="reg-calender">
         <div class="reg-calender-calender-grid" id="reg-calender-calender-grid">
           <!-- DAYS  -->
@@ -187,10 +197,7 @@
           <p class="calender-hours"></p>
           
           <!-- EVENTS -->
-           for section in currentPlan.sections.all 
-             for event in section.section_schedules_set.all  
-            <div class="reg-calender-event day-{{event.day_of_week}} hour-start-{{event.time.start_time.hour}}-{% if event.time.start_time.minute == 0 %}00{% elif event.time.start_time.minute <= 20 %}20{%elif event.time.start_time.minute <= 40 %}40{%else%}60{%endif%} hour-end-{{event.time.end_time.hour}}-{% if event.time.end_time.minute == 0 %}00{% elif event.time.end_time.minute <= 20 %}20{%elif event.time.end_time.minute <= 40 %}40{%else%}60{%endif%}">
-              {{section.course.code}}
+            ${eventObjectsString}
             </div>
     `
   }
@@ -218,8 +225,6 @@
   }
 
   const cartesianProduct = (arrays) => arrays.reduce((acc, curr) => acc.flatMap(a => curr.map(b => [...a, b])),[[]]);
-  
-
 
   const updateCombinations = () =>{
     // const neededMatches = sectionsInThePlan.length + shownCourses.length + pickedSections.length
