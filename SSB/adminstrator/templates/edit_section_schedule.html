@@ -1,0 +1,14 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="form-container">
+  <h1>Add Location and Time for Section: {{ section.crn }}</h1>
+  <form method="post" class="form">
+    {% csrf_token %} {{ form.as_p }}
+    <a href="{% url 'edit_locations' %}?next={{ request.path }}">Locations</a>
+    <a href="{% url 'edit_times' %}?next={{ request.path }}">Times</a>
+    <input type="submit" value="Submit" class="btn" />
+  </form>
+</div>
+
+<a href="{% url 'section_detail' section.crn %}">Back</a>
+{% endblock %}

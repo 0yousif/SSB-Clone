@@ -5,19 +5,6 @@ from datetime import date
 from .models import Profile
 
 
-
-# @receiver(post_save, sender=User)
-# def create_profile(sender, instance, created, **kwargs):
-#     if created:
-#         Profile.objects.create(
-#             user=instance)
-
-
-# @receiver(post_save, sender=User)
-# def save_profile(sender, instance, **kwargs):
-#     instance.profile.save()
-
-
 @receiver(pre_save, sender=Profile)
 def save_profile(sender, instance, **kwargs):
     if (instance.user_type == 'student'):
@@ -27,6 +14,5 @@ def save_profile(sender, instance, **kwargs):
         instance.academic_number = int(f"{year}{num}")
         student_email = instance.academic_number
         instance.email = f'{student_email}@student.edu.bh'
-
     elif (instance.user_type == 'tutor'):
         instance.email = f'{instance.first_name}.{instance.last_name}@tutor.edu.bh'

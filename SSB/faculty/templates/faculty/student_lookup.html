@@ -1,38 +1,83 @@
-{% extends 'base.html' %} {% load static %}  {% block content %}
+{% extends 'base.html' %} {% load static %} {% block content %}
+
 <head>
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 </head>
+<style>
+
+
+  .search-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+  }
+
+  .search-form {
+    display: flex;
+    max-width: 100%;
+  }
+
+  .search-form>div {
+    display: flex;
+    border-radius: 4px;
+  }
+
+  .search-form input[type="text"] {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    width: 250px;
+    font-size: 14px;
+  }
+
+  .search-form button {
+    padding: 8px 16px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    background-color: #0C1E33;
+    font-size: 13px;
+    margin-left: 1rem;
+  }
+
+</style>
 
 <div class="tutor-sections-body">
-<div class="tutor-sections-page">
-  <h1 class="section-header poppins-medium">
-    <img class="icon" src="{% static 'icons/registration1.png' %}" alt="" />
-    <strong>Student Lookup</strong>
-  </h1>
-
-{% if students %}
-<table class="sections-table">
-  <tr>
-    <th>Academic ID</th>
-    <th>Name</th>
-    <th>Status</th>
-    <th>Action</th>
-  </tr>
-  {% for student in students %}
-  <tr>
-    <td>{{ student.academic_number }}</td>
-    <td>{{ student.first_name }} {{ student.last_name }}</td>
-    <td>{{ student.status }}</td>
-    <td>
-      <a href="{% url 'student_detail' student.student_detail_id %}">View</a>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
-{% else %}
-<p class="no-sections">No students found.</p>
-`
-{% endif %}
+  <div class="tutor-sections-page">
+    <h1 class="section-header poppins-medium">
+      <img class="icon" src="{% static 'icons/registration1.png' %}" alt="" />
+      <strong>Student Lookup</strong>
+    </h1>
+<div class="search-container">
+    <form method="GET" class="search-form">
+      <div>
+        <input type="text" name="q" class="form-control" placeholder="Search..." value="{{ request.GET.q }}" />
+        <button type="submit">Search</button>
+      </div>
+    </form>
 </div>
+    {% if students %}
+    <table class="sections-table">
+      <tr>
+        <th>Academic ID</th>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+      {% for student in students %}
+      <tr>
+        <td>{{ student.academic_number }}</td>
+        <td>{{ student.first_name }} {{ student.last_name }}</td>
+        <td>{{ student.status }}</td>
+        <td>
+          <a href="{% url 'student_detail' student.student_detail_id %}">View</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p class="no-sections">No students found.</p>
+    `
+    {% endif %}
+  </div>
 </div>
 {% endblock %}

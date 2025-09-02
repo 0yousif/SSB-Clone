@@ -7,14 +7,23 @@
   // string = 10:50 a.m.
       const getHour = (string) =>{
         if (string){
-          
-          return string.split(" ")[1][0] === 'a'? string.split(":")[0]: Number(string.split(":")[0]) + 12 
+          if (string.indexOf(':') !== -1){
+            return string.split(" ")[1][0] === 'a'? string.split(":")[0]: Number(string.split(":")[0]) + 12 
+          }else{
+            return string.split(" ")[1][0] === 'a'? string.split(" ")[0]: Number(string.split(" ")[0]) + 12 
+          }
+
         }else return 
       }
       
       const getMinute= (string) =>{
-        if (string){
-          return string.split(" ")[0].split(":")[1] 
+        if (string){  
+          if (string.indexOf(':') !== -1){
+            return string.split(" ")[0].split(":")[1] 
+          }else{
+            return "00"
+          }
+        
         }else return
       }
       
@@ -30,9 +39,10 @@
 
           }
         }else return
+      
+      
+      
       }
-
-
       const addConflict = (department_code,course_code,course_name,tutor_username,schedules,section_crn,section_limit,registered_students_count) => {
       let registeredSectionElement =`
       <tr data-registeredcourse="" data-department="${department_code}" data-code="${course_code}" data-crn="${section_crn}">
@@ -140,8 +150,9 @@
         <td>{{section.course.department.department_code}}{{section.course.code}}</td>
         <td>{{section.course.name}}</td>
         <td>{{section.tutor.username}}</td>
-        <td>{% for schedule in section.section_schedules_set.all %}
-          <p>{{schedule.day_of_week}} {{schedule.time.start_time}}-{{schedule.time.end_time}}</p>
+        <td>
+          {% for schedule in section.section_schedules_set.all %}
+            <p>{{schedule.day_of_week}} {{schedule.time.start_time}}-endtime{{schedule.time.end_time}}</p>
           {% endfor %}
         </td>
         <td>{{section.crn}}</td>

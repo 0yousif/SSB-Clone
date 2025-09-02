@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
+
 from adminstrator.models import Profile, Section, Course, Departments, Semester, Location, Time, Section_schedules,Student_registration,Configurations, Attendance, Transcript, Grades, GRADE_CHOICES
 import datetime
 from django.http import HttpResponse
@@ -12,6 +13,8 @@ from .forms import StudentPlanForm
 from django.views.generic.edit import CreateView
 from django.urls import reverse
 from django.contrib import messages
+from django import forms
+from SSB.decorators import role_permission
 
 
 from adminstrator.models import Admissions
@@ -21,7 +24,7 @@ from adminstrator.models import Admissions
 def home(request):
     return render(request, 'home.html')
 
-
+@login_required
 def redirect_user(request):
     try:
         profile = Profile.objects.get(user_id=request.user.id)
@@ -35,13 +38,16 @@ def redirect_user(request):
         return redirect('dashboard')
     if profile_type == 'tutor':
         return redirect('faculty_dashboard')
+    return redirect('home_page')
 
 
 @login_required
+@role_permission('student')
 def dashboard(request):
     return render(request, 'dashboard.html')
 
 @login_required
+@role_permission('student')
 def conflictCheck(request,registeredSections,unregisteredSection):
     unregisteredSchedules = Section_schedules.objects.filter(crn=unregisteredSection) 
     registeredSchedules = Section_schedules.objects.filter(crn__in=registeredSections.values_list('crn'))
@@ -49,22 +55,26 @@ def conflictCheck(request,registeredSections,unregisteredSection):
     #  Checks if the end/start of the unregistered course is withing one of the registered ones
     for unregisteredSchedule in unregisteredSchedules:
         for registeredSchedule in registeredSchedules:
-            if (registeredSchedule.time.start_time <= unregisteredSchedule.time.start_time and unregisteredSchedule.time.start_time <= registeredSchedule.time.end_time) or (registeredSchedule.time.start_time <= unregisteredSchedule.time.end_time and unregisteredSchedule.time.end_time <= registeredSchedule.time.end_time):      
+            if ((registeredSchedule.time.start_time <= unregisteredSchedule.time.start_time and unregisteredSchedule.time.start_time <= registeredSchedule.time.end_time) or (registeredSchedule.time.start_time <= unregisteredSchedule.time.end_time and unregisteredSchedule.time.end_time <= registeredSchedule.time.end_time)) and unregisteredSchedule.day_of_week == registeredSchedule.day_of_week  :      
                 return True
     
     return False
 
 @login_required
-def getUserSections(request):
+def getUserSections(request, chosen_student=None):
+    if chosen_student is None:
+        chosen_student = request.user
+
+
     currentSemester = Semester.objects.get(is_current=True)
     
     registeredSections = Section.objects.filter(
-        crn__in=Student_registration.objects.filter(student=request.user).values_list('crn')
-    ).filter(semester=currentSemester.semester)
+        crn__in=Student_registration.objects.filter(student=chosen_student).values_list('crn')
+    ).filter(semester=currentSemester)
 
     unregisteredSections = Section.objects.exclude(
-        crn__in=Student_registration.objects.filter(student=request.user).values_list('crn')
-        ).filter(semester=currentSemester.semester)
+        crn__in=Student_registration.objects.filter(student=chosen_student).values_list('crn')
+        ).filter(semester=currentSemester)
 
     for i in range(0, len(unregisteredSections)):
         unregisteredSections[i].conflict = conflictCheck(request,registeredSections,unregisteredSections[i])
@@ -73,6 +83,7 @@ def getUserSections(request):
 
 
 @login_required
+@role_permission('student')
 def registration(request):
     if Profile.objects.get(user=request.user).user_type != "student":
         return HttpResponse("Unauthorized")
@@ -107,6 +118,7 @@ def doesHaveEnoughCredits(request, newCredits, max):
 
 
 @login_required
+@role_permission('student')
 def section_register(request, section_id, user_id):
     currentUserProfile = Profile.objects.get(user=request.user) 
     currentSemester = Semester.objects.get(is_current=True)
@@ -126,7 +138,7 @@ def section_register(request, section_id, user_id):
     # if the user is not already registered and there is a space in the section and the user has enough credits, if so the system will accept the registration
 
     registeredSections,unregisteredSections = getUserSections(request)
-    if not isRegistered(request=request,section_id=section_id) and not isSectionFilled(section_id=section_id,max=configs.Section_limit) and doesHaveEnoughCredits(request=request,newCredits=course_credits,max=configs.credits_limit) and not conflictCheck(request,registeredSections,section_id) and section.semester == currentSemester.semester and currentSemester.registration_end  > datetime.date.today():
+    if not isRegistered(request=request,section_id=section_id) and not isSectionFilled(section_id=section_id,max=configs.Section_limit) and doesHaveEnoughCredits(request=request,newCredits=course_credits,max=configs.credits_limit) and not conflictCheck(request,registeredSections,section_id) and section.semester.semester_id == currentSemester.semester_id and currentSemester.registration_end  > datetime.date.today():
         Student_registration.objects.create(student = request.user, registration_status='registered',registered_date=f'{now.year}-{now.month}-{now.day}',crn=section)
         currentUserProfile.total_credits_earned += course_credits
         currentUserProfile.save()
@@ -149,7 +161,7 @@ def section_deregister(request,section_id,user_id):
 
     section = Section.objects.get(crn=section_id)
     
-    if isRegistered(request=request,section_id=section_id) and section.semester == currentSemester.semester and currentSemester.registration_end  > datetime.date.today():
+    if isRegistered(request=request,section_id=section_id) and section.semester.semester_id == currentSemester.semester_id and currentSemester.registration_end  > datetime.date.today():
         Student_registration.objects.filter(student=request.user,crn=section_id).delete()
         course_credits = Course.objects.get(course_id=Section.objects.get(crn=section_id).course_id).credit_hours    
         user_profile =  Profile.objects.get(user=request.user)
@@ -172,7 +184,12 @@ def enrolled_courses(request):
 @login_required
 def student_profile(request):
     profile = request.user.profile
-    return render(request, 'student_profile.html', {'profile': profile})
+
+    
+    registeredSections, unregisteredSections = getUserSections(request)
+    configs = Configurations.objects.first()
+
+    return render(request, 'student_profile.html', {'profile': profile, "registeredSections":registeredSections, 'configs':configs})
 
 @login_required
 def get_current_plan(request,planGet):
@@ -270,20 +287,23 @@ def plan_remove_section(request,plan_id,crn):
 class admissionCreate(CreateView):
     model = Admissions
     fields = '__all__'
+    widgets = {
+        'dob': forms.DateInput(attrs={'type': 'date'}),
+    }
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, "Your admission was submitted successfully!")
+        messages.success(
+            self.request, "Your admission was submitted successfully!")
         return response
-
 
     def get_success_url(self):
         return reverse('student_login')
 
 
-
 @login_required
 def student_attendance(request):
+
         user = request.user
         current_semester = Semester.objects.get(is_current=True)
         registrations = Student_registration.objects.filter(student=user, crn__semester=current_semester)
@@ -308,78 +328,40 @@ def student_attendance(request):
 
 
 #FORMULA
-#TGPA =	Total of Semester Grade Points (sum of all GPV x sum of all Course Credits attempted) / Total of all Course Credits for the Semester
-
-# Cumulative CGPA =	Total of all Grade Points (sum of all GPV x sum of all Course Credits) / Total of All Course Credits of all Semesters
+#SGPA =	Total of Semester Grade Points (sum of all GPV x sum of all Course Credits attempted) / Total of all Course Credits for the Semester
+#Cumulative CGPA =	Total of all Grade Points (sum of all GPV x sum of all Course Credits) / Total of All Course Credits of all Semesters
 
 
 @login_required
 def transcript(request):
-    grade_dict = dict(GRADE_CHOICES)
-    
     grades = Grades.objects.filter(
         registration__student=request.user
     ).select_related(
         'registration__crn__semester',
         'registration__crn__course',
         'registration__crn__course__department',
-        'registration'  
+        'registration'
     ).order_by('-registration__crn__semester__semester_id')
     
     semesters = {}
     for grade in grades:
         semester_id = grade.registration.crn.semester.semester_id
-        course_credits = grade.registration.crn.course.credit_hours
-        registration_year = grade.registration.registered_date.year
-        
         if semester_id not in semesters:
             semesters[semester_id] = {
                 'id': semester_id,
-                'year': registration_year,  
-                'grades': [],
-                'total_grade_points': 0,
-                'total_attempted_credits': 0,
-                'total_passed_credits': 0,
-                'gpa': 0
+                'year': grade.registration.registered_date.year,
+                'grades': []
             }
-        
-        grade_point = grade_dict.get(grade.grade, 0)
-        gpv = grade_point * course_credits
-        
         semesters[semester_id]['grades'].append(grade)
-        semesters[semester_id]['total_grade_points'] += gpv
-        semesters[semester_id]['total_attempted_credits'] += course_credits
-        
-        if grade.grade != 'F':
-            semesters[semester_id]['total_passed_credits'] += course_credits
     
-    semester_data = []
-    cumulative_grade_points = 0
-    overall_attempted_credits = 0
-    overall_passed_credits = 0
+    semester_data = [{'id': data['id'], 'year': data['year'], 'grades': data['grades']} 
+                    for data in semesters.values()]
     
-    for semester_id, data in sorted(semesters.items(), reverse=True):
-        semester_gpa = data['total_grade_points'] / data['total_attempted_credits'] if data['total_attempted_credits'] > 0 else 0
-        
-        semester_data.append({
-            'id': data['id'],
-            'year': data['year'],  
-            'grades': data['grades'],
-            'gpa': semester_gpa,
-            'total_attempted_credits': data['total_attempted_credits'],
-            'total_passed_credits': data['total_passed_credits']
-        })
-        
-        cumulative_grade_points += data['total_grade_points']
-        overall_attempted_credits += data['total_attempted_credits']
-        overall_passed_credits += data['total_passed_credits']
+    profile = Profile.objects.get(user=request.user)
     
-    overall_gpa = cumulative_grade_points / overall_attempted_credits if overall_attempted_credits > 0 else 0
-
     return render(request, 'transcript.html', {
         'semester_data': semester_data,
-        'overall_gpa': overall_gpa,
-        'overall_attempted_credits': overall_attempted_credits,
-        'overall_passed_credits': overall_passed_credits
+        'overall_gpa': profile.gpa,
+        'overall_attempted_credits': profile.total_credits_attempted,
+        'overall_passed_credits': profile.total_credits_earned
     })
-

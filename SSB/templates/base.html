@@ -40,7 +40,11 @@
       </div>
       <div class="base-nav-user-info">
         <p class="base-user-name poppins-medium">
+          {% if user.is_superuser %}
+          Admin
+          {% else %}
           {{ user.profile.first_name }}
+          {% endif %}
         </p>
         <div class="base-user-image-container">
           <img src="" alt="" />
@@ -49,7 +53,19 @@
     </nav>
     <div class="base-side-bar" id="base-side-bar">
       <div class="side-bar-hide-container">
-        <button class="poppins-semibold active-bar-option">
+        
+        {% if user.is_superuser %}
+        <button class="poppins-semibold active-bar-option" onclick="document.location.href = 
+        '{% url 'admin_home' %}'">
+        {% elif user.profile.user_type == 'student' %}
+        <button class="poppins-semibold active-bar-option" onclick="document.location.href = 
+        '{% url 'dashboard' %}'">
+        {% else %}
+        <button class="poppins-semibold active-bar-option" onclick="document.location.href = 
+        '{% url 'faculty_dashboard' %}'">
+        {% endif %}
+
+
           <img src="{% static 'icons/element-4.png' %}" alt="" /> Dashboard
         </button>
       </div>
@@ -116,7 +132,7 @@
           Payment
         </button>
 
-        {% endif %} {% if user.profile.user_type == 'tutor' %}
+        {% elif user.profile.user_type == 'tutor' %}
         <p>Faculty</p>
         <button
           onclick="document.location.href = '{% url 'student_lookup' %}'"
@@ -144,12 +160,44 @@
           <img src="{% static 'icons/trend-up.png' %}" alt="" />assign grades
         </button>
 
+        {% elif user.is_superuser %}
+         <p>Administrator</p>
+        <button
+          onclick="document.location.href = '{% url 'admin_reg' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/Vector.png' %}" alt="" />Register users
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'admindex' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/note-2.png' %}" alt="" />Users
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'list_semesters' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/menu-board.png' %}" alt="" />Semesters
+          sections
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'list_sections' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/trend-up.png' %}" alt="" />Sections
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'admin_admission' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/trend-up.png' %}" alt="" />Admissions
+        </button>
+        
         {% endif %}
       </div>
 
-      <div class="side-bar-element-container">
-        {% block admin_nav %} {% endblock %}
-      </div>
+    
 
       <div class="side-bar-element-container">
         <p>Settings</p>

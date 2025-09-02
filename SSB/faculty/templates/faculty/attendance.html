@@ -4,7 +4,7 @@
 <head>
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 </head>
-    <style>
+<style>
    .header-row {
       display: flex;
       align-items: center;
@@ -34,13 +34,10 @@
       border: 1px solid #ddd;
       border-radius: 30px;
       min-width: 100px;
-    margin-left: 2rem;
-    font-size: 11px;
-
+      margin-left: 2rem;
+      font-size: 11px;
   }
  
-  
-
   .message-button-row {
       display: flex;
       align-items: center;
@@ -67,9 +64,18 @@
       white-space: nowrap;
       margin: 0;
   }
-
+  
+  .attendance-status {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 500;
+      display: inline-block;
+      text-align: center;
+      min-width: 50px;
+      background-color: #e9ecef;
+      color: #000;
+  }
 </style>
-
 
 <div class="tutor-sections-body">
 <div class="tutor-sections-page">
@@ -78,75 +84,91 @@
     <strong>Attendance report</strong>
   </h1>
 
+  {% if attendance_submitted %}
+  <div class="success-message">
+    Attendance submitted successfully for {{ today }}!
+  </div>
+  {% endif %}
 
-<form method="post">
-{% csrf_token %}
+  <form method="post">
+    {% csrf_token %}
     <div class="header-row">
-            <label>
-                Section:
-                <select name="section" onchange="this.form.submit()">
-                   <option value="">Select Section</option>
-                    {% for section in sections %}
-                    <option value="{{ section.crn }}" {% if selected_section and selected_section.crn == section.crn %}selected{% endif %}>
-                        {{ section.course.code }} (CRN: {{ section.crn }})
-                    </option>
-                    {% endfor %}
-                </select>
-            </label>
-        
-        <p class="current-date">Date:  {{today }}</p>
+      <label>
+        Section:
+        <select name="section" onchange="this.form.submit()">
+          <option value="">Select Section</option>
+          {% for section in sections %}
+          <option value="{{ section.crn }}" {% if selected_section and selected_section.crn == section.crn %}selected{% endif %}>
+            {{ section.course.code }} (CRN: {{ section.crn }})
+          </option>
+          {% endfor %}
+        </select>
+      </label>
+      
+      <p class="current-date">Date: {{ today }}</p>
+    </div>
+  </form>
+
+  {% if selected_section %}
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="section" value="{{ selected_section.crn }}">
+    
+    <div class="message-button-row">
+      {% if attendance_submitted %}
+      <div class="submitted">
+        Attendance already taken for today.
+      </div>
+      {% else %}
+      <div class="submitted"></div>
+      {% endif %}
+      
+      {% if not attendance_submitted %}
+      <button type="submit" name="submit_attendance" class="submit_attendance">Submit</button>
+      {% endif %}
     </div>
 
-      {% if selected_section %}
-        <div class="message-button-row">
-            {% if attendance_submitted %}
-            <div class="submitted">
-                Attendance already taken for today.
-            </div>
+    {% if students %}
+    <table class="sections-table">
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>Name</th>
+          <th class="status-column">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in student_attendance %}
+        <tr>
+          <td>{{ item.student.student.profile.academic_number }}</td>
+          <td>{{ item.student.student.profile.first_name }} {{ item.student.student.profile.last_name }}</td>
+          <td class="last-column">
+            {% if attendance_submitted and item.status %}
+              <span class="attendance-status">
+                {% if item.status == 'P' %}Present
+                {% elif item.status == 'A' %}Absent
+                {% elif item.status == 'L' %}Late
+                {% elif item.status == 'E' %}Excused
+                {% endif %}
+              </span>
             {% else %}
-            <div class="submitted"></div>
+              <select name="status_{{ item.student.pk }}" {% if attendance_submitted %}disabled{% endif %}>
+                <option value="P" {% if item.status == 'P' %}selected{% endif %}>Present</option>
+                <option value="A" {% if item.status == 'A' %}selected{% endif %}>Absent</option>
+                <option value="L" {% if item.status == 'L' %}selected{% endif %}>Late</option>
+                <option value="E" {% if item.status == 'E' %}selected{% endif %}>Excused</option>
+              </select>
             {% endif %}
-            {%if not attendance_submitted%}
-            <button type="submit" name="submit_attendance" class="submit_attendance">Submit</button>
-            {%endif%}
-        </div>
-
-        {% if students %}
-            <input type="hidden" name="section" value="{{ selected_section.crn }}">
-            
-        <table class="sections-table">
-                <thead>
-                    <tr>
-                        <th>Student ID</th>
-                        <th>Name</th>
-                        <th class="status-column">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for student in students %}
-                    <tr>
-                        <td>{{ student.student.profile.academic_number }}</td>
-                        <td>{{ student.student.profile.first_name }} {{ student.student.profile.last_name }}</td>
-                        <td class="last-column">
-                            <select name="status_{{ student.pk }}" {% if attendance_submitted %}disabled{% endif %}>
-                                <option value="P">Present</option>
-                                <option value="A">Absent</option>
-                                <option value="L">Late</option>
-                                <option value="E">Excused</option>
-                            </select>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            
-           
-        {% else %}
-<p class="no-sections">No students found.</p>
-        {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="no-sections">No students found.</p>
     {% endif %}
-
-</form>
+  </form>
+  {% endif %}
 </div>
 </div>
 
