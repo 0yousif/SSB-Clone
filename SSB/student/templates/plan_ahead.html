@@ -5,18 +5,27 @@
   
 <script>
 
+
+  // the sections that are aleady in the plan
   const sectionsInThePlan = [
     {% for section in currentPlan.sections.all %}
       {
         course: '{{section.course.department.department_code}}{{section.course.code}}',
         crn:'{{section.crn}}'
-        {% endfor %}
       },
+        {% endfor %}
   ]
-
-  const shownCourses = []
   
-  const pickedSections = []
+  let shownCourses = [
+    //list of strings 'IT6001'
+]
+  
+  let pickedSections = [
+    // {
+    //   course: "IT7001",
+    //   crn:"12"
+    // } 
+  ]
 
   const courses = {
     {% for course in courses %}
@@ -28,6 +37,7 @@
           {% for section in course.section_set.all %}
             '{{section.crn}}':{
               'crn': '{{section.crn}}',
+              'course_name':'{{course.name}}',
               'instructor':'{{section.tutor.username}}',
               'schedules': [
                 {% for schedule in section.section_schedules_set.all %}
@@ -40,7 +50,8 @@
                       'hour':'{{schedule.time.end_time.hour}}',
                       'minute':'{{schedule.time.end_time.minute}}',
                     },
-                    'location':'{{schedule.location.building_code}} {{schedule.location.room_number}}'
+                    'location':'{{schedule.location.building_code}} {{schedule.location.room_number}}',
+                    'day_of_week':'{{schedule.day_of_week}}'
                   },
                 {% endfor %}
               ]
@@ -51,6 +62,59 @@
     {% endfor %}
   }
 
+  const convertMinute = (string) =>{
+    if (string){
+      const minutes = Number(getMinute(string))
+      if (minutes < 20){
+        return "20"
+      }else if(minutes < 40) {
+        return "40"
+     } else {
+        return "60"
+      }
+    }else return
+  }
+
+  const conflictCheck = (schedule1,schedule2) =>{
+    schedule1_start = (Number(schedule1.start_time.hour) * 60) + Number(schedule1.start_time.minute)    
+    
+    schedule1_end = (Number(schedule1.end_time.hour) * 60) + Number(schedule1.end_time.minute)
+
+    
+    schedule2_start = (Number(schedule2.start_time.hour) * 60) + Number(schedule2.start_time.minute)
+    
+    schedule2_end = (Number(schedule2.end_time.hour) * 60) + Number(schedule2.end_time.minute)
+
+    if (
+      (
+        (schedule1_start >= schedule2_start &&
+        schedule1_start <= schedule2_end ) ||
+        (schedule1_end >= schedule2_start &&
+        schedule1_end <= schedule2_end ) 
+      ) &&
+        schedule1.day_of_week === schedule2.day_of_week  ){
+          return true
+    }
+    return false 
+  }
+
+  const bulkConflictCheck = (sectionsList) =>{
+    sectionsList.forEach((section1)=>{
+      sectionsList.forEach((section2)=>{
+        if (section1 !== section2){
+          isConflict = false
+          section1.schedules.forEach((section1Schedule)=>{
+            section2.schedules.forEach((section2Schedule)=>{
+
+            })
+          })
+        }
+      })
+    })
+    return false 
+  }
+
+  // Components
   const combinationComponent = (eventsList)=>{
     let htmlElementsString = `
             <div class="plan-plans-combination">
@@ -123,24 +187,72 @@
           <p class="calender-hours"></p>
           
           <!-- EVENTS -->
-          {% for section in currentPlan.sections.all %}
-            {% for event in section.section_schedules_set.all  %}
+           for section in currentPlan.sections.all 
+             for event in section.section_schedules_set.all  
             <div class="reg-calender-event day-{{event.day_of_week}} hour-start-{{event.time.start_time.hour}}-{% if event.time.start_time.minute == 0 %}00{% elif event.time.start_time.minute <= 20 %}20{%elif event.time.start_time.minute <= 40 %}40{%else%}60{%endif%} hour-end-{{event.time.end_time.hour}}-{% if event.time.end_time.minute == 0 %}00{% elif event.time.end_time.minute <= 20 %}20{%elif event.time.end_time.minute <= 40 %}40{%else%}60{%endif%}">
               {{section.course.code}}
             </div>
     `
   }
   
+  const showCourseButtonComponent = (course) =>{
+    return `<button onclick="showCourse('${course}')">Show</button>`
+  }
 
+  const hideCourseButtonComponent = (course) =>{
+    return `<button onclick="hideCourse('${course}')">Hide</button>`
+  }
+  
+  const selectCourseEvent = (course,crn)=>{
+    if (crn == 'none'){
+      pickedSections = pickedSections.filter(pickedSection => pickedSection.course !== course )
+      document.getElementById(`${course}-actions`).innerHTML = showCourseButtonComponent(course)
+    }else {
+      document.getElementById(`${course}-actions`).innerHTML = ''
+      pickedSections.push({course,crn})
+      shownCourses = shownCourses.filter(shownCourse=> shownCourse !== course)
+    }
+    
+    updateCombinations()
+
+  }
+
+  const cartesianProduct = (arrays) => arrays.reduce((acc, curr) => acc.flatMap(a => curr.map(b => [...a, b])),[[]]);
+  
+
+
+  const updateCombinations = () =>{
+    // const neededMatches = sectionsInThePlan.length + shownCourses.length + pickedSections.length
+    
+    cartesianProductBaseList = []
+    
+    let tempList = []
+    shownCourses.forEach((shownCourse)=>{
+      tempList = []
+      Object.keys(courses[shownCourse].sections).forEach(key => tempList.push(courses[shownCourse].sections[key])) 
+      cartesianProductBaseList.push(tempList)
+    })
+    pickedSections.forEach((pickedSection)=>{
+      cartesianProductBaseList.push([courses[pickedSection.course].sections[pickedSection.crn]])
+    })
+    
+    possibleCombinations = cartesianProduct(cartesianProductBaseList).filter(combination=>!bulkConflictCheck(combination))
+    console.log("all combinations", cartesianProduct(cartesianProductBaseList))
+    console.log("possibleCombinations",possibleCombinations)
+  } 
+  
   const showCourse = (course)=>{
     shownCourses.push(course)
-    console.log(document.getElementById(`${course}-actions`))
+    document.getElementById(`${course}-actions`).innerHTML = hideCourseButtonComponent(courses)
+    updateCombinations()
   }
   
   const hideCourse = (course)=>{
-    shownCourses = shownCourses.filter(shownCourse => shownCourse !== course)
+    shownCourses = shownCourses.filter((shownCourse) => {return  shownCourse !== course})
+    document.getElementById(`${course}-actions`).innerHTML = showCourseButtonComponent(course)
+    updateCombinations()
   }
-  
+
 </script>
 
   <div class="plan-section">
@@ -296,13 +408,13 @@
       </tr>
 
       {% for course in courses%}
-      {% if course.name != 'no pre req' %}
+      {% if course.name != 'no pre req' and course.section_set.all|length != 0 %}
             <tr>
         <td>{{course.department.department_code}}{{course.code}}</td>
         <td>{{course.name}}</td>
         <td>
           <form action="" id="{{course.department.department_code}}{{course.code}}-form">
-            <select  name="" id="">
+            <select  name="" id="" onchange="(selectCourseEvent('{{course.department.department_code}}{{course.code}}',this.value))">
               <option value="none">CRN</option>
               {%for section in course.section_set.all %}
               <option value="{{section.crn}}">{{section.crn}}</option>
@@ -317,7 +429,7 @@
           
         </td>
         <td id="{{course.department.department_code}}{{course.code}}-actions">
-          <button>Show</button>
+          <button onclick="showCourse('{{course.department.department_code}}{{course.code}}')">Show</button>
         </td>
       </tr>
       {%endif%}
@@ -438,8 +550,6 @@
     </form>
     <button form="new_plan" type="submit">Create</button>
   </div>
-
-
 
 
 {% endblock %}

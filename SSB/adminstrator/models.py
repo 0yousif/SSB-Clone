@@ -179,7 +179,7 @@ class Location(models.Model):
         validators=[MaxValueValidator(999)], null=False)
 
     def __str__(this):
-        return str(this.location_id)
+        return f"{this.room_number} {this.building_code}"
 
 
 class Time(models.Model):
