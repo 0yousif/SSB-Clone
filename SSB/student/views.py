@@ -181,9 +181,8 @@ def student_attendance(request):
 
 
 #FORMULA
-#TGPA =	Total of Semester Grade Points (sum of all GPV x sum of all Course Credits attempted) / Total of all Course Credits for the Semester
-
-# Cumulative CGPA =	Total of all Grade Points (sum of all GPV x sum of all Course Credits) / Total of All Course Credits of all Semesters
+#SGPA =	Total of Semester Grade Points (sum of all GPV x sum of all Course Credits attempted) / Total of all Course Credits for the Semester
+#Cumulative CGPA =	Total of all Grade Points (sum of all GPV x sum of all Course Credits) / Total of All Course Credits of all Semesters
 
 
 @login_required
@@ -248,6 +247,13 @@ def transcript(request):
         overall_passed_credits += data['total_passed_credits']
     
     overall_gpa = cumulative_grade_points / overall_attempted_credits if overall_attempted_credits > 0 else 0
+
+
+    profile = Profile.objects.get(user=request.user)
+    profile.gpa = round(overall_gpa, 2)
+    profile.total_credits_earned = overall_passed_credits
+    profile.save()
+
 
     return render(request, 'transcript.html', {
         'semester_data': semester_data,
