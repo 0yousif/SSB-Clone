@@ -1,17 +1,20 @@
 {% extends 'base.html' %} {% block content %}
-
 <div class="form-container">
   <form action="" method="post" class="form">
-    <h1>Apply!</h1>
+    <h1>Edit Times</h1>
     {% csrf_token %} {{ form.as_p }}
 
     <input type="submit" value="Submit" class="btn" />
   </form>
 </div>
 
-<script>
-  const date = document.getElementById('id_dob')
 
-  date.setAttribute('type', 'date')
+<script>
+  const startTime = document.getElementById('id_start_time')
+  const endTime = document.getElementById('id_end_time')
+
+  startTime.setAttribute('type', 'time')
+  endTime.setAttribute('type', 'time')
 </script>
+
 {% endblock %}

@@ -1,23 +1,41 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} {% load static %} {% block content %}
 
-<h1 class="list-title">Semesters List</h1>
+<div class="tutor-sections-body">
+  <div class="tutor-sections-page">
+<h1 class="section-header poppins-medium">
+  <img class="icon" src="{% static 'icons/registration1.png' %}" alt="" />
+  <strong>Semester list</strong>
+  <a class="button-lists" href="{% url 'make_semester'%}"
+    ><button>Add semester</button></a
+  >
+</h1>
 
-<div class="card-grid">
-  {% for semester in semester_list %}
-  <a href="{% url 'semester_detail' semester.semester_id %}" class="card-link">
-    <div class="card">
-      <div class="card-content">
-        <span class="card-title">{{ semester.semester_name }}</span>
-        <div class="card-details">
-          <h3>semester id: {{semester.semester}}</h3>
-          <h3>Registration start: {{semester.Registration_start}}</h3>
-          <h3>end date: {{semester.end_date}}</h3>
-          <h3>is current: {{semester.is_current}}</h3>
-        </div>
-      </div>
-    </div>
-  </a>
-  {% endfor %}
+
+{% if not semester %}
+    <table class="sections-table">
+      <tr>
+        <th>Semester id</th>
+        <th>Year</th>
+        <th>Registration start</th>
+        <th>Registration end</th>
+      </tr>
+      {% for semester in semester_list %}
+      <tr>
+        <td>{{ semester.semester_id }}</td>
+        <td>{{ semester.year }}</td>
+        <td>{{ semester.registration_start }}</td>
+        <td>{{ semester.registration_end }}</td>
+        <td>
+          <a href="{% url 'semester_detail' semester.semester_id %}">View</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p class="no-sections">No Semesters found.</p>
+    {% endif %}
+  </div>
+ </div>
 </div>
 
-{% endblock %}
+ {% endblock %}

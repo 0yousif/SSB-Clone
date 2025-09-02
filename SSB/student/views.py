@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
+
 from adminstrator.models import Profile, Section, Course, Departments, Semester, Location, Time, Section_schedules,Student_registration,Configurations, Attendance, Transcript, Grades, GRADE_CHOICES
 import datetime
 from django.http import HttpResponse
@@ -12,6 +13,8 @@ from .forms import StudentPlanForm
 from django.views.generic.edit import CreateView
 from django.urls import reverse
 from django.contrib import messages
+from django import forms
+from SSB.decorators import role_permission
 
 
 from adminstrator.models import Admissions
@@ -21,7 +24,7 @@ from adminstrator.models import Admissions
 def home(request):
     return render(request, 'home.html')
 
-
+@login_required
 def redirect_user(request):
     try:
         profile = Profile.objects.get(user_id=request.user.id)
@@ -35,13 +38,16 @@ def redirect_user(request):
         return redirect('dashboard')
     if profile_type == 'tutor':
         return redirect('faculty_dashboard')
+    return redirect('home_page')
 
 
 @login_required
+@role_permission('student')
 def dashboard(request):
     return render(request, 'dashboard.html')
 
 @login_required
+@role_permission('student')
 def conflictCheck(request,registeredSections,unregisteredSection):
     unregisteredSchedules = Section_schedules.objects.filter(crn=unregisteredSection) 
     registeredSchedules = Section_schedules.objects.filter(crn__in=registeredSections.values_list('crn'))
@@ -77,6 +83,7 @@ def getUserSections(request, chosen_student=None):
 
 
 @login_required
+@role_permission('student')
 def registration(request):
     if Profile.objects.get(user=request.user).user_type != "student":
         return HttpResponse("Unauthorized")
@@ -111,6 +118,7 @@ def doesHaveEnoughCredits(request, newCredits, max):
 
 
 @login_required
+@role_permission('student')
 def section_register(request, section_id, user_id):
     currentUserProfile = Profile.objects.get(user=request.user) 
     currentSemester = Semester.objects.get(is_current=True)
@@ -279,20 +287,23 @@ def plan_remove_section(request,plan_id,crn):
 class admissionCreate(CreateView):
     model = Admissions
     fields = '__all__'
+    widgets = {
+        'dob': forms.DateInput(attrs={'type': 'date'}),
+    }
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, "Your admission was submitted successfully!")
+        messages.success(
+            self.request, "Your admission was submitted successfully!")
         return response
-
 
     def get_success_url(self):
         return reverse('student_login')
 
 
-
 @login_required
 def student_attendance(request):
+
         user = request.user
         current_semester = Semester.objects.get(is_current=True)
         registrations = Student_registration.objects.filter(student=user, crn__semester=current_semester)
