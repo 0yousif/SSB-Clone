@@ -1236,7 +1236,7 @@ body.home-page h1 {
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
 }
-.details-title  h3 {
+.details-title h3 {
   font-size: 2rem;
 }
 .details-title h3 {
@@ -1248,9 +1248,23 @@ body.home-page h1 {
 }
 
 .details-content {
+  display: flex;
+  flex-direction: column;
+  align-content: stretch;
+
+  width: fit-content;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-style: normal;
 }
+
+
 .details-actions a {
   text-decoration: none;
   background-color: #133d82;
   color: white;
+
+  padding: 4px;
+  border-radius: 5px;
 }

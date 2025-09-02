@@ -14,9 +14,11 @@ from SSB.settings import EMAIL_HOST_USER
 from .forms import UserForm, StudentProfile, TutorProfile, studentLogin, Sections, SectionSchedule
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from SSB.decorators import role_permission
 
 
 @login_required
+@role_permission('admin')
 def signupUser(request):
     error_message = ""
     admission_data = request.session.get('admission_data')
@@ -59,6 +61,7 @@ def signupUser(request):
 
 
 @login_required
+@role_permission('admin')
 def adminregstudent(request, user_id):
 
     admission_data = request.session.get('admission_data')
@@ -96,7 +99,9 @@ def adminregstudent(request, user_id):
 
     return render(request, 'registration/registerprofile.html', {'profile_form': profile_form, 'profile': userProfile})
 
+
 @login_required
+@role_permission('admin')
 def adminregtutor(request, user_id):
     userProfile = Profile.objects.get(user_id=user_id)
     if request.method == 'POST':
@@ -111,8 +116,8 @@ def adminregtutor(request, user_id):
 
     return render(request, 'registration/registerprofile.html', {'profile_form': profile_form, 'profile': userProfile})
 
-
 @login_required
+@role_permission('Admin')
 def adminhome(request):
     if 'admission_data' in request.session:
         del request.session['admission_data']
@@ -121,6 +126,7 @@ def adminhome(request):
 
 
 @login_required
+@role_permission('admin')
 def admindex(request):
     query = request.GET.get('q', '')
     if query:
@@ -138,7 +144,6 @@ def admindex(request):
     users = User.objects.all()
 
     return render(request, 'index.html', {'users': users, 'profiles': profiles})
-
 
 def student_login(request):
     error_message = ""
@@ -167,8 +172,7 @@ def student_login(request):
     context = {'form': form, 'error_message': error_message}
     return render(request, 'auth/student_login.html', context)
 
-
-class AdmissionsList(ListView):
+class AdmissionsList(LoginRequiredMixin,ListView):
     model = Admissions
 
 
@@ -222,7 +226,6 @@ class SemesterCreate(LoginRequiredMixin, CreateView):
     fields = '__all__'
     success_url = '/administrator/semester/list'
 
-    
 
 class SemesterUpdate(LoginRequiredMixin, UpdateView):
 
@@ -277,7 +280,6 @@ class SectionCreate(LoginRequiredMixin, CreateView):
     model = Section
     form_class = Sections
     success_url = '/administrator/section/list'
-
 
 
 class SectionUpdate(LoginRequiredMixin, UpdateView):

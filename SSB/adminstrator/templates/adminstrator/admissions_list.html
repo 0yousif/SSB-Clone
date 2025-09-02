@@ -1,5 +1,4 @@
-{% extends 'base.html' %} {% block content %}
-
+{% extends 'base.html' %} {% block content %} {% if user.is_superuser %}
 <h1 class="list-title" class="poppins-extrabold">Admissions</h1>
 
 <table class="admin-table">
@@ -22,13 +21,15 @@
       <td>{{ admission.CPR }}</td>
       <td>{{ admission.school }}</td>
       <td>
-        <a href="{% url 'admission_session' admission.id%}" >
-          Accept
-        </a>
+        <a href="{% url 'admission_session' admission.id%}"> Accept </a>
       </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 
-{% endblock %}
+{% else %}
+<h1>No permission...</h1>
+<br />
+<a href="{% url 'redirect' %}"><h1>Go home</h1></a>
+{% endif %} {% endblock %}

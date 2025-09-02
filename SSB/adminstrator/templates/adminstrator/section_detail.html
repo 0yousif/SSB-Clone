@@ -7,10 +7,10 @@
     <h3>CRN: {{ section.crn }}</h3>
   </div>
   <div class="details-content">
-    <h3>section schedule type: {{section.schedule_type}}</h3>
-    <h3>section course ID: {{section.course_id}}</h3>
-    <h3>section Tutor ID: {{section.tutor_id}}</h3>
-    <p>section semester ID: {{section.semester_id}}</p>
+    <div>section schedule type: {{section.schedule_type}}</div>
+    <div>section course ID: {{section.course_id}}</div>
+    <div>section Tutor ID: {{section.tutor_id}}</div>
+    <div>section semester ID: {{section.semester_id}}</div>
 
     <div class="details-actions">
       <a href="{% url 'update_section' section.crn %}">Edit</a>
