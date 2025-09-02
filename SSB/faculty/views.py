@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from adminstrator.models import Profile, Attendance, Student_registration, Section, Semester, Grades, Transcript
+from adminstrator.models import Profile, Attendance, Student_registration, Section, Semester, Grades, Transcript, GRADE_CHOICES, Configurations
 from django.utils import timezone
 from django.db.models import Q
+
+from student.views import getUserSections
 
 
 @login_required
@@ -32,13 +34,17 @@ def student_lookup(request):
             Q(academic_number__icontains=q)
         )
 
-    
-    return render(request, 'faculty/student_lookup.html', {'students': students})
+    return render(request, 'faculty/student_lookup.html', {'students': students, })
 
 @login_required
 def student_detail(request, student_id):
-    student = Profile.objects.get(student_detail_id=student_id, user_type='student')
-    return render(request, 'student_profile.html', {'profile': student})
+    profile = Profile.objects.get(student_detail_id=student_id, user_type='student')
+    student = profile.user
+
+    registeredSections, unregisteredSections = getUserSections(request, student)
+    configs = Configurations.objects.first()
+
+    return render(request, 'student_profile.html', {'profile': profile, "registeredSections":registeredSections, 'configs':configs})
 
 
 
@@ -119,49 +125,86 @@ def section_students(request, crn):
 
 @login_required
 def grade_students(request, crn):
-    section = Section.objects.get(crn=crn, tutor=request.user)  
+    section = Section.objects.get(crn=crn, tutor=request.user)
     students = Student_registration.objects.filter(crn=section)
+
+    # print(f" {students.count()} students {crn}")
+    # for student in students:
+    #     print(f"Student: {student.student.username} Registration {student.registration}")
+
+
     grades_submitted = Grades.objects.filter(registration_id__crn=section).exists()
     
     if request.method == 'POST' and not grades_submitted:
+        grade_dict = dict(GRADE_CHOICES)
+        
         for student in students:
             grade_value = request.POST.get(f'grade_{student.registration}')
             if grade_value:
                 Grades.objects.update_or_create(
-                    registration_id=student,
+                    registration=student,
                     defaults={'grade': grade_value}
                 )
                 
                 if grade_value == 'F':
                     student.registration_status = 'failed'
-                    
-                    profile = student.student.profile
-                    course_credits = section.course.credit_hours 
-                    profile.total_credits_earned = max(0, profile.total_credits_earned - course_credits)
-                    profile.save()
-                
                 elif student.registration_status == 'failed':
                     student.registration_status = 'active'
                 
                 student.save()
-        
+        update_student_gpas(section)
         grades_submitted = True
     
     student_grades = []
     for student in students:
-        grade = Grades.objects.get(registration_id=student)
-        student_grades.append({
+            grade = Grades.objects.filter(registration=student).first()        
+            student_grades.append({
+
             'student': student,
-            'grade': grade.grade
+            'grade': grade.grade if grade else None
         })
     
-
     return render(request, 'faculty/grade_students.html', {
-        'section': section, 
-        'students': students,
-        'grades_submitted': grades_submitted,
-        'student_grades': student_grades
+        'section': section,
+        'student_grades': student_grades,
+        'grades_submitted': grades_submitted
     })
+
+def update_student_gpas(section):
+    grade_dict = dict(GRADE_CHOICES)
+    
+    student_registrations = Student_registration.objects.filter(crn=section)
+    
+    for reg in student_registrations:
+        student = reg.student
+        all_grades = Grades.objects.filter(
+            registration__student=student
+        ).select_related(
+            'registration__crn__course'
+        )
+        
+        total_grade_points = 0
+        total_attempted_credits = 0
+        total_passed_credits = 0
+        
+        for grade in all_grades:
+            course_credits = grade.registration.crn.course.credit_hours
+            grade_point = grade_dict.get(grade.grade, 0)
+            gpv = grade_point * course_credits
+            
+            total_grade_points += gpv
+            total_attempted_credits += course_credits
+            
+            if grade.grade != 'F':
+                total_passed_credits += course_credits
+        
+        overall_gpa = total_grade_points / total_attempted_credits if total_attempted_credits > 0 else 0
+        
+        profile = student.profile
+        profile.gpa = round(overall_gpa, 2)
+        profile.total_credits_attempted = total_attempted_credits
+        profile.total_credits_earned = total_passed_credits
+        profile.save()
 
 
 
