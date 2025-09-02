@@ -137,7 +137,10 @@ def enrolle_courses(request):
 @login_required
 def student_profile(request):
     profile = request.user.profile
-    return render(request, 'student_profile.html', {'profile': profile})
+    registeredSections, unregisteredSections = getUserSections(request)
+    configs = Configurations.objects.first()
+
+    return render(request, 'student_profile.html', {'profile': profile, "registeredSections":registeredSections, 'configs':configs})
 
 
 class admissionCreate(CreateView):

@@ -1,24 +1,26 @@
 {% extends 'base.html' %} {% block content %}
+
 <head>
   <style>
-  .profile-body {
-     font-family: 'Poppins', sans-serif;
-  font-weight: 500;
-  font-style: normal;
-  line-height: 1.5;
-  color: #333;
-  background-color: #f9f9f9;
-  min-height: 100vh;
-  display: flex; 
-  justify-content: center; 
-  align-items: center;
-}
+    .profile-body {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      font-style: normal;
+      line-height: 1.5;
+      color: #333;
+      background-color: #f9f9f9;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-.container {
-  flex-direction: column;
-  width: 100%;
-  max-width: 1000px;
-}
+    .container {
+      margin-top: 3rem;
+      flex-direction: column;
+      width: 100%;
+      max-width: 1000px;
+    }
 
     .header {
       text-align: left;
@@ -103,11 +105,7 @@
       <div class="profile-left">
         <div class="img-container">
           {% load static %}
-          <img
-            class="profile-img"
-            src="{% static profile.avatar|cut:'adminstrator/static/' %}"
-            alt="student image"
-          />
+          <img class="profile-img" src="{% static profile.avatar|cut:'adminstrator/static/' %}" alt="student image" />
         </div>
       </div>
 
@@ -139,12 +137,12 @@
             <div class="label">Major</div>
             <div class="value">{{ profile.major }}</div>
           </div>
-          <!-- 
+
           <div class="info-item">
             <div class="label">GPA</div>
             <div class="value">{{ profile.gpa }}</div>
           </div>
- -->
+
           <div class="info-item">
             <div class="label">Credits Earned</div>
             <div class="value">{{ profile.total_credits_earned }}</div>
@@ -156,7 +154,10 @@
           </div>
         </div>
       </div>
+
     </div>
+    {% include 'base_enrolled_courses.html' %}
+
   </div>
 </div>
 {% endblock %}
