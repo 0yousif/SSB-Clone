@@ -21,7 +21,7 @@ from .models import Profile, Configurations
 def save_profile(sender, instance, **kwargs):
     if (instance.user_type == 'student'):
 
-        config = Configurations.objects.all().first()
+        config = Configurations.objects.get(id=1)
 
         # to reset student ids
         if config.year != date.today().year:

@@ -264,7 +264,9 @@ MAJOR_CHOICES = (
     ('Cybersecurity', 'Cybersecurity'),
     ('Computer Science', 'Computer Science'),
     ('Marketing', 'Marketing'),
-    ('Computer Science', 'Computer Science'),
+    ('Web Media', 'Web Media'),
+    ('Visual Design', 'Visual Design'),
+    ('Accounting', 'Accounting'),
 )
 
 
