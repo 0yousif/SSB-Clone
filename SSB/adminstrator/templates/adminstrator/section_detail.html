@@ -1,25 +1,21 @@
 {% extends 'base.html' %} {% block content %}
 
-<h1>Section {{ section.crn }} Details</h1>
+<h1 class="list-title">Section {{ section.crn }} Details</h1>
 
-<div class="row">
-  <div class="col s6 col-offset-3">
-    <div class="card">
-      <div class="card-content">
-        <span class="card-title">CRN: {{ section.crn }}</span>
-        <h3>section schedule type: {{section.schedule_type}}</h3>
-        <h3>section course ID: {{section.course_id}}</h3>
-        <h3>section Tutor ID: {{section.tutor_id}}</h3>
-        <p>section semester ID: {{section.semester_id}}</p>
-      </div>
+<div class="details-container">
+  <div class="details-title">
+    <h3>CRN: {{ section.crn }}</h3>
+  </div>
+  <div class="details-content">
+    <h3>section schedule type: {{section.schedule_type}}</h3>
+    <h3>section course ID: {{section.course_id}}</h3>
+    <h3>section Tutor ID: {{section.tutor_id}}</h3>
+    <p>section semester ID: {{section.semester_id}}</p>
 
-      <div class="card-action">
-        <a href="{% url 'update_section' section.crn %}">Edit</a>
-        <a href="{% url 'delete_section' section.crn %}">Delete</a>
-        <a href="{% url 'edit_section_schedule' section.crn %}"
-          >Edit schedule</a
-        >
-      </div>
+    <div class="details-actions">
+      <a href="{% url 'update_section' section.crn %}">Edit</a>
+      <a href="{% url 'delete_section' section.crn %}">Delete</a>
+      <a href="{% url 'edit_section_schedule' section.crn %}">Edit schedule</a>
     </div>
   </div>
 </div>

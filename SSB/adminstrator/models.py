@@ -128,10 +128,12 @@ class Profile(models.Model):
     personal_email = models.CharField(max_length=50, null=True)
     avatar = models.ImageField(
         upload_to='adminstrator/static/user_profiles', default='')
+
     def __str__(self):
         return str(self.user.username)
 
 #########################################################################
+
 
 class Course(models.Model):
     course_id = models.AutoField(primary_key=True, null=False)
@@ -162,11 +164,12 @@ class Section(models.Model):
     tutor = models.ForeignKey(User, on_delete=models.PROTECT, null=False)
     schedule_type = models.CharField(choices=SCHEDULE_TYPES, null=False)
 
-    # @property
-    # def crn_pad(self):
-    #     return str(self.crn).zfill(5)
+    @property
+    def crn_padded(self):
+        return str(self.crn).zfill(5)
+
     semester = models.IntegerField(
-        validators=[MaxValueValidator(10),MinValueValidator(1)], null=False)
+        validators=[MaxValueValidator(10), MinValueValidator(1)], null=False)
 
     def get_absolute_url(self):
         return reverse('section_detail', kwargs={'pk': self.crn})
@@ -190,7 +193,8 @@ class Time(models.Model):
     time_id = models.AutoField(primary_key=True, null=False)
     start_time = models.TimeField(null=False)
     end_time = models.TimeField(null=False)
-    period = models.IntegerField(null=False, validators=[MaxValueValidator(2), MinValueValidator(1)])
+    period = models.IntegerField(null=False, validators=[
+                                 MaxValueValidator(2), MinValueValidator(1)])
 
     def __str__(this):
         return str(this.time_id)
@@ -289,16 +293,19 @@ GRADE_CHOICES = (
 )
 
 
-class Grades(models.Model):    
-    grade_id = models.AutoField(primary_key=True,null=False)    
-    grade = models.CharField(max_length=1, choices=GRADE_CHOICES)    
-    registration = models.ForeignKey(Student_registration, on_delete=models.CASCADE)    
+class Grades(models.Model):
+    grade_id = models.AutoField(primary_key=True, null=False)
+    grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    registration = models.ForeignKey(
+        Student_registration, on_delete=models.CASCADE)
+
     def __str__(this):
         return f"{this.grade_id} - {this.grade}"
 
 
 class Transcript(models.Model):
-    student = models.OneToOneField(Profile, on_delete=models.CASCADE, primary_key=True)
+    student = models.OneToOneField(
+        Profile, on_delete=models.CASCADE, primary_key=True)
 
     def __str__(self):
         return f"Transcript for {self.student.user.username}"
