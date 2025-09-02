@@ -16,9 +16,11 @@
         {% endfor %}
   ]
   
+  
+  
   let shownCourses = [
     //list of strings 'IT6001'
-]
+  ]
   
   let pickedSections = [
     // {
@@ -26,8 +28,9 @@
     //   crn:"12"
     // } 
   ]
-
-  const courses = {
+  currentPlanId = '{{currentPlan.plan_id}}'
+  const ADD_SECTION_URL = `{% url 'plan_add_section' 11111 22222 %}`
+  const courses = { 
     {% for course in courses %}
       "{{course.department.department_code}}{{course.code}}":{
         'name':'{{course.name}}',
@@ -38,6 +41,7 @@
             '{{section.crn}}':{
               'crn': '{{section.crn}}',
               'course_name':'{{course.name}}',
+              'course':'{{course.department.department_code}}{{course.code}}',
               'instructor':'{{section.tutor.username}}',
               'schedules': [
                 {% for schedule in section.section_schedules_set.all %}
@@ -72,6 +76,10 @@
         return "60"
       }
     }else return
+  }
+
+  const addSectionUrl = (section_id)=>{
+    return ADD_SECTION_URL.replace('11111',currentPlanId).replace('22222',section_id) 
   }
 
   const conflictCheck = (schedule1,schedule2) =>{
@@ -118,8 +126,18 @@
   // Components
   const combinationComponent = (sectionsList, index)=>{
     eventObjectsString = ''
+    sectionNames = ''
     colors = ['purple','green','blue','yellow']
     sectionsList.forEach((section,sectionIndex)=>{
+      sectionNames +=`
+            <div class="plan-combination-section">
+            <div class="plan-combination-section-course">
+              <div class="plan-combination-section-course-${colors[sectionIndex % colors.length]}"></div>
+              <p>${section.course} | ${section.course_name}</p>
+            </div>
+            <p class="plan-combination-section-crn">CRN: ${section.crn}</p>
+          </div>
+          `
       section.schedules.forEach((event)=>(
         eventObjectsString += `<div class="reg-calender-event-${colors[sectionIndex % colors.length]} day-${event.day_of_week} hour-start-${event.start_time.hour}-${convertMinute(event.start_time.minute)} hour-end-${event.end_time.hour}-${convertMinute(event.end_time.minute)}">
         <div class="reg-event-time">
@@ -206,32 +224,36 @@
         </div>
         </div>
         <div class="plan-combination-sections">
-          <div class="plan-combination-section">
-            <div class="plan-combination-section-course">
-              <div class="plan-combination-section-course-color"></div>
-              <p>IT6001 | System Analysis & Design</p>
-            </div>
-            <p class="plan-combination-section-crn">CRN: 12</p>
-          </div>
+
+        ${sectionNames}
         </div>
       </div>
     `
   }
   
   const showCourseButtonComponent = (course) =>{
-    return `<button onclick="showCourse('${course}')">Show</button>`
+    return `<button class="reg-registration-table-remove-button" onclick="showCourse('${course}')">Show</button>`
   }
 
   const hideCourseButtonComponent = (course) =>{
-    return `<button onclick="hideCourse('${course}')">Hide</button>`
+    return `<button class='reg-registration-table-add-button' onclick="hideCourse('${course}')">Hide</button>`
+  }
+
+  const addSectionButtonComponent = (crn) =>{
+    return `<form method="post" action='${addSectionUrl(crn)}'>
+      {% csrf_token %}
+      <button type='submit' class='reg-registration-table-conflict-button'>Add</button></form>`
   }
   
   const selectCourseEvent = (course,crn)=>{
     if (crn == 'none'){
       pickedSections = pickedSections.filter(pickedSection => pickedSection.course !== course )
       document.getElementById(`${course}-actions`).innerHTML = showCourseButtonComponent(course)
+      
+      document.getElementById(`${course}-actions`).innerHTML = showCourseButtonComponent(course)
+
     }else {
-      document.getElementById(`${course}-actions`).innerHTML = ''
+      document.getElementById(`${course}-actions`).innerHTML = addSectionButtonComponent(crn)
       pickedSections.push({course,crn})
       shownCourses = shownCourses.filter(shownCourse=> shownCourse !== course)
     }
@@ -254,11 +276,15 @@
     pickedSections.forEach((pickedSection)=>{
       cartesianProductBaseList.push([courses[pickedSection.course].sections[pickedSection.crn]])
     })
+
+    sectionsInThePlan.forEach((sectionInThePlan)=>{
+      cartesianProductBaseList.push([courses[sectionInThePlan.course].sections[sectionInThePlan.crn]])
+    })
     
     possibleCombinations = cartesianProduct(cartesianProductBaseList).filter(combination=>!bulkConflictCheck(combination))
 
     const combinationsSection = document.getElementById('plan-section-combinations') 
-    combinationsSection.innerHTML = ''
+    combinationsSection.innerHTML =   ''
     
     possibleCombinations.forEach((possibleCombination,index)=>{
       combinationsSection.innerHTML += combinationComponent(possibleCombination,index)
@@ -306,7 +332,7 @@
           <div class="plan-added-sections">
             {%for section in currentPlan.sections.all %}            
               <div class="plan-added-section" >
-                <p>{{section.course.name}}<br>CRN:{{section.crn}}</p><button>Remove</button>
+                <p>{{section.course.name}}<br>CRN:{{section.crn}}</p><form action="{% url 'plan_remove_section' currentPlan.plan_id section.crn %}" method="post">{%csrf_token%}<button class="reg-registration-table-add-button">Remove</button></form>
               </div>
             {% endfor %}
           </div>
@@ -404,9 +430,9 @@
           <th>Code</th>
           <th>Name</th>
           <th>CRN</th>
-          <th>Instructor</th>
-          <th>Time</th>
-          <th>Location</th>
+          <th> - </th>
+          <th> - </th>
+          <th> - </th>
           <th>Actions</th>
         </tr>
 
@@ -434,7 +460,7 @@
           
         </td>
         <td id="{{course.department.department_code}}{{course.code}}-actions">
-          <button onclick="showCourse('{{course.department.department_code}}{{course.code}}')">Show</button>
+          <button class="reg-registration-table-remove-button" onclick="showCourse('{{course.department.department_code}}{{course.code}}')">Show</button>
         </td>
       </tr>
       {%endif%}
@@ -461,10 +487,10 @@
       {{newPlanForm.as_p}}
       <div>
         <a onclick="document.getElementById('plan-new-plan-form').style.display = 'none'">Cancel</a>
+        <button form="new_plan" type="submit">Create</button>
       </div>
       
     </form>
-    <button form="new_plan" type="submit">Create</button>
   </div>
 
 

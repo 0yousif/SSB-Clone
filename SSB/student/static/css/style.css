@@ -768,6 +768,27 @@ body.home-page h1 {
   background-color: #0c1e33;
 }
 
+.plan-combination-section-course-purple {
+  height: 100%;
+  aspect-ratio: 1/1;
+  background-color: #E1D2FF;
+}
+.plan-combination-section-course-green {
+  height: 100%;
+  aspect-ratio: 1/1;
+  background-color: #CCEFBF;
+}
+.plan-combination-section-course-blue {
+  height: 100%;
+  aspect-ratio: 1/1;
+  background-color: #BAE5F5;
+}
+.plan-combination-section-course-yellow {
+  height: 100%;
+  aspect-ratio: 1/1;
+  background-color: #FDE1AC;
+}
+
 .plan-count {
   font-size: 3rem;
 }
