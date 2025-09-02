@@ -55,7 +55,7 @@ def conflictCheck(request,registeredSections,unregisteredSection):
     #  Checks if the end/start of the unregistered course is withing one of the registered ones
     for unregisteredSchedule in unregisteredSchedules:
         for registeredSchedule in registeredSchedules:
-            if (registeredSchedule.time.start_time <= unregisteredSchedule.time.start_time and unregisteredSchedule.time.start_time <= registeredSchedule.time.end_time) or (registeredSchedule.time.start_time <= unregisteredSchedule.time.end_time and unregisteredSchedule.time.end_time <= registeredSchedule.time.end_time):      
+            if ((registeredSchedule.time.start_time <= unregisteredSchedule.time.start_time and unregisteredSchedule.time.start_time <= registeredSchedule.time.end_time) or (registeredSchedule.time.start_time <= unregisteredSchedule.time.end_time and unregisteredSchedule.time.end_time <= registeredSchedule.time.end_time)) and unregisteredSchedule.day_of_week == registeredSchedule.day_of_week  :      
                 return True
     
     return False
@@ -70,11 +70,11 @@ def getUserSections(request, chosen_student=None):
     
     registeredSections = Section.objects.filter(
         crn__in=Student_registration.objects.filter(student=chosen_student).values_list('crn')
-    ).filter(semester=currentSemester.semester)
+    ).filter(semester=currentSemester)
 
     unregisteredSections = Section.objects.exclude(
         crn__in=Student_registration.objects.filter(student=chosen_student).values_list('crn')
-        ).filter(semester=currentSemester.semester)
+        ).filter(semester=currentSemester)
 
     for i in range(0, len(unregisteredSections)):
         unregisteredSections[i].conflict = conflictCheck(request,registeredSections,unregisteredSections[i])
@@ -138,7 +138,7 @@ def section_register(request, section_id, user_id):
     # if the user is not already registered and there is a space in the section and the user has enough credits, if so the system will accept the registration
 
     registeredSections,unregisteredSections = getUserSections(request)
-    if not isRegistered(request=request,section_id=section_id) and not isSectionFilled(section_id=section_id,max=configs.Section_limit) and doesHaveEnoughCredits(request=request,newCredits=course_credits,max=configs.credits_limit) and not conflictCheck(request,registeredSections,section_id) and section.semester == currentSemester.semester and currentSemester.registration_end  > datetime.date.today():
+    if not isRegistered(request=request,section_id=section_id) and not isSectionFilled(section_id=section_id,max=configs.Section_limit) and doesHaveEnoughCredits(request=request,newCredits=course_credits,max=configs.credits_limit) and not conflictCheck(request,registeredSections,section_id) and section.semester.semester_id == currentSemester.semester_id and currentSemester.registration_end  > datetime.date.today():
         Student_registration.objects.create(student = request.user, registration_status='registered',registered_date=f'{now.year}-{now.month}-{now.day}',crn=section)
         currentUserProfile.total_credits_earned += course_credits
         currentUserProfile.save()
@@ -161,7 +161,7 @@ def section_deregister(request,section_id,user_id):
 
     section = Section.objects.get(crn=section_id)
     
-    if isRegistered(request=request,section_id=section_id) and section.semester == currentSemester.semester and currentSemester.registration_end  > datetime.date.today():
+    if isRegistered(request=request,section_id=section_id) and section.semester.semester_id == currentSemester.semester_id and currentSemester.registration_end  > datetime.date.today():
         Student_registration.objects.filter(student=request.user,crn=section_id).delete()
         course_credits = Course.objects.get(course_id=Section.objects.get(crn=section_id).course_id).credit_hours    
         user_profile =  Profile.objects.get(user=request.user)

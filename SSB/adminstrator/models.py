@@ -194,8 +194,7 @@ class Time(models.Model):
     time_id = models.AutoField(primary_key=True, null=False)
     start_time = models.TimeField(null=False)
     end_time = models.TimeField(null=False)
-    period = models.IntegerField(null=False, validators=[
-                                 MaxValueValidator(2), MinValueValidator(1)])
+    period = models.IntegerField(null=False, validators=[MaxValueValidator(2), MinValueValidator(1)])
 
     def __str__(this):
         return str(this.time_id)
@@ -210,7 +209,7 @@ class Section_schedules(models.Model):
     time = models.ForeignKey(Time, on_delete=models.PROTECT, null=False)
 
     def __str__(this):
-        return str(this.schedule_id)
+        return f'id: {this.schedule_id} crn: {this.crn_id}'
 
 
 class Student_registration(models.Model):
