@@ -1,2 +1,2 @@
-web: gunicorn ssb.ssb.wsgi
+web: gunicorn ssb.ssb.wsgi --preload
 
