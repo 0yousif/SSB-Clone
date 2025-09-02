@@ -1,0 +1,189 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Base</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!-- End of google fonts -->
+  </head>
+  <body class="base-body">
+    <nav class="base-nav">
+      <div class="base-side-bar-button-container">
+        <img onclick="slide()" src="{% static 'icons/menu.png' %}" alt="" />
+      </div>
+      <div class="base-nav-user-info">
+        <p class="base-user-name poppins-medium">
+          {{ user.profile.first_name }}
+        </p>
+        <div class="base-user-image-container">
+          <img src="" alt="" />
+        </div>
+      </div>
+    </nav>
+    <div class="base-side-bar" id="base-side-bar">
+      <div class="side-bar-hide-container">
+        <button class="poppins-semibold active-bar-option">
+          <img src="{% static 'icons/element-4.png' %}" alt="" /> Dashboard
+        </button>
+      </div>
+      <div class="side-bar-element-container">
+        {% if user.profile.user_type == 'student' %}
+
+        <p>Student</p>
+        <button
+          onclick="document.location.href = '{% url 'student_profile' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/Vector.png' %}" alt="" />Student Profile
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'student-registration' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/note-2.png' %}" alt="" />Registration
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'week_at_glance' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/menu-board.png' %}" alt="" />Week at glance
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'transcript' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/trend-up.png' %}" alt="" />academic
+          Transcript
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'enrolled_courses' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/book.png' %}" alt="" />Enrolled Courses
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'plan_ahead' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/archive-book.png' %}" alt="" />Plan Ahead
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'attendance_report' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/calendar-tick.png' %}" alt="" />Attendance
+          report
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'dashboard' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/solar_calculator-bold.png' %}" alt="" />GPA
+          Calculator
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'dashboard' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/dollar-square.png' %}" alt="" />Online
+          Payment
+        </button>
+
+        {% endif %} {% if user.profile.user_type == 'tutor' %}
+        <p>Faculty</p>
+        <button
+          onclick="document.location.href = '{% url 'student_lookup' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/Vector.png' %}" alt="" />Student Lookup
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'take_attendance' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/note-2.png' %}" alt="" />Attendance Sheet
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'tutor_sections' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/menu-board.png' %}" alt="" />Enrolled
+          sections
+        </button>
+        <button
+          onclick="document.location.href = '{% url 'grade_sections' %}'"
+          class="poppins-semibold"
+        >
+          <img src="{% static 'icons/trend-up.png' %}" alt="" />assign grades
+        </button>
+
+        {% endif %}
+      </div>
+
+      <div class="side-bar-element-container">
+        {% block admin_nav %} {% endblock %}
+      </div>
+
+      <div class="side-bar-element-container">
+        <p>Settings</p>
+        <button button class="poppins-semibold">
+          <img src="{% static 'icons/setting-2.png' %}" alt="" />Account
+          Settings
+        </button>
+
+        <form action="{% url 'logout' %}" method="post">
+          {%csrf_token%}
+          <button type="submit">
+            <img src="{% static 'icons/logout.png' %}" alt="" />Logout
+          </button>
+        </form>
+      </div>
+    </div>
+    
+    {% block content %} {% endblock %}
+
+    <!-- </main> -->
+    <footer class="base-footer"></footer>
+  </body>
+  <script>
+    let isAppearing = false
+    const sideBar = document.querySelector("#base-side-bar")
+    const slide = () => {
+      if (isAppearing) {
+        sideBar.style.transform = "translate(-13rem)"
+      } else {
+        sideBar.style.transform = "translate(0rem)"
+      }
+      isAppearing = !isAppearing
+    }
+
+   
+  </script>
+</html>

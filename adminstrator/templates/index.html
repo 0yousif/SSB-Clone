@@ -1,0 +1,75 @@
+{% extends 'base.html' %} {% load static %} {% include 'admin_panel' %} 
+{% block content %}
+  <form method="GET" class="search-form">
+    <div>
+      <input
+        type="text"
+        name="q"
+        class="form-control"
+        placeholder="Search..."
+        value="{{ request.GET.q }}"
+      />
+      <button type="submit">Search</button>
+    </div>
+  </form>
+
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>Academic Number</th>
+        <th>Status</th>
+        <th>Name</th>
+        <th>DOB</th>
+        <th>Gender</th>
+        <th>Profession</th>
+        <th>Type</th>
+        <th>Major</th>
+        <th>Current Semester</th>
+        <th>GPA</th>
+        <th>Edit</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for profile in profiles %}
+      <tr>
+        <td>{{ profile.user.id }}</td>
+        <td>
+           {% if profile.user_type != 'tutor' %}
+          {{ profile.academic_number }}
+          {% else %}
+          --
+        {% endif %}
+        </td>
+        <td>{{ profile.status }}</td>
+        <td>{{ profile.first_name }} {{ profile.last_name }}</td>
+        <td>{{ profile.dob }}</td>
+        <td>{{profile.gender}}</td>
+        <td>{{ profile.profession }}</td>
+        <td>{{ profile.user_type }}</td>
+        <td>{{ profile.major }}</td>
+        <td>{{ profile.current_semester }}</td>
+        <td>{{ profile.gpa }}</td>
+        <td>
+          {% if profile.user_type == 'student' %}
+          <a
+            href="{% url 'admin_reg_student_profile' user_id=profile.user.id %}"
+            >Edit</a
+          >
+          {% elif profile.user_type == 'tutor' %}
+          <a href="{% url 'admin_reg_tutor_profile' user_id=profile.user.id %}"
+            >Edit</a
+          >
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td>No profiles found</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

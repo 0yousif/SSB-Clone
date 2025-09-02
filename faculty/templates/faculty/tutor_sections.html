@@ -1,0 +1,72 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<head>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+<div class="tutor-sections-body">
+<div class="tutor-sections-page">
+  <h1 class="section-header poppins-medium">
+    <img class="icon" src="{% static 'icons/registration1.png' %}" alt="" />
+    <strong>Assigned Sections</strong>
+  </h1>
+
+  {% if not sections %}
+  <p class="no-sections">
+    No sections assigned to you for the current semester.
+  </p>
+  {% else %}
+  <table class="sections-table">
+    <tr>
+      <th>Course Code</th>
+      <th>Course Name</th>
+      <th>Time</th>
+      <th>Location</th>
+      <th>Students</th>
+      <th>Action</th>
+    </tr>
+
+    {% for section in sections %}
+    <tr>
+      <td>
+        {{ section.course.department.department_code }}
+        <!--  -->
+        {{ section.course.code }}
+      </td>
+      <td>{{ section.course.name }}</td>
+      <td>
+        {% for schedule in section.section_schedules_set.all %}
+        <p>
+          {{ schedule.day_of_week }}
+          <!--  -->
+          {{ schedule.time.start_time }}-
+          <!--  -->
+          {{schedule.time.end_time }}
+        </p>
+        {% empty %}
+        <p>No schedule set</p>
+        {% endfor %}
+      </td>
+      <td>
+        {% for schedule in section.section_schedules_set.all %}
+        <p>
+          Bldg {{ schedule.location.building_code }}, Room
+          <!--  -->
+          {{schedule.location.room_number }}
+        </p>
+        {% empty %}
+        <p>No location set</p>
+        {% endfor %}
+      </td>
+      <td>{{ section.student_registration_set.count }} students</td>
+      <td>
+        <a href="{% url 'section_students' section.crn %}">View Students</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+  
+</div>
+</div>
+
+
+{% endblock %}

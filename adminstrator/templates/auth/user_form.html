@@ -1,0 +1,11 @@
+{% extends 'base.html' %} {% block content %} {% if object %}
+<h1>Edit <span>{{ object.name }}</span></h1>
+{% else %} {% endif %}
+<div class="form-container">
+  <h1>Add User</h1>
+  <form action="" method="post" enctype="multipart/form-data" class="form">
+    {% csrf_token %} {{ form.as_p }}
+    <input type="submit" value="Submit!" class="btn" />
+  </form>
+</div>
+{% endblock %}

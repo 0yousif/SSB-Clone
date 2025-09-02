@@ -1,0 +1,30 @@
+{% extends 'base.html' %} {% block content %} {% if object %}
+
+<h1>Edit <span class="teal-text">{{object.name}}</span></h1>
+{% else %} {% endif %}
+<div class="form-container">
+  <h1>Make a course</h1>
+  <form action="" method="post" class="form">
+    {% csrf_token %} {% for field in form %} {% if field.name != 'is_active' %}
+    <div>
+      <div>
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+      </div>
+    </div>
+    {% else %}
+    <div class="input-field">
+      <p>
+        <label>
+          <h3>{{ field.label }}</h3>
+          {{ field }}
+        </label>
+      </p>
+    </div>
+
+    {% endif %} {% endfor %}
+    <input type="submit" value="Submit" class="btn" />
+  </form>
+</div>
+
+{% endblock %}
