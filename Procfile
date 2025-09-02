@@ -1,1 +1,1 @@
-web: gunicorn SSB.wsgi
+web: gunicorn --config gunicorn.conf.py SSB.wsgi
