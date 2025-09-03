@@ -1,7 +1,6 @@
 {% extends 'base.html' %} {% load static %} {% include 'admin_panel' %} 
 {% block content %} {% if user.is_superuser %}
 <div class="dashboard-get-started-section">
-  <p>Administrator dashboard</p>
 
   <div class="dashboard-get-started-boxes">
     <a href="{% url 'admin_reg'%}">
