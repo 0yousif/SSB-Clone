@@ -561,17 +561,22 @@ body.home-page h1 {
 }
 
 .button-logins button {
-  background-color: #0a2c61;
-  color: white;
 
   margin: 10px;
-  padding: 15px;
+  padding: 10px;
   border: none;
   border-radius: 10px;
-  font-weight: 900;
+  font-weight: 800;
 
-  font-size: 1.5rem;
+  font-size: 1rem;
   cursor: pointer;
+   padding: 10px 20px;
+    font-size: 16px;
+    border: 2px solid #0C1E33;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: transparent;
+    color: #0C1E33;
 }
 
 .button-logins button:hover {
