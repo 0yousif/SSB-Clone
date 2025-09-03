@@ -4,48 +4,44 @@
 <link rel="stylesheet" href="{% static 'css/calender.css' %}" />
   
 <script>
-/*
 
-    Expected Object:
 
-    Courses {
-         'IT6001':{
-             name: 'System Analysis & Design',
-             course_code:'6001',
-             department_code: 'IT'
-             sections: [
-              {
-                crn: '1'
-                instructor: 'Mr ahmed',
-                schedules: [
-                  {
-                    start_time: {
-                      hour: 1
-                      minute: 10
-                      }
-                    end_time: {
-                      hour: 1
-                      minute: 10
-                    }
-                    location: 32 320
-                  }
-                ]
-                },
-             ]
-          }
-       }
-*/
-
-  const courses = {
+  // the sections that are aleady in the plan
+  const sectionsInThePlan = [
+    {% for section in currentPlan.sections.all %}
+      {
+        course: '{{section.course.department.department_code}}{{section.course.code}}',
+        crn:'{{section.crn}}'
+      },
+        {% endfor %}
+  ]
+  
+  
+  
+  let shownCourses = [
+    //list of strings 'IT6001'
+  ]
+  
+  let pickedSections = [
+    // {
+    //   course: "IT7001",
+    //   crn:"12"
+    // } 
+  ]
+  currentPlanId = '{{currentPlan.plan_id}}'
+  const ADD_SECTION_URL = `{% url 'plan_add_section' 11111 22222 %}`
+  const courses = { 
     {% for course in courses %}
       "{{course.department.department_code}}{{course.code}}":{
         'name':'{{course.name}}',
         'course_code':'{{course.code}}',
         'department_code':'{{course.department.department_code}}',
-        'sections':[
+        'sections':{
           {% for section in course.section_set.all %}
-            {
+            '{{section.crn}}':{
               'crn': '{{section.crn}}',
+              'course_name':'{{course.name}}',
+              'course':'{{course.department.department_code}}{{course.code}}',
               'instructor':'{{section.tutor.username}}',
               'schedules': [
                 {% for schedule in section.section_schedules_set.all %}
@@ -55,31 +51,261 @@
                       'minute':'{{schedule.time.start_time.minute}}',
                     },                    
                     'end_time': {
-                      'hour':'{{event.time.end_time.hour}}',
+                      'hour':'{{schedule.time.end_time.hour}}',
                       'minute':'{{schedule.time.end_time.minute}}',
                     },
-                    'location':'{{schedule.location.building_code}} {{schedule.location.room_number}}'
+                    'location':'{{schedule.location.building_code}} {{schedule.location.room_number}}',
+                    'day_of_week':'{{schedule.day_of_week}}',
+                    'course':'{{course.department.department_code}}{{course.code}}'
                   },
                 {% endfor %}
               ]
             },
           {% endfor %}
-        ],
+          },
       },
     {% endfor %}
   }
+  const convertMinute = (minute) =>{
+    if (minute){
+      if (minute < 20){
+        return "20"
+      }else if(minute < 40) {
+        return "40"
+     } else {
+        return "60"
+      }
+    }else return
+  }
 
+  const addSectionUrl = (section_id)=>{
+    return ADD_SECTION_URL.replace('11111',currentPlanId).replace('22222',section_id) 
+  }
 
-  const sectionsInThePlan = [
-    {% for section in currentPlan.sections.all %}
-      {
-        course: '{{section.course.department.department_code}}{{section.course.code}}',
-        crn:'{{section.crn}}'
-        {% endfor %}
-      },
-  ]
+  const conflictCheck = (schedule1,schedule2) =>{
+    schedule1_start = (Number(schedule1.start_time.hour) * 60) + Number(schedule1.start_time.minute)    
+    
+    schedule1_end = (Number(schedule1.end_time.hour) * 60) + Number(schedule1.end_time.minute)
+
+    
+    schedule2_start = (Number(schedule2.start_time.hour) * 60) + Number(schedule2.start_time.minute)
+    
+    schedule2_end = (Number(schedule2.end_time.hour) * 60) + Number(schedule2.end_time.minute)
+
+    if (
+      (
+        (schedule1_start >= schedule2_start &&
+        schedule1_start <= schedule2_end ) ||
+        (schedule1_end >= schedule2_start &&
+        schedule1_end <= schedule2_end ) 
+      ) &&
+        schedule1.day_of_week === schedule2.day_of_week  ){
+          return true
+    }
+    return false 
+  }
+
+  const bulkConflictCheck = (sectionsList) =>{
+    let result = false
+     sectionsList.forEach((section1)=>{
+      sectionsList.forEach((section2)=>{
+        if (section1 !== section2){
+          section1.schedules.forEach((section1Schedule)=>{
+            section2.schedules.forEach((section2Schedule)=>{
+              if (conflictCheck(section1Schedule,section2Schedule)){
+                result = true 
+              }
+            })
+          })
+        }
+      })
+    })
+    return result
+  }
+
+  // Components
+  const combinationComponent = (sectionsList, index)=>{
+    eventObjectsString = ''
+    sectionNames = ''
+    colors = ['purple','green','blue','yellow']
+    sectionsList.forEach((section,sectionIndex)=>{
+      sectionNames +=`
+            <div class="plan-combination-section">
+            <div class="plan-combination-section-course">
+              <div class="plan-combination-section-course-${colors[sectionIndex % colors.length]}"></div>
+              <p>${section.course} | ${section.course_name}</p>
+            </div>
+            <p class="plan-combination-section-crn">CRN: ${section.crn}</p>
+          </div>
+          `
+      section.schedules.forEach((event)=>(
+        eventObjectsString += `<div class="reg-calender-event-${colors[sectionIndex % colors.length]} day-${event.day_of_week} hour-start-${event.start_time.hour}-${convertMinute(event.start_time.minute)} hour-end-${event.end_time.hour}-${convertMinute(event.end_time.minute)}">
+        <div class="reg-event-time">
+          ${event.course}
+        </div>
+        </div>
+        `  
+      ))
+    })
+    console.log
+    return `
+          <div class="plan-plans-combination">
+        <p class="plan-count poppins-bold">${index}</p>
+        <div class="reg-calender">
+        <div class="reg-calender-calender-grid" id="reg-calender-calender-grid">
+          <!-- DAYS  -->
+          <p class="calender-days ">Week</p>
+          <p class="calender-days">Sun</p>
+          <p class="calender-days">Mon</p>
+          <p class="calender-days">Tue</p>
+          <p class="calender-days">Wed</p>
+          <p class="calender-days">Thu</p>
+          <p class="calender-days">Fri</p>
+          <p class="calender-days">Sat</p>
+          
+          <!-- HOURS -->
+          <p class="calender-hours">8:00</p>
+          
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">9:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">10:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">11:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">12:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">13:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">14:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">15:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">16:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">17:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">18:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">19:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours">20:00</p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          <p class="calender-hours"></p>
+          
+          <!-- EVENTS -->
+        ${eventObjectsString}
+    
+        </div>
+        </div>
+        <div class="plan-combination-sections">
+
+        ${sectionNames}
+        </div>
+      </div>
+    `
+  }
+  
+  const showCourseButtonComponent = (course) =>{
+    return `<button class="reg-registration-table-remove-button" onclick="showCourse('${course}')">Show</button>`
+  }
+
+  const hideCourseButtonComponent = (course) =>{
+    return `<button class='reg-registration-table-add-button' onclick="hideCourse('${course}')">Hide</button>`
+  }
+
+  const addSectionButtonComponent = (crn) =>{
+    return `<form method="post" action='${addSectionUrl(crn)}'>
+      {% csrf_token %}
+      <button type='submit' class='reg-registration-table-conflict-button'>Add</button></form>`
+  }
+  
+  const selectCourseEvent = (course,crn)=>{
+    if (crn == 'none'){
+      pickedSections = pickedSections.filter(pickedSection => pickedSection.course !== course )
+      document.getElementById(`${course}-actions`).innerHTML = showCourseButtonComponent(course)
       
-  const shownCourses = []
+      document.getElementById(`${course}-actions`).innerHTML = showCourseButtonComponent(course)
+
+    }else {
+      document.getElementById(`${course}-actions`).innerHTML = addSectionButtonComponent(crn)
+      pickedSections.push({course,crn})
+      shownCourses = shownCourses.filter(shownCourse=> shownCourse !== course)
+    }
+    
+    updateCombinations()
+
+  }
+
+  const cartesianProduct = (arrays) => arrays.reduce((acc, curr) => acc.flatMap(a => curr.map(b => [...a, b])),[[]]);
+
+  const updateCombinations = () =>{
+    cartesianProductBaseList = []
+    
+    let tempList = []
+    shownCourses.forEach((shownCourse)=>{
+      tempList = []
+      Object.keys(courses[shownCourse].sections).forEach(key => tempList.push(courses[shownCourse].sections[key])) 
+      cartesianProductBaseList.push(tempList)
+    })
+    pickedSections.forEach((pickedSection)=>{
+      cartesianProductBaseList.push([courses[pickedSection.course].sections[pickedSection.crn]])
+    })
+
+    sectionsInThePlan.forEach((sectionInThePlan)=>{
+      cartesianProductBaseList.push([courses[sectionInThePlan.course].sections[sectionInThePlan.crn]])
+    })
+    
+    possibleCombinations = cartesianProduct(cartesianProductBaseList).filter(combination=>!bulkConflictCheck(combination))
+
+    const combinationsSection = document.getElementById('plan-section-combinations') 
+    combinationsSection.innerHTML =   ''
+    
+    possibleCombinations.forEach((possibleCombination,index)=>{
+      combinationsSection.innerHTML += combinationComponent(possibleCombination,index)
+    })
+  
+    // console.log('all possibilities',cartesianProduct(cartesianProductBaseList))
+    // console.log("possibleCombinations",possibleCombinations)
+  } 
+  
+  const showCourse = (course)=>{
+    shownCourses.push(course)
+    document.getElementById(`${course}-actions`).innerHTML = hideCourseButtonComponent(course)
+    updateCombinations()
+  }
+  
+  const hideCourse = (course)=>{
+    shownCourses = shownCourses.filter((shownCourse) => {return  shownCourse !== course})
+    document.getElementById(`${course}-actions`).innerHTML = showCourseButtonComponent(course)
+    updateCombinations()
+  }
+
 </script>
 
   <div class="plan-section">
@@ -106,12 +332,12 @@
           <div class="plan-added-sections">
             {%for section in currentPlan.sections.all %}            
               <div class="plan-added-section" >
-                <p>{{section.course.name}}<br>CRN:{{section.crn}}</p><button>Remove</button>
+                <p>{{section.course.name}}<br>CRN:{{section.crn}}</p><form action="{% url 'plan_remove_section' currentPlan.plan_id section.crn %}" method="post">{%csrf_token%}<button class="reg-registration-table-add-button">Remove</button></form>
               </div>
             {% endfor %}
           </div>
         </div>
-        <div class="reg-calender">
+    <div class="reg-calender">
     <div class="reg-calender-calender-grid" id="reg-calender-calender-grid">
       <!-- DAYS  -->
       <p class="calender-days ">Week</p>
@@ -204,44 +430,22 @@
           <th>Code</th>
           <th>Name</th>
           <th>CRN</th>
-          <th>Instructor</th>
-          <th>Time</th>
-          <th>Location</th>
+          <th> - </th>
+          <th> - </th>
+          <th> - </th>
           <th>Actions</th>
         </tr>
 
-        <tr>
-          <td>IT7001</td>
-          <td>System Analysis & Design</td>
-          <td>
-            <select name="" id="">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">3</option>
-            </select>
-          </td>
-          <td>Mr ahmed</td>
-          <td>
-            <p>MO 10:00 - 12:00 AM</p>
-            <p>MO 10:00 - 12:00 AM</p>
-          </td>
-          <td>
-            <p>B19.250</p>
-            <p>B19.250</p>
-          </td>
-          <td><button>Add</button></td>
-        </tr>
       </tr>
 
       {% for course in courses%}
-      {% if course.name != 'no pre req' %}
+      {% if course.name != 'no pre req' and course.section_set.all|length != 0 %}
             <tr>
         <td>{{course.department.department_code}}{{course.code}}</td>
         <td>{{course.name}}</td>
         <td>
           <form action="" id="{{course.department.department_code}}{{course.code}}-form">
-            <select  name="" id="">
+            <select  name="" id="" onchange="(selectCourseEvent('{{course.department.department_code}}{{course.code}}',this.value))">
               <option value="none">CRN</option>
               {%for section in course.section_set.all %}
               <option value="{{section.crn}}">{{section.crn}}</option>
@@ -256,7 +460,7 @@
           
         </td>
         <td id="{{course.department.department_code}}{{course.code}}-actions">
-          <button>Show</button>
+          <button class="reg-registration-table-remove-button" onclick="showCourse('{{course.department.department_code}}{{course.code}}')">Show</button>
         </td>
       </tr>
       {%endif%}
@@ -265,6 +469,15 @@
       </table>
   </div>
   
+    <div class="plan-section plan-section-combinations" >
+    <h1 class="reg-registration-section-header"><img src="{% static 'icons/registration1.png'%}" alt="">Combinations</h1>
+    
+    <div class="plan-plans-combinations" id="plan-section-combinations">
+    
+    </div>
+    
+
+  </div>
   {%endif%}
 
   <div class="plan-new-plan-form" id="plan-new-plan-form">
@@ -274,109 +487,10 @@
       {{newPlanForm.as_p}}
       <div>
         <a onclick="document.getElementById('plan-new-plan-form').style.display = 'none'">Cancel</a>
+        <button form="new_plan" type="submit">Create</button>
       </div>
       
     </form>
-    <button form="new_plan" type="submit">Create</button>
-  </div>
-
-  <div class="plan-section plan-section-combinations">
-    <h1 class="reg-registration-section-header"><img src="{% static 'icons/registration1.png'%}" alt="">Combinations</h1>
-    
-    <div class="plan-plans-combinations">
-      <div class="plan-plans-combination">
-        <p class="plan-count poppins-bold">1</p>
-        <div class="reg-calender">
-        <div class="reg-calender-calender-grid" id="reg-calender-calender-grid">
-          <!-- DAYS  -->
-          <p class="calender-days ">Week</p>
-          <p class="calender-days">Sun</p>
-          <p class="calender-days">Mon</p>
-          <p class="calender-days">Tue</p>
-          <p class="calender-days">Wed</p>
-          <p class="calender-days">Thu</p>
-          <p class="calender-days">Fri</p>
-          <p class="calender-days">Sat</p>
-          
-          <!-- HOURS -->
-          <p class="calender-hours">8:00</p>
-          
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">9:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">10:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">11:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">12:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">13:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">14:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">15:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">16:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">17:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">18:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">19:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours">20:00</p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          <p class="calender-hours"></p>
-          
-          <!-- EVENTS -->
-          {% for section in currentPlan.sections.all %}
-            {% for event in section.section_schedules_set.all  %}
-            <div class="reg-calender-event day-{{event.day_of_week}} hour-start-{{event.time.start_time.hour}}-{% if event.time.start_time.minute == 0 %}00{% elif event.time.start_time.minute <= 20 %}20{%elif event.time.start_time.minute <= 40 %}40{%else%}60{%endif%} hour-end-{{event.time.end_time.hour}}-{% if event.time.end_time.minute == 0 %}00{% elif event.time.end_time.minute <= 20 %}20{%elif event.time.end_time.minute <= 40 %}40{%else%}60{%endif%}">
-              {{section.course.code}}
-            </div>
-            {% endfor %}
-          {%endfor%}
-    
-        </div>
-        </div>
-        <div class="plan-combination-sections">
-          <div class="plan-combination-section">
-            <div class="plan-combination-section-course">
-              <div class="plan-combination-section-course-color"></div>
-              <p>IT6001 | System Analysis & Design</p>
-            </div>
-            <p class="plan-combination-section-crn">CRN: 12</p>
-          </div>
-        </div>
-      </div>
-
-
-    </div>
   </div>
 
 

@@ -5,61 +5,61 @@
   <div class="dashboard-get-started-section">
     <p>Get Started ...</p>
     <div class="dashboard-get-started-boxes">
-      <div class="dashboard-get-started-box">
+      <div class="dashboard-get-started-box" onclick="document.location.href = `{% url 'student_profile' %}`">
         <div class="image-container cyan-background">
           <img src="{% static 'icons/Vector.png' %}" alt="">
         </div>
         <p class="box-title poppins-bold">Student Profile</p>
-        <p class="box-description roboto">Write something about course registration here, thanks</p>
+        <p class="box-description roboto">View and manage your personal information, academic details, and contact preferences.</p>
       </div>
-      <div class="dashboard-get-started-box">
+      <div class="dashboard-get-started-box"  onclick="document.location.href = `{% url 'student-registration' %}`">
         <div class="image-container magenta-background">
           <img src="{% static 'icons/note-2.png' %}" alt="">
         </div>
         <p class="box-title poppins-bold">Registration</p>
-        <p class="box-description roboto">Write something about course registration here, thanks</p>
+        <p class="box-description roboto">Register for courses, add or drop classes, and view your current class schedule.</p>
       </div>
-      <div class="dashboard-get-started-box">
+      <div class="dashboard-get-started-box"  onclick="document.location.href = `{% url 'week_at_glance' %}`">
         <div class="image-container yellow-background">
           <img src="{% static 'icons/menu-board.png' %}" alt="">
         </div>
         <p class="box-title poppins-bold">Week at Glance</p>
-        <p class="box-description roboto">Write something about course registration here, thanks</p>
+        <p class="box-description roboto">Get a quick overview of your weekly schedule, classes, and important academic deadlines.</p>
       </div>
-      <div class="dashboard-get-started-box">
+      <div class="dashboard-get-started-box" onclick="document.location.href = `{% url  'enrolled_courses' %}`">
         <div class="image-container lemon-green-background">
           <img src="{% static 'icons/book.png' %}" alt="">
         </div>
         <p class="box-title poppins-bold">Enrolled Courses</p>
-        <p class="box-description roboto">Write something about course registration here, thanks</p>
+        <p class="box-description roboto">Access all your current courses, view materials, and check course requirements.</p>
       </div>
-      <div class="dashboard-get-started-box">
-        <div class="image-container cyan-background">
+      <div class="dashboard-get-started-box"  onclick="document.location.href = `{% url  'attendance_report' %}`">
+      <div class="image-container cyan-background">
           <img src="{% static 'icons/calendar-tick.png' %}" alt="">
         </div>
         <p class="box-title poppins-bold">Attendance Report</p>
-        <p class="box-description roboto">Write something about course registration here, thanks</p>
+        <p class="box-description roboto">Track and view your attendance records for all enrolled courses this semester.</p>
       </div>
-      <div class="dashboard-get-started-box">
+      <div class="dashboard-get-started-box" onclick="document.location.href = `{% url  'plan_ahead' %}`">
         <div class="image-container magenta-background">
           <img src="{% static 'icons/archive-book.png' %}" alt="">
         </div>
         <p class="box-title poppins-bold">Plan Ahead</p>
-        <p class="box-description roboto">Write something about course registration here, thanks</p>
+        <p class="box-description roboto">Explore future course offerings and plan your academic schedule for upcoming terms.</p>
       </div>
-      <div class="dashboard-get-started-box">
+      <div class="dashboard-get-started-box" onclick="document.location.href = `{% url  'transcript' %}`">
         <div class="image-container yellow-background">
           <img src="{% static 'icons/Vector.png' %}" alt="">
         </div>
         <p class="box-title poppins-bold">Academic Transcript</p>
-        <p class="box-description roboto">Write something about course registration here, thanks</p>
+        <p class="box-description roboto">View and download your official academic transcript with completed courses and grades.</p>
       </div>
       <div class="dashboard-get-started-box">
         <div class="image-container lemon-green-background">
           <img src="{% static 'icons/Vector.png' %}" alt="">
         </div>
         <p class="box-title poppins-bold">Online Payment</p>
-        <p class="box-description roboto">Write something about course registration here, thanks</p>
+        <p class="box-description roboto">You can't pay because you have a scholarship. =) =( what a sad funny workaround</p>
       </div>
 
     </div>

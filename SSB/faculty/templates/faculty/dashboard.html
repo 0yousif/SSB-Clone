@@ -1,41 +1,43 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
 <div class="dashboard-get-started-section">
   <p>Get Started ...</p>
   <div class="dashboard-get-started-boxes">
-    <div class="dashboard-get-started-box">
+    <div class="dashboard-get-started-box" onclick="document.location.href = `{% url 'student_lookup' %}`">
       <div class="image-container cyan-background">
-        <img src="{% static 'icons/Vector.png' %}" alt="" />
+        <img src="{% static 'icons/Vector.png' %}" alt="Student Lookup Icon" />
       </div>
       <p class="box-title poppins-bold">Student Lookup</p>
       <p class="box-description roboto">
-        Write something about course registration here, thanks
+        Search and view student profiles, academic records, and contact information quickly and efficiently.
       </p>
     </div>
-    <div class="dashboard-get-started-box">
+    <div class="dashboard-get-started-box" onclick="document.location.href = `{% url 'take_attendance' %}`">
       <div class="image-container magenta-background">
-        <img src="{% static 'icons/note-2.png' %}" alt="" />
+        <img src="{% static 'icons/note-2.png' %}" alt="Attendance Sheet Icon" />
       </div>
       <p class="box-title poppins-bold">Attendance Sheet</p>
       <p class="box-description roboto">
-        Write something about course registration here, thanks
+        Record, track, and manage student attendance for your classes with our easy-to-use digital system.
       </p>
     </div>
-    <div class="dashboard-get-started-box">
+    <div class="dashboard-get-started-box" onclick="document.location.href = `{% url 'tutor_sections' %}`" >
       <div class="image-container yellow-background">
-        <img src="{% static 'icons/menu-board.png' %}" alt="" />
+        <img src="{% static 'icons/menu-board.png' %}" alt="Assigned Sections Icon" />
       </div>
       <p class="box-title poppins-bold">Assigned Sections</p>
       <p class="box-description roboto">
-        Write something about course registration here, thanks
+        View and manage all the course sections assigned to you for the current academic term.
       </p>
     </div>
-    <div class="dashboard-get-started-box">
+    <div class="dashboard-get-started-box" onclick="document.location.href = `{% url 'grade_sections' %}`">
       <div class="image-container lemon-green-background">
-        <img src="{% static 'icons/book.png' %}" alt="" />
+        <img src="{% static 'icons/book.png' %}" alt="Assign Grades Icon" />
       </div>
       <p class="box-title poppins-bold">Assign Grades</p>
       <p class="box-description roboto">
-        Write something about course registration here, thanks
+        Submit and manage student grades for assignments, exams, and final course evaluations.
       </p>
     </div>
   </div>

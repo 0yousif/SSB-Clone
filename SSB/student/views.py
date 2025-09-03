@@ -192,10 +192,10 @@ def student_profile(request):
     return render(request, 'student_profile.html', {'profile': profile, "registeredSections":registeredSections, 'configs':configs})
 
 @login_required
-def get_current_plan(request,planGet):
-    if (planGet):
-        if plans.get(plan_id=int(planGet)):
-            return plans.get(plan_id=int(planGet))
+def get_current_plan(request,GETPlan):
+    if (GETPlan):
+        if plans.get(plan_id=int(GETPlan)):
+            return plans.get(plan_id=int(GETPlan))
         elif plans.get(plan_id=0):
             return plans.get(plan_id=0)
     else:
@@ -208,6 +208,7 @@ def get_current_plan(request,planGet):
 
 @login_required
 def plan_ahead(request):
+    
     courses = Course.objects.all()
     plans = Student_plan.objects.filter(student=request.user)
     newPlanForm = StudentPlanForm()
@@ -260,18 +261,19 @@ def delete_plan(request, plan_id):
 
 @login_required
 def plan_add_section(request,plan_id,crn):
-    if Student_plan.objects.filter(plan_id=plan_id,student=request.user,sections=crn).exists():
-        courses = Course.objects.all()
-        plans = Student_plan.objects.filter(student=request.user)
-        newPlanForm = StudentPlanForm()
-        currentPlan = get_current_plan(plan_id)
+    # if  Student_plan.objects.filter(plan_id=plan_id,student=request.user,sections__section_id=crn).exists():
+    #     courses = Course.objects.all()
+    #     plans = Student_plan.objects.filter(student=request.user)
+    #     newPlanForm = StudentPlanForm()
+    #     currentPlan = Student_plan.objects.filter(plan_id=plan_id,student=request.user)
+    #     return render(request, 'plan_ahead.html',{"courses":courses,"plans":plans,"newPlanForm":newPlanForm,'currentPlan':currentPlan})
 
-        return render(request, 'plan_ahead.html',{"courses":courses,"plans":plans,"newPlanForm":newPlanForm,'currentPlan':currentPlan})
-        Student_plan.objects.filter(plan_id=plan_id,student=request.user).sections.add(crn)
+
+    Student_plan.objects.get(plan_id=plan_id,student=request.user).sections.add(crn)
     courses = Course.objects.all()
     plans = Student_plan.objects.filter(student=request.user)
     newPlanForm = StudentPlanForm()
-    currentPlan = get_current_plan(plan_id)
+    currentPlan = currentPlan = Student_plan.objects.get(plan_id=plan_id,student=request.user)
 
     return render(request, 'plan_ahead.html',{"courses":courses,"plans":plans,"newPlanForm":newPlanForm,'currentPlan':currentPlan})
 
@@ -281,8 +283,14 @@ def plan_add_section(request,plan_id,crn):
 
 @login_required
 def plan_remove_section(request,plan_id,crn):
-    print("section added to the plan")
-    return redirect('plan_ahead')
+    Student_plan.objects.get(plan_id=plan_id,student=request.user).sections.remove(crn)
+    courses = Course.objects.all()
+    plans = Student_plan.objects.filter(student=request.user)
+    newPlanForm = StudentPlanForm()
+    currentPlan = currentPlan = Student_plan.objects.get(plan_id=plan_id,student=request.user)
+
+    return render(request, 'plan_ahead.html',{"courses":courses,"plans":plans,"newPlanForm":newPlanForm,'currentPlan':currentPlan})
+
 
 class admissionCreate(CreateView):
     model = Admissions

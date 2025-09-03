@@ -188,7 +188,7 @@ class Location(models.Model):
         validators=[MaxValueValidator(999)], null=False)
 
     def __str__(this):
-        return str(this.location_id)
+        return f"{this.room_number} {this.building_code}"
 
 
 class Time(models.Model):
@@ -198,7 +198,7 @@ class Time(models.Model):
     period = models.IntegerField(null=False, validators=[MaxValueValidator(2), MinValueValidator(1)])
 
     def __str__(this):
-        return str(this.time_id)
+        return f'{this.start_time} - {this.end_time}' 
 
 
 class Section_schedules(models.Model):

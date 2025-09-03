@@ -39,9 +39,7 @@
 
           }
         }else return
-      
-      
-      
+        
       }
       const addConflict = (department_code,course_code,course_name,tutor_username,schedules,section_crn,section_limit,registered_students_count) => {
       let registeredSectionElement =`
@@ -90,7 +88,8 @@
               ="">
               <p class="montserrat-regular">${getHour(schedules[i].start_time)}:${getMinute(schedules[i].start_time)} - ${getHour(schedules[i].end_time)}:${getMinute(schedules[i].end_time)}</p>
             </div>
-         </div>                `
+         </div>
+         `
             }
 
               
