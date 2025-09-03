@@ -578,10 +578,10 @@ body.home-page h1 {
     background-color: transparent;
     color: #0C1E33;
 }
-
+/* 
 .button-logins button:hover {
   background-color: #1859c0;
-}
+} */
 
 .login-container {
   display: flex;
