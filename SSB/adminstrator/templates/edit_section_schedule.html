@@ -4,8 +4,11 @@
   <h1>Add Location and Time for Section: {{ section.crn }}</h1>
   <form method="post" class="form">
     {% csrf_token %} {{ form.as_p }}
+        <div class="details-actions">
+
     <a href="{% url 'edit_locations' %}?next={{ request.path }}">Locations</a>
     <a href="{% url 'edit_times' %}?next={{ request.path }}">Times</a>
+    </div>
     <input type="submit" value="Submit" class="btn" />
   </form>
 </div>

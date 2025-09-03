@@ -82,7 +82,7 @@ def adminregstudent(request, user_id):
             """
             address = str(userProfile.personal_email)
             send_mail(subject, message, EMAIL_HOST_USER,
-                      [address], fail_silently=False)
+                      [address])
 
             if admission_data is not None:
 
