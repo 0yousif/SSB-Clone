@@ -124,7 +124,7 @@ class Profile(models.Model):
         validators=[MaxValueValidator(999)], null=True, default=0)
     total_credits_attempted = models.IntegerField(default=0)
     status = models.CharField(
-        choices=USER_STATUS_CHOICES, default=USER_STATUS_CHOICES[0][0], null=False)
+        choices=USER_STATUS_CHOICES, default=USER_STATUS_CHOICES[0][0], max_length=30 ,null=False)
     email = models.CharField(max_length=50, null=True)
     personal_email = models.CharField(max_length=50, null=True)
     avatar = models.ImageField(
@@ -144,7 +144,7 @@ class Course(models.Model):
     name = models.CharField(max_length=50, null=False)
     description = models.CharField(max_length=200, null=False)
     credit_hours = models.IntegerField(choices=COURSE_CREDITS, null=False)
-    schedule_type = models.CharField(choices=SCHEDULE_TYPES, null=False)
+    schedule_type = models.CharField(choices=SCHEDULE_TYPES,max_length=30, null=False)
     prerequisit_course = models.ForeignKey(
         "Course", on_delete=models.SET_NULL, null=True)
     is_active = models.BooleanField(default=False, null=False)
@@ -163,7 +163,7 @@ class Section(models.Model):
         validators=[MaxValueValidator(999999)], primary_key=True, null=False)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False)
     tutor = models.ForeignKey(User, on_delete=models.PROTECT, null=False)
-    schedule_type = models.CharField(choices=SCHEDULE_TYPES, null=False)
+    schedule_type = models.CharField(choices=SCHEDULE_TYPES,max_length=30 ,null=False)
     semester = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True) 
 
     @property
@@ -203,7 +203,7 @@ class Time(models.Model):
 
 class Section_schedules(models.Model):
     schedule_id = models.AutoField(primary_key=True, null=False)
-    day_of_week = models.CharField(choices=DAYS, null=False)
+    day_of_week = models.CharField(choices=DAYS,max_length=30 , null=False)
     crn = models.ForeignKey(Section, on_delete=models.CASCADE, null=False)
     location = models.ForeignKey(
         Location, on_delete=models.PROTECT, null=False)
@@ -216,7 +216,7 @@ class Section_schedules(models.Model):
 class Student_registration(models.Model):
     registration = models.AutoField(primary_key=True, null=False)
     student = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
-    registration_status = models.CharField(null=False)
+    registration_status = models.CharField(max_length=30 ,null=False)
     registered_date = models.DateField(null=False)
     crn = models.ForeignKey(Section, on_delete=models.PROTECT)
 
