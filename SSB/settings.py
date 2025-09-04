@@ -84,7 +84,6 @@ WSGI_APPLICATION = 'SSB.wsgi.application'
 
 if 'ON_HEROKU' in os.environ:
     DATABASES = {
-        'ENGINE': 'django.db.backends.postgresql',
         "default": dj_database_url.config(
             env='DATABASE_URL',
             conn_max_age=600,
