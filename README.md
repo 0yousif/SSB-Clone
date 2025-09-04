@@ -1,6 +1,6 @@
 ## Classy: A Django Student Self-Service Banner
 
-![home page](./images/cover.png)
+![Cover](./images/Cover.png)
 
 A full-featured Student Information System (SIS) built with Django, mimicking the core functionality of real-world self-service Banner. Classy allows students to manage their academic journey.
 
@@ -66,11 +66,11 @@ Students can securely log in to view their personal information, register for co
 
 
 2. **Design and Wireframes**
-##### Our initial designs were created in Figma. View Wireframes: [Classy Figma File](https://www.figma.com/design/TWKe9bsGHfUYdSXq6yz6Rt/SSB?node-id=0-1&t=REz6iXyguLgBiaI6-1)
+###### Our initial designs were created in Figma. View Wireframes: [Classy Figma File](https://www.figma.com/design/TWKe9bsGHfUYdSXq6yz6Rt/SSB?node-id=0-1&t=REz6iXyguLgBiaI6-1)
 
 3. **Project Management**
 
-##### We used Notion to organize tasks and track progress throughout the project: [Notion Link](https://www.notion.so/SSB-clone-245c7cb3abbf80409236cdac969b9734?source=copy_link)
+###### We used Notion to organize tasks and track progress throughout the project: [Notion Link](https://www.notion.so/SSB-clone-245c7cb3abbf80409236cdac969b9734?source=copy_link)
 
 ---
 
