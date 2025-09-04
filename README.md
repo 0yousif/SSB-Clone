@@ -1,4 +1,4 @@
-## Classy: A Django Student Self-Service Banner
+### Classy: A Django Student Self-Service Banner
 
 ![Cover](./images/Cover.png)
 
