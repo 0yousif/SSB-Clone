@@ -95,8 +95,7 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'classy',
-            # The value of 'NAME' should match the value of 'NAME' you replaced.
+            'NAME': 'SSB',
         }
     }
 
