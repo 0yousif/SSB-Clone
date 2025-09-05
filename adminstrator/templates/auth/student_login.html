@@ -41,7 +41,7 @@
             {%for message in messages %}
   <p>{{message}}</p>
   {% endfor %}
-    <a href="/apply/"><p>Not a student? Apply now!</p></a>
+    <a href="{% url 'admission' %}"><p>Not a student? Apply now!</p></a>
   </form>
 </div>
 
