@@ -4,7 +4,7 @@
 
 A full-featured Student Information System (SIS) built with Django, mimicking the core functionality of real-world self-service Banner. Classy allows students to manage their academic journey.
 
-You can view our app here: [CLASSY!](https:/classy.com/)
+You can view our app here: [CLASSY!](https://classy-fa28de6ea0ef.herokuapp.com/)
 
 
 ### _Members_
